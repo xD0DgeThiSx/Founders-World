@@ -18,10 +18,10 @@ The initial objective is not to ship gameplay quickly. The objective is to estab
 
 ## Non-Goals For This Phase
 
-- No gameplay feature implementation
+- No full gameplay loop implementation
 - No economy balancing
 - No quest, combat, tycoon, or simulator logic
-- No production UI flows beyond structural placeholders
+- No full permissions or entitlement system yet
 - No datastore integration beyond future planning
 
 ## Experience Pillars
@@ -40,6 +40,7 @@ The initial objective is not to ship gameplay quickly. The objective is to estab
 - Server-owned orchestration in `ServerScriptService`
 - Client presentation and input handling isolated to player and UI trees
 - Workspace and audio assets organized for content growth
+- World generation driven by reusable configuration rather than one-off map scripts
 
 ## Planned System Domains
 
@@ -50,6 +51,7 @@ The initial objective is not to ship gameplay quickly. The objective is to estab
 - Client app shell and presentation controllers
 - World composition and content containers
 - Audio catalog and playback routing
+- VIP and founder identity configuration for future permission hooks
 
 ## Coding Standards
 
@@ -75,4 +77,5 @@ This phase succeeds when the repository provides:
 - Clear documentation for product and engineering direction
 - A source layout that maps cleanly into Roblox services
 - Bootstrap points for future server and client initialization
+- Distinct graybox venue layouts with navigable rooms and identity
 - Enough architectural guidance that multiple developers can contribute consistently

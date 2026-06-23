@@ -2,16 +2,17 @@
 
 Founder's World is a Roblox experience scaffolded for long-term maintainability, clean team collaboration, and safe gameplay iteration.
 
-This repository now contains the Phase 1 playable prototype world structure for Founder's World. The focus is still on architectural quality and expandable systems, but the map is now explorable with placeholder geometry and foundational interaction loops.
+This repository now contains the Phase 2 playable graybox expansion for Founder's World. The project keeps the original runtime-generation architecture, but the world has been upgraded into a more distinct, room-driven playable layout with venue-specific graybox detail.
 
 ## Current Scope
 
 - High-level product and engineering documentation
 - Rojo-compatible Roblox source tree
 - Server, shared, client, UI, world, and audio boundaries
-- Playable prototype world generation
+- Config-driven graybox world generation
 - Teleport, spawn, and door interaction systems
-- Media showcase frameworks for future content integrations
+- Venue room, prop, sign, and media panel generation
+- VIP and founder display seed configuration
 
 ## Project Layout
 
@@ -60,7 +61,7 @@ Founders-World/
 3. Add systems incrementally behind clear interfaces.
 4. Keep shared code deterministic and dependency-light.
 
-## Phase 1 Prototype Features
+## Phase 2 Graybox Features
 
 - Stromblad Estate
 - Girls Hangout
@@ -69,12 +70,12 @@ Founders-World/
 - BO6 Gaming Lounge
 - Hub-and-spoke teleport navigation
 - Interactive doors
-- Photo slideshow placeholders
-- Spotify station placeholders
-- Twitch wall placeholders
-- YouTube showcase placeholders
+- Config-defined room layouts
+- Themed labeled props and signage
+- Distinct media panel styles for photo, Spotify, Twitch, and YouTube
+- Pool, hot tub, and slide placeholders
 - Spawn pads and venue signage
 
 ## Next Step
 
-Use `ROADMAP.md` as the implementation sequence and `ARCHITECTURE.md` as the engineering reference as this placeholder prototype evolves into full gameplay systems.
+Use `ROADMAP.md` as the implementation sequence and `ARCHITECTURE.md` as the engineering reference as this graybox world evolves into persistent systems, authored art, and full gameplay loops.

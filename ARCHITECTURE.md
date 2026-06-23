@@ -31,6 +31,8 @@ Systems represent feature runtime behavior. Systems can depend on services and s
 
 Shared code contains contracts, enums, utility modules, schema definitions, and configuration that both client and server can safely consume. Shared code should remain conservative because any unnecessary replication becomes long-term cost.
 
+In Phase 2, `WorldConfig.lua` becomes the main authoring surface for venue layouts. Rooms, props, media panels, signs, and VIP seed data all live in shared config so the runtime builder can stay generic.
+
 ### 5. Presentation Layer
 
 Client app and UI controllers should translate replicated state into visuals and local input behavior. They should not decide authoritative outcomes.
@@ -53,6 +55,7 @@ World assets and audio structures should be organized so designers can expand co
 - `Remotes/`: remote event/function containers and definitions
 - `Config/`: tunable data and non-secret constants
 - `Packages/`: external packages or vendored dependencies when adopted
+- `Shared/Config/WorldConfig.lua`: source of truth for generated venue layouts
 
 ### `src/StarterGui`
 
@@ -68,6 +71,8 @@ World assets and audio structures should be organized so designers can expand co
 - `Map/`: static or semi-static world composition roots
 - `Interactives/`: runtime-relevant placeables and tagged interactive content
 
+The current world is still generated at runtime, but it is now structured as a configurable graybox map rather than a single shell per venue.
+
 ### `src/SoundService`
 
 - `Music/`: background and ambient music grouping
@@ -80,6 +85,7 @@ World assets and audio structures should be organized so designers can expand co
 - Shared modules must not depend on server or client modules.
 - Systems may depend on services, but cross-system coupling should be minimized.
 - UI code must not directly own economy, combat, or persistence decisions.
+- World generation code should consume config data, not embed venue-specific authoring decisions inline.
 
 ## Remote Communication Rules
 
@@ -104,5 +110,6 @@ As gameplay begins, this architecture can safely absorb:
 - interaction systems
 - persistence adapters
 - analytics hooks
+- entitlement checks backed by the VIP seed config
 
 The goal is to let features grow without flattening the codebase into a single shared dependency web.
