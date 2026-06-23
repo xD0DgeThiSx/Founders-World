@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local WorldConfig = require(ReplicatedStorage.Shared.Config.WorldConfig)
 
+local PlayerProfileService = require(script.Parent.PlayerProfileService)
 local RemoteRegistryService = require(script.Parent.RemoteRegistryService)
 
 local PlayerSessionService = {}
@@ -34,6 +35,11 @@ local function buildRolePayload(session)
 	}
 end
 
+local function syncPlayerState(player, session)
+	RemoteRegistryService.syncPlayerRole(player, buildRolePayload(session))
+	RemoteRegistryService.syncPlayerProfile(player, PlayerProfileService.getProfilePayload(player))
+end
+
 local function createSession(player)
 	local isFounder = isFounderName(player.Name)
 	local isVip = isVipName(player.Name)
@@ -45,6 +51,8 @@ local function createSession(player)
 		role = "VIP"
 	end
 
+	local profile = PlayerProfileService.createProfile(player, role)
+
 	local session = {
 		Player = player,
 		UserId = player.UserId,
@@ -53,13 +61,14 @@ local function createSession(player)
 		IsFounder = isFounder,
 		IsVIP = isVip,
 		Role = role,
+		Profile = profile,
 		JoinClock = os.clock(),
 		InteractionCooldowns = {},
 		TeleportCooldownUntil = 0,
 	}
 
 	sessionsByUserId[player.UserId] = session
-	RemoteRegistryService.syncPlayerRole(player, buildRolePayload(session))
+	syncPlayerState(player, session)
 	return session
 end
 
@@ -68,7 +77,7 @@ local function bindPlayer(player)
 
 	player.CharacterAdded:Connect(function()
 		task.defer(function()
-			RemoteRegistryService.syncPlayerRole(player, buildRolePayload(session))
+			syncPlayerState(player, session)
 		end)
 	end)
 end
@@ -79,9 +88,14 @@ end
 
 local function onPlayerRemoving(player)
 	sessionsByUserId[player.UserId] = nil
+	PlayerProfileService.removeProfile(player)
 end
 
 function PlayerSessionService.start()
+	RemoteRegistryService.getFunction("RequestPlayerProfile").OnServerInvoke = function(player)
+		return PlayerSessionService.GetProfilePayload(player)
+	end
+
 	Players.PlayerAdded:Connect(onPlayerAdded)
 	Players.PlayerRemoving:Connect(onPlayerRemoving)
 
@@ -122,6 +136,18 @@ function PlayerSessionService.GetRolePayload(player)
 	end
 
 	return buildRolePayload(session)
+end
+
+function PlayerSessionService.GetProfile(player)
+	return PlayerProfileService.getProfile(player)
+end
+
+function PlayerSessionService.GetProfilePayload(player)
+	return PlayerProfileService.getProfilePayload(player)
+end
+
+function PlayerSessionService.HasPermission(player, permissionName)
+	return PlayerProfileService.hasPermission(player, permissionName)
 end
 
 return PlayerSessionService
