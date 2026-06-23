@@ -3,11 +3,13 @@ local RemoteConfig = {
 		Events = {
 			"NotifyPlayer",
 			"SyncPlayerRole",
+			"SyncPlayerProfile",
 		},
 		Functions = {
 			"RequestVenueTeleport",
 			"RequestMediaInteract",
 			"RequestFounderAction",
+			"RequestPlayerProfile",
 		},
 	},
 }
