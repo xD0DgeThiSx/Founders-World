@@ -1,0 +1,110 @@
+local WorldConfig = {
+	Hub = {
+		Name = "Founder's Plaza",
+		Position = Vector3.new(0, 0, 0),
+		Size = Vector3.new(140, 2, 140),
+		SignText = "Welcome to Founder's World",
+	},
+	Venues = {
+		{
+			Id = "stromblad-estate",
+			Name = "Stromblad Estate",
+			Theme = "Elegant social estate prototype",
+			Position = Vector3.new(0, 0, -190),
+			Footprint = Vector3.new(96, 32, 96),
+			Color = Color3.fromRGB(162, 131, 94),
+			Accent = Color3.fromRGB(241, 219, 187),
+			Media = {
+				Photo = true,
+				Spotify = true,
+				Twitch = false,
+				YouTube = true,
+			},
+		},
+		{
+			Id = "girls-hangout",
+			Name = "Girls Hangout",
+			Theme = "Bright lifestyle lounge prototype",
+			Position = Vector3.new(165, 0, -70),
+			Footprint = Vector3.new(84, 28, 84),
+			Color = Color3.fromRGB(255, 170, 214),
+			Accent = Color3.fromRGB(255, 240, 248),
+			Media = {
+				Photo = true,
+				Spotify = true,
+				Twitch = true,
+				YouTube = false,
+			},
+		},
+		{
+			Id = "founder-lounge",
+			Name = "Founder Lounge",
+			Theme = "Premium networking hub prototype",
+			Position = Vector3.new(165, 0, 85),
+			Footprint = Vector3.new(92, 30, 76),
+			Color = Color3.fromRGB(48, 58, 74),
+			Accent = Color3.fromRGB(215, 191, 126),
+			Media = {
+				Photo = false,
+				Spotify = true,
+				Twitch = true,
+				YouTube = true,
+			},
+		},
+		{
+			Id = "contentforge-studio",
+			Name = "ContentForge Studio",
+			Theme = "Creator production floor prototype",
+			Position = Vector3.new(-165, 0, 85),
+			Footprint = Vector3.new(108, 30, 88),
+			Color = Color3.fromRGB(68, 94, 123),
+			Accent = Color3.fromRGB(181, 224, 255),
+			Media = {
+				Photo = true,
+				Spotify = false,
+				Twitch = true,
+				YouTube = true,
+			},
+		},
+		{
+			Id = "bo6-gaming-lounge",
+			Name = "BO6 Gaming Lounge",
+			Theme = "Competitive gaming social prototype",
+			Position = Vector3.new(-165, 0, -70),
+			Footprint = Vector3.new(96, 28, 80),
+			Color = Color3.fromRGB(40, 40, 40),
+			Accent = Color3.fromRGB(255, 111, 0),
+			Media = {
+				Photo = false,
+				Spotify = true,
+				Twitch = true,
+				YouTube = true,
+			},
+		},
+	},
+	Media = {
+		PhotoSlides = {
+			"Vision Board",
+			"Community Moment",
+			"Prototype Venue",
+			"Future Expansion",
+		},
+		SpotifyTracks = {
+			"Placeholder Track A",
+			"Placeholder Track B",
+			"Placeholder Track C",
+		},
+		TwitchStreams = {
+			"Live Build Session",
+			"Community Stream",
+			"Feature Preview",
+		},
+		YouTubeShowcase = {
+			"World Tour Teaser",
+			"Studio Breakdown",
+			"Founder's Update",
+		},
+	},
+}
+
+return WorldConfig
