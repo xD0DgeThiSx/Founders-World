@@ -47,6 +47,15 @@
 - Establish permission and entitlement boundaries
 - Add player state replication strategy
 
+### Phase 5 Build Slice
+
+- Added `ProfileConfig` for default profile shape, role permissions, entitlements, stats, and preferences
+- Added `PlayerProfileService` as the in-memory profile/data boundary before datastore persistence
+- Connected `PlayerSessionService` to profile creation, cleanup, and client-safe profile payloads
+- Added profile replication remotes through `RemoteConfig` and `RemoteRegistryService`
+- Connected teleport and interaction stats to profile state
+- Switched founder action checks to the profile permission boundary
+
 ## Phase 6: World Architecture
 
 - Define world loading/content streaming strategy
