@@ -359,24 +359,86 @@ local WorldConfig = {
 				}),
 			},
 			Props = {
-				prop("Arcade Cabinets", "Arcade", Vector3.new(-34, 4, 4), Vector3.new(6, 8, 4), {
+				prop("Arcade Cabinet A", "ArcadeCabinet", Vector3.new(-36, 5, -1), Vector3.new(5, 10, 4), {
 					Color = Color3.fromRGB(255, 94, 170),
+					Accent = Color3.fromRGB(255, 220, 240),
 				}),
-				prop("Projector Couch", "Seat", Vector3.new(18, 2, 16), Vector3.new(16, 4, 6), {
+				prop("Arcade Cabinet B", "ArcadeCabinet", Vector3.new(-36, 5, 7), Vector3.new(5, 10, 4), {
+					Color = Color3.fromRGB(200, 60, 160),
+					Accent = Color3.fromRGB(255, 220, 240),
+				}),
+				prop("Arcade Cabinet C", "ArcadeCabinet", Vector3.new(-36, 5, 15), Vector3.new(5, 10, 4), {
+					Color = Color3.fromRGB(255, 130, 200),
+					Accent = Color3.fromRGB(255, 220, 240),
+				}),
+				prop("Dance Floor", "FloorPad", Vector3.new(-22, 2.1, 8), Vector3.new(18, 0.2, 16), {
+					Color = Color3.fromRGB(255, 80, 180),
+					Material = Enum.Material.Neon,
+					Transparency = 0.35,
+				}),
+				prop("Prize Counter", "Table", Vector3.new(-18, 2, -3), Vector3.new(14, 4, 4), {
+					Color = Color3.fromRGB(230, 160, 210),
+					Material = Enum.Material.WoodPlanks,
+				}),
+				prop("Cinema Screen", "CinemaScreen", Vector3.new(20, 10, -7), Vector3.new(22, 12, 1), {
+					Color = Color3.fromRGB(255, 170, 214),
+					Accent = Color3.fromRGB(255, 240, 248),
+				}),
+				prop("Front Row Seats", "Seat", Vector3.new(20, 2, 4), Vector3.new(22, 4, 6), {
 					Color = Color3.fromRGB(221, 145, 195),
 					Material = Enum.Material.Fabric,
+				}),
+				prop("Back Row Seats", "Seat", Vector3.new(20, 2, 11), Vector3.new(22, 4, 6), {
+					Color = Color3.fromRGB(200, 120, 175),
+					Material = Enum.Material.Fabric,
+				}),
+				prop("Popcorn Stand", "Table", Vector3.new(10, 2, 15), Vector3.new(4, 6, 4), {
+					Color = Color3.fromRGB(240, 180, 60),
+					Material = Enum.Material.SmoothPlastic,
 				}),
 				prop("Streaming Desk", "Table", Vector3.new(-26, 1.5, 34), Vector3.new(10, 3, 5), {
 					Color = Color3.fromRGB(198, 137, 181),
 					Material = Enum.Material.WoodPlanks,
 				}),
-				prop("Pool Placeholder", "Pool", Vector3.new(0, 0, 40), Vector3.new(22, 4, 12), {
+				prop("Ring Light", "Display", Vector3.new(-36, 9, 34), Vector3.new(6, 6, 1), {
+					Color = Color3.fromRGB(255, 250, 220),
+					Material = Enum.Material.Neon,
+					Shape = Enum.PartType.Cylinder,
+				}),
+				prop("Gaming Chair", "Seat", Vector3.new(-22, 2, 38), Vector3.new(5, 8, 5), {
+					Color = Color3.fromRGB(180, 80, 150),
+					Material = Enum.Material.Fabric,
+				}),
+				prop("Pool", "Pool", Vector3.new(0, 0, 40), Vector3.new(22, 4, 12), {
 					Color = Color3.fromRGB(104, 193, 255),
 					Accent = Color3.fromRGB(235, 247, 255),
 				}),
-				prop("Slide Placeholder", "Slide", Vector3.new(18, 0, 42), Vector3.new(18, 8, 6), {
+				prop("Water Slide", "Slide", Vector3.new(18, 0, 42), Vector3.new(18, 8, 6), {
 					Color = Color3.fromRGB(255, 124, 198),
 					Accent = Color3.fromRGB(255, 255, 255),
+				}),
+				prop("Pool Chair A", "PoolChair", Vector3.new(-18, 2, 36), Vector3.new(8, 3, 4), {
+					Color = Color3.fromRGB(255, 240, 240),
+					Accent = Color3.fromRGB(255, 170, 214),
+				}),
+				prop("Pool Chair B", "PoolChair", Vector3.new(-18, 2, 44), Vector3.new(8, 3, 4), {
+					Color = Color3.fromRGB(255, 240, 240),
+					Accent = Color3.fromRGB(255, 170, 214),
+				}),
+				prop("Umbrella Post", "Display", Vector3.new(-28, 7, 40), Vector3.new(1.5, 14, 1.5), {
+					Color = Color3.fromRGB(255, 240, 248),
+					Material = Enum.Material.Metal,
+				}),
+				prop("VIP Floor Pad", "FloorPad", Vector3.new(28, 2.1, 40), Vector3.new(14, 0.2, 14), {
+					Color = Color3.fromRGB(255, 200, 230),
+					Material = Enum.Material.Neon,
+					Transparency = 0.25,
+				}),
+				prop("VIP Star Wall", "VIPDisplay", Vector3.new(34, 10, 40), Vector3.new(18, 12, 1), {
+					Color = Color3.fromRGB(255, 170, 214),
+					Accent = Color3.fromRGB(255, 240, 248),
+					Label = "VIP Star Lounge",
+					Message = "Welcome, superstar! Abbie, Lue, Emi & Sophia — this spot is yours.",
 				}),
 			},
 			MediaPanels = {
@@ -391,13 +453,22 @@ local WorldConfig = {
 				}),
 			},
 			Signs = {
-				sign("Abbie", "Arcade Captain", Vector3.new(-34, 14, -18), {
+				sign("Girls Hangout", "Abbie · Lue · Emi · Emi · Sophia", Vector3.new(0, 20, -44), {
+					Size = Vector3.new(28, 10, 1),
+				}),
+				sign("Abbie", "Arcade Captain", Vector3.new(-24, 14, -5), {
 					Size = Vector3.new(10, 8, 1),
 				}),
-				sign("Charlie", "Theater Host", Vector3.new(0, 14, -18), {
+				sign("Lue", "Theater Host", Vector3.new(20, 14, -5), {
 					Size = Vector3.new(10, 8, 1),
 				}),
-				sign("Sophia", "Lounge Lead", Vector3.new(34, 14, -18), {
+				sign("Emi", "Streaming Queen", Vector3.new(-24, 14, 23), {
+					Size = Vector3.new(10, 8, 1),
+				}),
+				sign("Emi", "Lounge Lead", Vector3.new(20, 14, 23), {
+					Size = Vector3.new(10, 8, 1),
+				}),
+				sign("Sophia", "Pool Queen", Vector3.new(0, 14, 44), {
 					Size = Vector3.new(10, 8, 1),
 				}),
 			},

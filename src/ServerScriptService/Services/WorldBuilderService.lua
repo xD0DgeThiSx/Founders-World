@@ -578,6 +578,219 @@ local function createSlidePlaceholder(propsFolder, venueConfig, propConfig)
 	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, "Placeholder", venueConfig.Accent)
 end
 
+local function createArcadeCabinetProp(propsFolder, venueConfig, propConfig)
+	local folder = createFolder(propConfig.Name, propsFolder)
+	local center = worldPosition(venueConfig, propConfig.Offset)
+	local s = propConfig.Size
+	local color = propConfig.Color or venueConfig.Accent
+	local accent = propConfig.Accent or Color3.fromRGB(255, 255, 255)
+
+	createPart("CabinetBody", folder, {
+		Size = Vector3.new(s.X, s.Y * 0.76, s.Z),
+		Position = center + Vector3.new(0, -(s.Y * 0.12), 0),
+		Color = color,
+		Material = Enum.Material.SmoothPlastic,
+		CanCollide = true,
+	})
+	createPart("Marquee", folder, {
+		Size = Vector3.new(s.X + 0.4, s.Y * 0.24, s.Z * 0.5),
+		Position = center + Vector3.new(0, s.Y * 0.38, -(s.Z * 0.25)),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = true,
+	})
+	createPart("Screen", folder, {
+		Size = Vector3.new(s.X * 0.72, s.Y * 0.38, 0.2),
+		Position = center + Vector3.new(0, -(s.Y * 0.06), -(s.Z / 2 + 0.1)),
+		Color = Color3.fromRGB(80, 220, 255),
+		Material = Enum.Material.Neon,
+		Transparency = 0.08,
+		CanCollide = false,
+	})
+	createPart("LeftTrim", folder, {
+		Size = Vector3.new(0.25, s.Y, 0.25),
+		Position = center + Vector3.new(-(s.X / 2), 0, -(s.Z / 2)),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = false,
+	})
+	createPart("RightTrim", folder, {
+		Size = Vector3.new(0.25, s.Y, 0.25),
+		Position = center + Vector3.new(s.X / 2, 0, -(s.Z / 2)),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = false,
+	})
+	local labelAnchor = createPart("Label", folder, {
+		Size = Vector3.new(3, 0.5, 3),
+		Position = center + Vector3.new(0, s.Y / 2 + 2.5, 0),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = false,
+	})
+	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+end
+
+local function createCinemaScreenProp(propsFolder, venueConfig, propConfig)
+	local folder = createFolder(propConfig.Name, propsFolder)
+	local center = worldPosition(venueConfig, propConfig.Offset)
+	local s = propConfig.Size
+	local color = propConfig.Color or venueConfig.Color
+	local accent = propConfig.Accent or venueConfig.Accent
+
+	createPart("ScreenSurface", folder, {
+		Size = Vector3.new(s.X, s.Y, 0.3),
+		Position = center,
+		Color = Color3.fromRGB(238, 238, 238),
+		Material = Enum.Material.SmoothPlastic,
+		CanCollide = true,
+	})
+	createPart("ScreenFrame", folder, {
+		Size = Vector3.new(s.X + 1.2, s.Y + 1.2, 0.2),
+		Position = center + Vector3.new(0, 0, 0.26),
+		Color = Color3.fromRGB(18, 18, 18),
+		Material = Enum.Material.Metal,
+		CanCollide = true,
+	})
+	createPart("LeftCurtain", folder, {
+		Size = Vector3.new(2.5, s.Y + 4, 2),
+		Position = center + Vector3.new(-(s.X / 2 + 2), 0.5, 0.4),
+		Color = color,
+		Material = Enum.Material.Fabric,
+		CanCollide = true,
+	})
+	createPart("RightCurtain", folder, {
+		Size = Vector3.new(2.5, s.Y + 4, 2),
+		Position = center + Vector3.new(s.X / 2 + 2, 0.5, 0.4),
+		Color = color,
+		Material = Enum.Material.Fabric,
+		CanCollide = true,
+	})
+	createPart("Pelmet", folder, {
+		Size = Vector3.new(s.X + 7, 1.5, 2),
+		Position = center + Vector3.new(0, s.Y / 2 + 1.25, 0.4),
+		Color = accent,
+		Material = Enum.Material.Metal,
+		CanCollide = true,
+	})
+	local labelAnchor = createPart("Label", folder, {
+		Size = Vector3.new(3, 0.5, 3),
+		Position = center + Vector3.new(0, s.Y / 2 + 4, 0),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = false,
+	})
+	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+end
+
+local function createPoolChairProp(propsFolder, venueConfig, propConfig)
+	local folder = createFolder(propConfig.Name, propsFolder)
+	local center = worldPosition(venueConfig, propConfig.Offset)
+	local s = propConfig.Size
+	local color = propConfig.Color or venueConfig.Accent
+	local accent = propConfig.Accent or venueConfig.Accent
+
+	createPart("Seat", folder, {
+		Size = Vector3.new(s.X * 0.62, s.Y * 0.28, s.Z),
+		Position = center + Vector3.new(-(s.X * 0.19), 0, 0),
+		Color = color,
+		Material = Enum.Material.Fabric,
+		CanCollide = true,
+	})
+	createPart("BackRest", folder, {
+		Size = Vector3.new(s.X * 0.38, s.Y, s.Z),
+		Color = color,
+		Material = Enum.Material.Fabric,
+		CFrame = CFrame.new(center + Vector3.new(s.X * 0.31, 0, 0)) * CFrame.Angles(0, 0, math.rad(28)),
+		CanCollide = true,
+	})
+	createPart("Towel", folder, {
+		Size = Vector3.new(s.X * 0.5, 0.18, s.Z * 0.82),
+		Position = center + Vector3.new(-(s.X * 0.15), s.Y * 0.15, 0),
+		Color = accent,
+		Material = Enum.Material.SmoothPlastic,
+		CanCollide = false,
+	})
+	local labelAnchor = createPart("Label", folder, {
+		Size = Vector3.new(2, 0.5, 2),
+		Position = center + Vector3.new(0, s.Y / 2 + 2.5, 0),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = false,
+	})
+	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+end
+
+local function createVIPDisplayProp(propsFolder, venueConfig, propConfig)
+	local folder = createFolder(propConfig.Name, propsFolder)
+	local center = worldPosition(venueConfig, propConfig.Offset)
+	local s = propConfig.Size
+	local color = propConfig.Color or venueConfig.Accent
+	local accent = propConfig.Accent or venueConfig.Accent
+
+	local mainPanel = createPart(propConfig.Name, folder, {
+		Size = Vector3.new(s.X, s.Y, 0.4),
+		Position = center,
+		Color = color,
+		Material = Enum.Material.Neon,
+		Transparency = 0.08,
+		CanCollide = true,
+	})
+	createPart("Frame", folder, {
+		Size = Vector3.new(s.X + 1.5, s.Y + 1.5, 0.2),
+		Position = center + Vector3.new(0, 0, 0.31),
+		Color = accent,
+		Material = Enum.Material.Metal,
+		CanCollide = true,
+	})
+	createPart("LeftColumn", folder, {
+		Size = Vector3.new(2, s.Y + 6, 2),
+		Position = center + Vector3.new(-(s.X / 2 + 2), 1, 0),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = true,
+	})
+	createPart("RightColumn", folder, {
+		Size = Vector3.new(2, s.Y + 6, 2),
+		Position = center + Vector3.new(s.X / 2 + 2, 1, 0),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = true,
+	})
+	createPart("Crown", folder, {
+		Size = Vector3.new(s.X + 7, 2, 2),
+		Position = center + Vector3.new(0, s.Y / 2 + 2, 0),
+		Color = accent,
+		Material = Enum.Material.Metal,
+		CanCollide = true,
+	})
+	createPart("LeftStar", folder, {
+		Size = Vector3.new(3.5, 3.5, 3.5),
+		Shape = Enum.PartType.Ball,
+		Position = center + Vector3.new(-(s.X / 2 + 2), s.Y / 2 + 5, 0),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = false,
+	})
+	createPart("RightStar", folder, {
+		Size = Vector3.new(3.5, 3.5, 3.5),
+		Shape = Enum.PartType.Ball,
+		Position = center + Vector3.new(s.X / 2 + 2, s.Y / 2 + 5, 0),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = false,
+	})
+	createSurfaceText(mainPanel, Enum.NormalId.Front, "VIP", "Girls Only", accent)
+	local labelAnchor = createPart("Label", folder, {
+		Size = Vector3.new(3, 0.5, 3),
+		Position = center + Vector3.new(0, s.Y / 2 + 5.5, 0),
+		Color = accent,
+		Material = Enum.Material.Neon,
+		CanCollide = false,
+	})
+	createBillboardText(labelAnchor, propConfig.Label or "VIP Star Lounge", "VIP Only", venueConfig.Accent)
+end
+
 local function createProp(propsFolder, venueConfig, propConfig)
 	if propConfig.Kind == "Pool" then
 		createPoolPlaceholder(propsFolder, venueConfig, propConfig)
@@ -585,6 +798,14 @@ local function createProp(propsFolder, venueConfig, propConfig)
 		createHotTubPlaceholder(propsFolder, venueConfig, propConfig)
 	elseif propConfig.Kind == "Slide" then
 		createSlidePlaceholder(propsFolder, venueConfig, propConfig)
+	elseif propConfig.Kind == "ArcadeCabinet" then
+		createArcadeCabinetProp(propsFolder, venueConfig, propConfig)
+	elseif propConfig.Kind == "CinemaScreen" then
+		createCinemaScreenProp(propsFolder, venueConfig, propConfig)
+	elseif propConfig.Kind == "PoolChair" then
+		createPoolChairProp(propsFolder, venueConfig, propConfig)
+	elseif propConfig.Kind == "VIPDisplay" then
+		createVIPDisplayProp(propsFolder, venueConfig, propConfig)
 	else
 		createStandardProp(propsFolder, venueConfig, propConfig)
 	end
@@ -629,6 +850,17 @@ local function getPropInteractionDefinition(venueConfig, propConfig)
 			ActionText = "Inspect",
 			ObjectText = propConfig.Label or propConfig.Name,
 			Message = "Interaction placeholder: " .. (propConfig.Label or propConfig.Name),
+			CooldownKey = "Prop:" .. venueConfig.Id .. ":" .. propConfig.Name,
+		}
+	end
+
+	if propConfig.Kind == "VIPDisplay" then
+		return {
+			ActionType = "Notify",
+			ActionText = "Enter",
+			ObjectText = propConfig.Label or propConfig.Name,
+			Message = propConfig.Message or "Welcome to the VIP area!",
+			RoleRequired = "VIP",
 			CooldownKey = "Prop:" .. venueConfig.Id .. ":" .. propConfig.Name,
 		}
 	end
