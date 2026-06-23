@@ -54,7 +54,7 @@ function PlayerProfileService.createProfile(player, role)
 	profile.Permissions = deepCopy(getPermissionsForRole(profile.Role))
 
 	applyRoleEntitlements(profile, profile.Role)
-	profile.Stats.Visits += 1
+	profile.Stats.Visits = profile.Stats.Visits + 1
 
 	profilesByUserId[player.UserId] = profile
 	return profile
