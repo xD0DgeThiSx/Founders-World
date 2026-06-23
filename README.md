@@ -2,7 +2,7 @@
 
 Founder's World is a Roblox experience scaffolded for long-term maintainability, clean team collaboration, and safe gameplay iteration.
 
-This repository now contains the Phase 2 playable graybox expansion for Founder's World. The project keeps the original runtime-generation architecture, but the world has been upgraded into a more distinct, room-driven playable layout with venue-specific graybox detail.
+This repository now contains the Phase 4 world-space expansion for Founder's World. The runtime-generation architecture is still intact, but the map has grown into a larger graybox world with a real plaza, readable spacing, dedicated feature zones, and roads connecting the major areas.
 
 ## Current Scope
 
@@ -15,6 +15,8 @@ This repository now contains the Phase 2 playable graybox expansion for Founder'
 - VIP and founder display seed configuration
 - Player session tracking and role sync
 - Remote-driven client notification and venue navigation shell
+- Config-driven plaza, zone, and road layout
+- Placeholder expansion districts for future major features
 
 ## Project Layout
 
@@ -63,14 +65,20 @@ Founders-World/
 3. Add systems incrementally behind clear interfaces.
 4. Keep shared code deterministic and dependency-light.
 
-## Phase 2 Graybox Features
+## Phase 4 World Features
 
 - Stromblad Estate
 - Girls Hangout
 - Founder Lounge
 - ContentForge Studio
 - BO6 Gaming Lounge
-- Hub-and-spoke teleport navigation
+- Water Park placeholder zone
+- Outdoor Mall placeholder zone
+- Drive-In Theater placeholder zone
+- Offroad Track placeholder zone
+- Future Amusement Park placeholder zone
+- Founder’s Plaza as the central travel and spawn hub
+- Roads and walkways between major areas
 - Interactive doors
 - Config-defined room layouts
 - Themed labeled props and signage
@@ -87,6 +95,13 @@ Founders-World/
 - `TeleportService` handles safe teleports with cooldowns
 - `InteractionService` centralizes prompt logic and future role-gated hooks
 - `AppShell` provides the initial client HUD layer
+
+## Phase 4 Layout Layer
+
+- `WorldConfig.Zones` defines all active and future districts
+- `WorldConfig.Roads` defines walkable connections between destinations
+- `WorldBuilderService` now generates plaza, zone platforms, roads, overhead signs, and expansion markers
+- Every major area has a physical placeholder footprint ready for future systems
 
 ## Next Step
 

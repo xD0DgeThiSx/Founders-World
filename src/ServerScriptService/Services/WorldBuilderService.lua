@@ -11,6 +11,12 @@ local TeleportService = require(script.Parent.TeleportService)
 
 local WorldBuilderService = {}
 
+local zoneLookup = {}
+
+for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
+	zoneLookup[zoneConfig.Id] = zoneConfig
+end
+
 local function createFolder(name, parent)
 	local folder = Instance.new("Folder")
 	folder.Name = name
@@ -27,7 +33,9 @@ end
 
 local function createPart(name, parent, properties)
 	local className = properties.ClassName or "Part"
+	local finalCFrame = properties.CFrame
 	properties.ClassName = nil
+	properties.CFrame = nil
 
 	local part = createInstance(className, name, parent)
 
@@ -41,6 +49,10 @@ local function createPart(name, parent, properties)
 		part[property] = value
 	end
 
+	if finalCFrame then
+		part.CFrame = finalCFrame
+	end
+
 	return part
 end
 
@@ -52,17 +64,19 @@ local function createSurfaceText(parent, face, title, subtitle, textColor)
 
 	local titleLabel = createInstance("TextLabel", "Title", surfaceGui)
 	titleLabel.BackgroundTransparency = 1
-	titleLabel.Size = UDim2.fromScale(1, 0.6)
+	titleLabel.Size = UDim2.fromScale(1, 0.54)
 	titleLabel.Font = Enum.Font.GothamBold
+	titleLabel.TextWrapped = true
 	titleLabel.TextScaled = true
 	titleLabel.TextColor3 = textColor
 	titleLabel.Text = title
 
 	local subtitleLabel = createInstance("TextLabel", "Subtitle", surfaceGui)
 	subtitleLabel.BackgroundTransparency = 1
-	subtitleLabel.Position = UDim2.fromScale(0, 0.58)
-	subtitleLabel.Size = UDim2.fromScale(1, 0.38)
+	subtitleLabel.Position = UDim2.fromScale(0.04, 0.5)
+	subtitleLabel.Size = UDim2.fromScale(0.92, 0.42)
 	subtitleLabel.Font = Enum.Font.Gotham
+	subtitleLabel.TextWrapped = true
 	subtitleLabel.TextScaled = true
 	subtitleLabel.TextColor3 = textColor
 	subtitleLabel.Text = subtitle
@@ -72,7 +86,7 @@ end
 
 local function createBillboardText(part, title, subtitle, textColor)
 	local billboard = createInstance("BillboardGui", "BillboardText", part)
-	billboard.Size = UDim2.fromOffset(220, 70)
+	billboard.Size = UDim2.fromOffset(230, 72)
 	billboard.StudsOffset = Vector3.new(0, 4.5, 0)
 	billboard.AlwaysOnTop = true
 
@@ -80,6 +94,7 @@ local function createBillboardText(part, title, subtitle, textColor)
 	titleLabel.BackgroundTransparency = 1
 	titleLabel.Size = UDim2.fromScale(1, 0.55)
 	titleLabel.Font = Enum.Font.GothamBold
+	titleLabel.TextWrapped = true
 	titleLabel.TextScaled = true
 	titleLabel.TextColor3 = textColor
 	titleLabel.TextStrokeTransparency = 0.5
@@ -90,6 +105,7 @@ local function createBillboardText(part, title, subtitle, textColor)
 	subtitleLabel.Position = UDim2.fromScale(0, 0.5)
 	subtitleLabel.Size = UDim2.fromScale(1, 0.45)
 	subtitleLabel.Font = Enum.Font.Gotham
+	subtitleLabel.TextWrapped = true
 	subtitleLabel.TextScaled = true
 	subtitleLabel.TextColor3 = textColor
 	subtitleLabel.TextStrokeTransparency = 0.5
@@ -132,6 +148,10 @@ local function createSign(signFolder, name, position, title, subtitle, color, ac
 	return sign
 end
 
+local function getZoneConfig(zoneId)
+	return zoneLookup[zoneId]
+end
+
 local function hasOpenSide(roomConfig, side)
 	for _, openSide in ipairs(roomConfig.OpenSides or {}) do
 		if openSide == side then
@@ -144,6 +164,135 @@ end
 
 local function worldPosition(venueConfig, offset)
 	return venueConfig.Position + offset
+end
+
+local function createNavigationPad(parent, name, position, color, label)
+	local pad = createPart(name, parent, {
+		Size = Vector3.new(14, 1, 14),
+		Position = position,
+		Color = color,
+		Material = Enum.Material.Neon,
+		CanCollide = true,
+	})
+
+	local marker = createPart(name .. "Marker", parent, {
+		Size = Vector3.new(10, 8, 1),
+		Position = position + Vector3.new(0, 5, -7),
+		Color = Color3.fromRGB(25, 25, 25),
+		Material = Enum.Material.SmoothPlastic,
+		CanCollide = true,
+	})
+
+	createSurfaceText(marker, Enum.NormalId.Front, label, "Teleport", color)
+
+	return pad
+end
+
+local function createRoad(roadsFolder, roadConfig)
+	local direction = roadConfig.EndPosition - roadConfig.StartPosition
+	local center = roadConfig.StartPosition:Lerp(roadConfig.EndPosition, 0.5)
+	local length = direction.Magnitude
+
+	if length <= 0 then
+		return
+	end
+
+	local roadPart = createPart(roadConfig.Name, roadsFolder, {
+		Size = Vector3.new(roadConfig.Width, roadConfig.Height, length),
+		Color = roadConfig.Color,
+		Material = roadConfig.Material,
+		CFrame = CFrame.lookAt(center, roadConfig.EndPosition),
+		CanCollide = true,
+	})
+
+	createPart(roadConfig.Name .. "Stripe", roadsFolder, {
+		Size = Vector3.new(math.max(roadConfig.Width * 0.1, 1), 0.2, math.max(length - 8, 8)),
+		Color = Color3.fromRGB(255, 221, 124),
+		Material = Enum.Material.Neon,
+		CFrame = roadPart.CFrame + Vector3.new(0, (roadConfig.Height / 2) + 0.1, 0),
+		CanCollide = false,
+	})
+end
+
+local function createZonePlatform(zoneFolder, zoneConfig)
+	createPart("ZonePlatform", zoneFolder, {
+		Size = zoneConfig.Size,
+		Position = zoneConfig.Position + Vector3.new(0, 1, 0),
+		Color = zoneConfig.Color,
+		Material = Enum.Material.Concrete,
+		CanCollide = true,
+	})
+
+	createPart("ZoneBorder", zoneFolder, {
+		Size = Vector3.new(zoneConfig.Size.X + 6, 1, zoneConfig.Size.Z + 6),
+		Position = zoneConfig.Position + Vector3.new(0, 0.55, 0),
+		Color = zoneConfig.Accent,
+		Material = Enum.Material.Metal,
+		CanCollide = true,
+	})
+end
+
+local function createZoneArrival(zoneFolder, zoneConfig)
+	local arrivalPad = createNavigationPad(zoneFolder, zoneConfig.Name .. "ArrivalPad", zoneConfig.Position + zoneConfig.ArrivalOffset, zoneConfig.Accent, zoneConfig.Name)
+
+	InteractionService.registerPrompt(arrivalPad, {
+		ActionType = "Notify",
+		ActionText = "Inspect",
+		ObjectText = zoneConfig.Name,
+		Message = zoneConfig.Name .. " arrival pad placeholder",
+		CooldownKey = "ZoneArrival:" .. zoneConfig.Id,
+	})
+end
+
+local function createZoneMarker(zoneFolder, zoneConfig)
+	local marker = createPart("ExpansionMarker", zoneFolder, {
+		Size = Vector3.new(8, 18, 8),
+		Position = zoneConfig.Position + Vector3.new(0, 9, zoneConfig.Size.Z / 2 - 24),
+		Color = zoneConfig.Accent,
+		Material = Enum.Material.Neon,
+		CanCollide = true,
+	})
+
+	createBillboardText(marker, zoneConfig.Status, zoneConfig.FutureExpansionText, zoneConfig.Accent)
+
+	InteractionService.registerPrompt(marker, {
+		ActionType = "Notify",
+		ActionText = "Inspect",
+		ObjectText = zoneConfig.Name,
+		Message = zoneConfig.FutureExpansionText,
+		CooldownKey = "ZoneMarker:" .. zoneConfig.Id,
+	})
+end
+
+local function createZoneSigns(zoneFolder, zoneConfig)
+	createSign(
+		zoneFolder,
+		"ZoneSign",
+		zoneConfig.Position + Vector3.new(0, 18, -zoneConfig.Size.Z / 2 + 8),
+		zoneConfig.LargeSignTitle,
+		zoneConfig.LargeSignSubtitle,
+		zoneConfig.Color,
+		zoneConfig.Accent,
+		Vector3.new(24, 12, 1)
+	)
+
+	createSign(
+		zoneFolder,
+		"ZoneDebugSign",
+		zoneConfig.Position + Vector3.new(zoneConfig.Size.X / 2 - 18, 10, zoneConfig.Size.Z / 2 - 12),
+		zoneConfig.Name,
+		string.format("%s | %s | %s", zoneConfig.BuildPhase, zoneConfig.Status, zoneConfig.Category),
+		Color3.fromRGB(28, 28, 28),
+		zoneConfig.Accent,
+		Vector3.new(18, 10, 1)
+	)
+end
+
+local function buildZone(zoneFolder, zoneConfig)
+	createZonePlatform(zoneFolder, zoneConfig)
+	createZoneArrival(zoneFolder, zoneConfig)
+	createZoneMarker(zoneFolder, zoneConfig)
+	createZoneSigns(zoneFolder, zoneConfig)
 end
 
 local function createVenueShell(venueFolder, venueConfig)
@@ -159,6 +308,7 @@ local function createVenueShell(venueFolder, venueConfig)
 		Position = Vector3.new(position.X, floorY, position.Z),
 		Color = venueConfig.Color,
 		Material = Enum.Material.Concrete,
+		CanCollide = true,
 	})
 
 	createPart("Roof", shellFolder, {
@@ -167,6 +317,7 @@ local function createVenueShell(venueFolder, venueConfig)
 		Color = venueConfig.Accent,
 		Material = Enum.Material.Metal,
 		Transparency = 0.08,
+		CanCollide = true,
 	})
 
 	createPart("BackWall", shellFolder, {
@@ -174,6 +325,7 @@ local function createVenueShell(venueFolder, venueConfig)
 		Position = Vector3.new(position.X, wallY, position.Z + footprint.Z / 2),
 		Color = venueConfig.Accent,
 		Material = Enum.Material.Concrete,
+		CanCollide = true,
 	})
 
 	createPart("LeftWall", shellFolder, {
@@ -181,6 +333,7 @@ local function createVenueShell(venueFolder, venueConfig)
 		Position = Vector3.new(position.X - footprint.X / 2, wallY, position.Z),
 		Color = venueConfig.Accent,
 		Material = Enum.Material.Concrete,
+		CanCollide = true,
 	})
 
 	createPart("RightWall", shellFolder, {
@@ -188,6 +341,7 @@ local function createVenueShell(venueFolder, venueConfig)
 		Position = Vector3.new(position.X + footprint.X / 2, wallY, position.Z),
 		Color = venueConfig.Accent,
 		Material = Enum.Material.Concrete,
+		CanCollide = true,
 	})
 
 	local doorWidth = 14
@@ -198,6 +352,7 @@ local function createVenueShell(venueFolder, venueConfig)
 		Position = Vector3.new(position.X - (doorWidth / 2 + frontSegmentWidth / 2), wallY, position.Z - footprint.Z / 2),
 		Color = venueConfig.Accent,
 		Material = Enum.Material.Concrete,
+		CanCollide = true,
 	})
 
 	createPart("FrontWallRight", shellFolder, {
@@ -205,6 +360,7 @@ local function createVenueShell(venueFolder, venueConfig)
 		Position = Vector3.new(position.X + (doorWidth / 2 + frontSegmentWidth / 2), wallY, position.Z - footprint.Z / 2),
 		Color = venueConfig.Accent,
 		Material = Enum.Material.Concrete,
+		CanCollide = true,
 	})
 
 	local doorwayRoot = createFolder("Doors", venueFolder)
@@ -335,6 +491,7 @@ local function createPoolPlaceholder(propsFolder, venueConfig, propConfig)
 		Position = center,
 		Color = propConfig.Accent or venueConfig.Accent,
 		Material = Enum.Material.Concrete,
+		CanCollide = true,
 	})
 
 	createPart("PoolWater", poolFolder, {
@@ -343,6 +500,7 @@ local function createPoolPlaceholder(propsFolder, venueConfig, propConfig)
 		Color = propConfig.Color or Color3.fromRGB(74, 142, 196),
 		Material = Enum.Material.Glass,
 		Transparency = 0.25,
+		CanCollide = true,
 	})
 
 	local labelAnchor = createPart("PoolLabel", poolFolder, {
@@ -365,6 +523,7 @@ local function createHotTubPlaceholder(propsFolder, venueConfig, propConfig)
 		Position = center,
 		Color = propConfig.Accent or venueConfig.Accent,
 		Material = Enum.Material.Metal,
+		CanCollide = true,
 	})
 
 	createPart("TubWater", hotTubFolder, {
@@ -373,6 +532,7 @@ local function createHotTubPlaceholder(propsFolder, venueConfig, propConfig)
 		Color = propConfig.Color or Color3.fromRGB(114, 170, 214),
 		Material = Enum.Material.Glass,
 		Transparency = 0.2,
+		CanCollide = true,
 	})
 
 	local labelAnchor = createPart("TubLabel", hotTubFolder, {
@@ -395,6 +555,7 @@ local function createSlidePlaceholder(propsFolder, venueConfig, propConfig)
 		Position = center + Vector3.new(-slideSize.X / 4, slideSize.Y, 0),
 		Color = propConfig.Accent or venueConfig.Accent,
 		Material = Enum.Material.Metal,
+		CanCollide = true,
 	})
 
 	createPart("SlideRamp", slideFolder, {
@@ -404,6 +565,7 @@ local function createSlidePlaceholder(propsFolder, venueConfig, propConfig)
 		Color = propConfig.Color or venueConfig.Color,
 		Material = Enum.Material.SmoothPlastic,
 		CFrame = CFrame.new(center + Vector3.new(0, slideSize.Y / 2, 0)) * CFrame.Angles(0, math.rad(90), 0),
+		CanCollide = true,
 	})
 
 	local labelAnchor = createPart("SlideLabel", slideFolder, {
@@ -428,7 +590,7 @@ local function createProp(propsFolder, venueConfig, propConfig)
 	end
 end
 
-local function getPropInteractionDefinition(venueConfig, propConfig, targetPart)
+local function getPropInteractionDefinition(venueConfig, propConfig)
 	if propConfig.Kind == "Display" then
 		local actionType = "Notify"
 		local message = "Viewing " .. (propConfig.Label or propConfig.Name)
@@ -492,34 +654,13 @@ local function createVenueSigns(signFolder, venueConfig)
 	end
 end
 
-local function createNavigationPad(parent, name, position, color, label)
-	local pad = createPart(name, parent, {
-		Size = Vector3.new(14, 1, 14),
-		Position = position,
-		Color = color,
-		Material = Enum.Material.Neon,
-		CanCollide = true,
-	})
-
-	local marker = createPart(name .. "Marker", parent, {
-		Size = Vector3.new(10, 8, 1),
-		Position = position + Vector3.new(0, 5, -7),
-		Color = Color3.fromRGB(25, 25, 25),
-		Material = Enum.Material.SmoothPlastic,
-		CanCollide = true,
-	})
-
-	createSurfaceText(marker, Enum.NormalId.Front, label, "Teleport", color)
-
-	return pad
-end
-
-local function createFounderHubMonument(environmentFolder)
-	local founderAnchor = createPart("FounderMonument", environmentFolder, {
+local function createFounderHubMonument(plazaFolder)
+	local founderAnchor = createPart("FounderMonument", plazaFolder, {
 		Size = Vector3.new(18, 10, 2),
-		Position = Vector3.new(0, 6, -12),
+		Position = Vector3.new(0, 6, -18),
 		Color = Color3.fromRGB(28, 28, 28),
 		Material = Enum.Material.SmoothPlastic,
+		CanCollide = true,
 	})
 
 	createSurfaceText(founderAnchor, Enum.NormalId.Front, "Founder", WorldConfig.VIP.FounderUsername, Color3.fromRGB(255, 201, 68))
@@ -531,6 +672,92 @@ local function createFounderHubMonument(environmentFolder)
 		RoleRequired = "Founder",
 		CooldownKey = "FounderMonument",
 	})
+end
+
+local function createHubDirectionalSigns(plazaFolder)
+	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
+		createSign(
+			plazaFolder,
+			zoneConfig.Id .. "DirectionSign",
+			WorldConfig.Hub.Position + zoneConfig.HubSignOffset + Vector3.new(0, 10, 0),
+			zoneConfig.Name,
+			string.format("%s | %s", zoneConfig.BuildPhase, zoneConfig.Status),
+			Color3.fromRGB(32, 32, 32),
+			zoneConfig.Accent,
+			Vector3.new(16, 9, 1)
+		)
+	end
+end
+
+local function createTeleportHubBoard(plazaFolder)
+	local activeZones = {}
+	local futureZones = {}
+
+	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
+		if zoneConfig.ZoneType == "Active" then
+			table.insert(activeZones, zoneConfig.Name)
+		else
+			table.insert(futureZones, zoneConfig.Name)
+		end
+	end
+
+	local subtitle = "Active:\n" .. table.concat(activeZones, "\n") .. "\n\nFuture:\n" .. table.concat(futureZones, "\n")
+
+	createSign(
+		plazaFolder,
+		"TeleportHubBoard",
+		WorldConfig.Hub.Position + WorldConfig.Hub.TeleportBoardOffset,
+		"Teleport Hub Board",
+		subtitle,
+		Color3.fromRGB(24, 28, 36),
+		Color3.fromRGB(255, 201, 68),
+		WorldConfig.Hub.BoardSize
+	)
+end
+
+local function buildFounderPlaza(plazaFolder, navigationFolder, spawnFolder)
+	local hub = WorldConfig.Hub
+
+	createPart("PlazaFloor", plazaFolder, {
+		Size = hub.Size,
+		Position = hub.Position + Vector3.new(0, 1, 0),
+		Color = Color3.fromRGB(212, 212, 212),
+		Material = Enum.Material.Concrete,
+		CanCollide = true,
+	})
+
+	createPart("PlazaCenterRing", plazaFolder, {
+		Size = Vector3.new(72, 1.2, 72),
+		Position = hub.Position + Vector3.new(0, 1.1, 0),
+		Color = Color3.fromRGB(255, 201, 68),
+		Material = Enum.Material.Neon,
+		CanCollide = true,
+	})
+
+	createPart("PlazaSpawnZone", plazaFolder, {
+		Size = Vector3.new(42, 1.2, 42),
+		Position = hub.SpawnPosition - Vector3.new(0, 2, 0),
+		Color = Color3.fromRGB(255, 239, 179),
+		Material = Enum.Material.Neon,
+		Transparency = 0.18,
+		CanCollide = true,
+	})
+
+	createSign(
+		navigationFolder,
+		"HubWelcomeSign",
+		hub.Position + hub.WelcomeSignOffset,
+		hub.SignText,
+		"Central spawn, travel hub, and expansion gateway",
+		Color3.fromRGB(35, 35, 35),
+		Color3.fromRGB(255, 255, 255),
+		Vector3.new(34, 14, 1)
+	)
+
+	createSpawn(spawnFolder, "CentralSpawn", hub.SpawnPosition, Color3.fromRGB(255, 201, 68))
+	createFounderHubMonument(plazaFolder)
+	createTeleportHubBoard(plazaFolder)
+	createHubDirectionalSigns(navigationFolder)
 end
 
 local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder, mediaFolder, navigationFolder)
@@ -560,7 +787,7 @@ local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder,
 			end
 
 			if matchedConfig then
-				local interactionDefinition = getPropInteractionDefinition(venueConfig, matchedConfig, propInstance)
+				local interactionDefinition = getPropInteractionDefinition(venueConfig, matchedConfig)
 				if interactionDefinition then
 					InteractionService.registerPrompt(propInstance, interactionDefinition)
 				end
@@ -583,12 +810,15 @@ local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder,
 		CooldownKey = "TeleportHub:" .. venueConfig.Id,
 	})
 
-	local hubPad = createNavigationPad(navigationFolder, venueConfig.Name .. " TeleportPad", Vector3.new(venueConfig.Position.X * 0.28, 0.5, venueConfig.Position.Z * 0.28), venueConfig.Accent, venueConfig.Name)
+	local zoneConfig = getZoneConfig(venueConfig.Id)
+	local hubPadPosition = WorldConfig.Hub.Position + (zoneConfig and zoneConfig.HubSignOffset or Vector3.new())
+	local teleportDestinationId = zoneConfig and zoneConfig.TeleportDestinationId or venueConfig.Id
+	local hubPad = createNavigationPad(navigationFolder, venueConfig.Name .. " TeleportPad", Vector3.new(hubPadPosition.X, 0.5, hubPadPosition.Z), venueConfig.Accent, venueConfig.Name)
 	InteractionService.registerPrompt(hubPad, {
 		ActionType = "TeleportVenue",
 		ActionText = "Teleport",
 		ObjectText = venueConfig.Name,
-		VenueId = venueConfig.Id,
+		VenueId = teleportDestinationId,
 		CooldownKey = "TeleportVenue:" .. venueConfig.Id,
 	})
 
@@ -631,16 +861,22 @@ local function createWorldFolders()
 
 	local root = createFolder("FoundersWorld", Workspace)
 	local mapFolder = createFolder("Map", root)
+	local plazaFolder = createFolder("Plaza", mapFolder)
+	local zonesFolder = createFolder("Zones", mapFolder)
 	local venuesFolder = createFolder("Venues", mapFolder)
+	local roadsFolder = createFolder("Roads", mapFolder)
 	local navigationFolder = createFolder("Navigation", mapFolder)
 	local spawnsFolder = createFolder("Spawns", mapFolder)
 	local mediaFolder = createFolder("Media", mapFolder)
 	local teleportFolder = createFolder("Teleports", mapFolder)
 	local environmentFolder = createFolder("Environment", mapFolder)
 
-	return root, {
+	return {
 		Map = mapFolder,
+		Plaza = plazaFolder,
+		Zones = zonesFolder,
 		Venues = venuesFolder,
+		Roads = roadsFolder,
 		Navigation = navigationFolder,
 		Spawns = spawnsFolder,
 		Media = mediaFolder,
@@ -661,35 +897,23 @@ local function createAmbientSound()
 end
 
 function WorldBuilderService.build()
-	local _, folders = createWorldFolders()
+	local folders = createWorldFolders()
 
 	createAmbientSound()
+	buildFounderPlaza(folders.Plaza, folders.Navigation, folders.Spawns)
 
-	local hub = WorldConfig.Hub
-	createPart("HubFloor", folders.Environment, {
-		Size = hub.Size,
-		Position = hub.Position + Vector3.new(0, 1, 0),
-		Color = Color3.fromRGB(212, 212, 212),
-		Material = Enum.Material.Concrete,
-		CanCollide = true,
-	})
+	for _, roadConfig in ipairs(WorldConfig.Roads or {}) do
+		createRoad(folders.Roads, roadConfig)
+	end
 
-	createPart("HubCenterMarker", folders.Environment, {
-		Size = Vector3.new(30, 1.2, 30),
-		Position = hub.Position + Vector3.new(0, 1.1, 0),
-		Color = Color3.fromRGB(255, 201, 68),
-		Material = Enum.Material.Neon,
-		CanCollide = true,
-	})
+	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
+		local zoneFolder = createFolder(zoneConfig.Name, folders.Zones)
+		buildZone(zoneFolder, zoneConfig)
+	end
 
-	createFounderHubMonument(folders.Environment)
-	createSign(folders.Navigation, "HubSign", hub.Position + Vector3.new(0, 8, -32), hub.SignText, "Choose a venue to explore", Color3.fromRGB(35, 35, 35), Color3.fromRGB(255, 255, 255))
-	createSpawn(folders.Spawns, "CentralSpawn", hub.Position + Vector3.new(0, 3, 24), Color3.fromRGB(255, 201, 68))
+	TeleportService.setHubTarget(CFrame.new(WorldConfig.Hub.SpawnPosition))
 
-	local hubDestination = CFrame.new(hub.Position + Vector3.new(0, 4, 24))
-	TeleportService.setHubTarget(hubDestination)
-
-	for _, venueConfig in ipairs(WorldConfig.Venues) do
+	for _, venueConfig in ipairs(WorldConfig.Venues or {}) do
 		local venueFolder = createFolder(venueConfig.Name, folders.Venues)
 		buildVenue(venueFolder, venueConfig, folders.Spawns, folders.Teleports, folders.Media, folders.Navigation)
 	end

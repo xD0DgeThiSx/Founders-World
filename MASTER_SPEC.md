@@ -54,6 +54,7 @@ The initial objective is not to ship gameplay quickly. The objective is to estab
 - VIP and founder identity configuration for future permission hooks
 - Player session tracking and role-aware interaction routing
 - Remote-driven client notifications and menu-driven venue travel
+- Large-scale world layout, expansion zoning, and circulation paths
 
 ## Coding Standards
 
@@ -82,4 +83,5 @@ This phase succeeds when the repository provides:
 - Distinct graybox venue layouts with navigable rooms and identity
 - Player roles synced between server and client
 - A reusable remote and interaction layer for future features
+- A readable macro-layout where present and future features each have a dedicated physical space
 - Enough architectural guidance that multiple developers can contribute consistently

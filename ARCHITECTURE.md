@@ -50,6 +50,8 @@ The first UI shell is still lightweight, but it now renders role state, notifica
 
 World assets and audio structures should be organized so designers can expand content safely without scattering unrelated assets across top-level service trees.
 
+Phase 4 promotes macro layout data into shared config. Plaza layout, zone footprints, roads, expansion markers, and destination metadata are now first-class authored data instead of ad hoc world placement.
+
 ## Folder Responsibilities
 
 ### `src/ServerScriptService`
@@ -61,6 +63,7 @@ World assets and audio structures should be organized so designers can expand co
 - `Services/PlayerSessionService.lua`: role-aware per-player state
 - `Services/RemoteRegistryService.lua`: config-driven remote initialization
 - `Services/TeleportService.lua`: safe teleport and arrival logic
+- `Services/WorldBuilderService.lua`: macro and micro world generation for plaza, zones, roads, venues, and placeholder districts
 
 ### `src/ReplicatedStorage`
 
@@ -70,6 +73,7 @@ World assets and audio structures should be organized so designers can expand co
 - `Packages/`: external packages or vendored dependencies when adopted
 - `Shared/Config/WorldConfig.lua`: source of truth for generated venue layouts
 - `Shared/Config/RemoteConfig.lua`: source of truth for runtime remotes
+- `Shared/Config/WorldConfig.lua`: now also defines zones, roads, hub signage positions, and future expansion metadata
 
 ### `src/StarterGui`
 
@@ -102,6 +106,7 @@ The current world is still generated at runtime, but it is now structured as a c
 - Systems may depend on services, but cross-system coupling should be minimized.
 - UI code must not directly own economy, combat, or persistence decisions.
 - World generation code should consume config data, not embed venue-specific authoring decisions inline.
+- Macro layout data should stay declarative so zone spacing, roads, and future districts can evolve without rewriting service logic.
 
 ## Remote Communication Rules
 
