@@ -1,17 +1,15 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local SoundService = game:GetService("SoundService")
-local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
-local RuntimeConfig = require(ReplicatedStorage.Shared.Config.RuntimeConfig)
 local WorldConfig = require(ReplicatedStorage.Shared.Config.WorldConfig)
 
 local MediaFramework = require(ServerScriptService.Systems.MediaFramework)
+local InteractionService = require(script.Parent.InteractionService)
+local TeleportService = require(script.Parent.TeleportService)
 
 local WorldBuilderService = {}
-
-local DOOR_OPEN_ATTRIBUTE = "DoorIsOpen"
 
 local function createFolder(name, parent)
 	local folder = Instance.new("Folder")
@@ -134,63 +132,6 @@ local function createSign(signFolder, name, position, title, subtitle, color, ac
 	return sign
 end
 
-local function createTeleportPrompt(parent, actionText, objectText, callback)
-	local prompt = createInstance("ProximityPrompt", "Prompt", parent)
-	prompt.ActionText = actionText
-	prompt.ObjectText = objectText
-	prompt.HoldDuration = RuntimeConfig.World.PromptHoldDuration
-	prompt.RequiresLineOfSight = false
-	prompt.MaxActivationDistance = 14
-	prompt.Triggered:Connect(callback)
-	return prompt
-end
-
-local function teleportCharacter(player, destinationCFrame)
-	local character = player.Character
-	if not character then
-		return
-	end
-
-	local rootPart = character:FindFirstChild("HumanoidRootPart")
-	if not rootPart then
-		return
-	end
-
-	rootPart.CFrame = destinationCFrame
-end
-
-local function connectDoor(door, label, closedCFrame, openOffset)
-	local isAnimating = false
-	local openCFrame = closedCFrame * CFrame.new(openOffset)
-
-	door:SetAttribute(DOOR_OPEN_ATTRIBUTE, false)
-
-	createTeleportPrompt(door, "Open", label, function()
-		if isAnimating or door:GetAttribute(DOOR_OPEN_ATTRIBUTE) then
-			return
-		end
-
-		isAnimating = true
-		door:SetAttribute(DOOR_OPEN_ATTRIBUTE, true)
-
-		local tween = TweenService:Create(door, TweenInfo.new(RuntimeConfig.World.DoorOpenTime, Enum.EasingStyle.Sine), {
-			CFrame = openCFrame,
-		})
-		tween:Play()
-		tween.Completed:Wait()
-
-		task.delay(RuntimeConfig.World.DoorAutoCloseDelay, function()
-			local closeTween = TweenService:Create(door, TweenInfo.new(RuntimeConfig.World.DoorOpenTime, Enum.EasingStyle.Sine), {
-				CFrame = closedCFrame,
-			})
-			closeTween:Play()
-			closeTween.Completed:Wait()
-			door:SetAttribute(DOOR_OPEN_ATTRIBUTE, false)
-			isAnimating = false
-		end)
-	end)
-end
-
 local function hasOpenSide(roomConfig, side)
 	for _, openSide in ipairs(roomConfig.OpenSides or {}) do
 		if openSide == side then
@@ -301,7 +242,15 @@ local function createVenueShell(venueFolder, venueConfig)
 		CanCollide = true,
 	})
 
-	connectDoor(door, venueConfig.Name, door.CFrame, Vector3.new(0, 12, 0))
+	InteractionService.registerPrompt(door, {
+		ActionType = "Door",
+		ActionText = "Open",
+		ObjectText = venueConfig.Name,
+		Target = door,
+		ClosedCFrame = door.CFrame,
+		OpenOffset = Vector3.new(0, 12, 0),
+		CooldownKey = "Door:" .. venueConfig.Id,
+	})
 end
 
 local function createRoomPart(name, parent, size, position, color, material)
@@ -479,6 +428,52 @@ local function createProp(propsFolder, venueConfig, propConfig)
 	end
 end
 
+local function getPropInteractionDefinition(venueConfig, propConfig, targetPart)
+	if propConfig.Kind == "Display" then
+		local actionType = "Notify"
+		local message = "Viewing " .. (propConfig.Label or propConfig.Name)
+		local roleRequired
+
+		if string.find(propConfig.Name, "Founder") then
+			actionType = "FounderAction"
+			message = "Opened founder display placeholder."
+			roleRequired = "Founder"
+		end
+
+		return {
+			ActionType = actionType,
+			ActionText = "Open",
+			ObjectText = propConfig.Label or propConfig.Name,
+			Message = message,
+			RoleRequired = roleRequired,
+			CooldownKey = "Prop:" .. venueConfig.Id .. ":" .. propConfig.Name,
+		}
+	end
+
+	if propConfig.Kind == "CommandCenter" then
+		return {
+			ActionType = "FounderAction",
+			ActionText = "Access",
+			ObjectText = propConfig.Label or propConfig.Name,
+			Message = "AI command center placeholder opened.",
+			RoleRequired = "Founder",
+			CooldownKey = "Prop:" .. venueConfig.Id .. ":" .. propConfig.Name,
+		}
+	end
+
+	if propConfig.Kind == "Arcade" or propConfig.Kind == "GamingStation" then
+		return {
+			ActionType = "Notify",
+			ActionText = "Inspect",
+			ObjectText = propConfig.Label or propConfig.Name,
+			Message = "Interaction placeholder: " .. (propConfig.Label or propConfig.Name),
+			CooldownKey = "Prop:" .. venueConfig.Id .. ":" .. propConfig.Name,
+		}
+	end
+
+	return nil
+end
+
 local function createVenueSigns(signFolder, venueConfig)
 	local shellSignPosition = Vector3.new(venueConfig.Position.X, venueConfig.Position.Y + venueConfig.Footprint.Y + 8, venueConfig.Position.Z - venueConfig.Footprint.Z / 2 + 2)
 	createSign(signFolder, "VenueSign", shellSignPosition, venueConfig.Name, venueConfig.Theme, venueConfig.Color, venueConfig.Accent, Vector3.new(18, 10, 1))
@@ -528,9 +523,17 @@ local function createFounderHubMonument(environmentFolder)
 	})
 
 	createSurfaceText(founderAnchor, Enum.NormalId.Front, "Founder", WorldConfig.VIP.FounderUsername, Color3.fromRGB(255, 201, 68))
+	InteractionService.registerPrompt(founderAnchor, {
+		ActionType = "FounderAction",
+		ActionText = "Open",
+		ObjectText = "Founder Display",
+		Message = "Founder monument placeholder opened.",
+		RoleRequired = "Founder",
+		CooldownKey = "FounderMonument",
+	})
 end
 
-local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder, mediaFolder, navigationFolder, hubDestination)
+local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder, mediaFolder, navigationFolder)
 	createVenueShell(venueFolder, venueConfig)
 
 	local roomsFolder = createFolder("Rooms", venueFolder)
@@ -545,23 +548,79 @@ local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder,
 		createProp(propsFolder, venueConfig, propConfig)
 	end
 
+	for _, propInstance in ipairs(propsFolder:GetDescendants()) do
+		if propInstance:IsA("BasePart") then
+			local matchedConfig
+
+			for _, propConfig in ipairs(venueConfig.Props or {}) do
+				if propConfig.Name == propInstance.Name then
+					matchedConfig = propConfig
+					break
+				end
+			end
+
+			if matchedConfig then
+				local interactionDefinition = getPropInteractionDefinition(venueConfig, matchedConfig, propInstance)
+				if interactionDefinition then
+					InteractionService.registerPrompt(propInstance, interactionDefinition)
+				end
+			end
+		end
+	end
+
 	createVenueSigns(signsFolder, venueConfig)
 
 	local spawnOffset = venueConfig.SpawnOffset or Vector3.new(0, 3, -22)
 	local spawnPosition = venueConfig.Position + spawnOffset
 	createSpawn(spawnFolder, venueConfig.Name .. " Spawn", spawnPosition, venueConfig.Accent)
+	TeleportService.registerVenueTarget(venueConfig.Id, CFrame.new(spawnPosition), venueConfig.Name)
 
 	local arrivalPad = createNavigationPad(teleportFolder, venueConfig.Name .. " ReturnPad", venueConfig.Position + Vector3.new(0, 0.5, venueConfig.Footprint.Z / 2 - 14), venueConfig.Accent, "Return to Plaza")
-	createTeleportPrompt(arrivalPad, "Teleport", "Founder's Plaza", function(player)
-		teleportCharacter(player, hubDestination + Vector3.new(0, 4, 0))
-	end)
+	InteractionService.registerPrompt(arrivalPad, {
+		ActionType = "TeleportHub",
+		ActionText = "Teleport",
+		ObjectText = "Founder's Plaza",
+		CooldownKey = "TeleportHub:" .. venueConfig.Id,
+	})
 
 	local hubPad = createNavigationPad(navigationFolder, venueConfig.Name .. " TeleportPad", Vector3.new(venueConfig.Position.X * 0.28, 0.5, venueConfig.Position.Z * 0.28), venueConfig.Accent, venueConfig.Name)
-	createTeleportPrompt(hubPad, "Teleport", venueConfig.Name, function(player)
-		teleportCharacter(player, CFrame.new(spawnPosition + Vector3.new(0, 2, 0)))
-	end)
+	InteractionService.registerPrompt(hubPad, {
+		ActionType = "TeleportVenue",
+		ActionText = "Teleport",
+		ObjectText = venueConfig.Name,
+		VenueId = venueConfig.Id,
+		CooldownKey = "TeleportVenue:" .. venueConfig.Id,
+	})
 
-	MediaFramework.build(mediaFolder, venueConfig)
+	local builtPanels = MediaFramework.build(mediaFolder, venueConfig)
+
+	for _, builtPanel in ipairs(builtPanels) do
+		local mediaType = builtPanel.Config.MediaType
+		local actionText = "View"
+		local objectText = builtPanel.Config.Title
+
+		if mediaType == "Spotify" then
+			actionText = "Open"
+			objectText = "Spotify Station"
+		elseif mediaType == "Twitch" then
+			actionText = "Watch"
+			objectText = "Twitch Wall"
+		elseif mediaType == "YouTube" then
+			actionText = "View"
+			objectText = "YouTube Showcase"
+		elseif mediaType == "Photo" then
+			actionText = "View"
+			objectText = "Slideshow"
+		end
+
+		InteractionService.registerPrompt(builtPanel.Screen, {
+			ActionType = "Media",
+			ActionText = actionText,
+			ObjectText = objectText,
+			Message = "Interaction placeholder: " .. builtPanel.Config.Title,
+			CooldownKey = "Media:" .. venueConfig.Id .. ":" .. builtPanel.Config.Name,
+		})
+	end
 end
 
 local function createWorldFolders()
@@ -628,10 +687,11 @@ function WorldBuilderService.build()
 	createSpawn(folders.Spawns, "CentralSpawn", hub.Position + Vector3.new(0, 3, 24), Color3.fromRGB(255, 201, 68))
 
 	local hubDestination = CFrame.new(hub.Position + Vector3.new(0, 4, 24))
+	TeleportService.setHubTarget(hubDestination)
 
 	for _, venueConfig in ipairs(WorldConfig.Venues) do
 		local venueFolder = createFolder(venueConfig.Name, folders.Venues)
-		buildVenue(venueFolder, venueConfig, folders.Spawns, folders.Teleports, folders.Media, folders.Navigation, hubDestination)
+		buildVenue(venueFolder, venueConfig, folders.Spawns, folders.Teleports, folders.Media, folders.Navigation)
 	end
 end
 

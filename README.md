@@ -13,6 +13,8 @@ This repository now contains the Phase 2 playable graybox expansion for Founder'
 - Teleport, spawn, and door interaction systems
 - Venue room, prop, sign, and media panel generation
 - VIP and founder display seed configuration
+- Player session tracking and role sync
+- Remote-driven client notification and venue navigation shell
 
 ## Project Layout
 
@@ -75,6 +77,16 @@ Founders-World/
 - Distinct media panel styles for photo, Spotify, Twitch, and YouTube
 - Pool, hot tub, and slide placeholders
 - Spawn pads and venue signage
+- Player roles: Founder, VIP, Guest
+- Main HUD, role badge, venue navigation placeholder, and toast notifications
+
+## Phase 3 Systems
+
+- `PlayerSessionService` tracks join/leave state and founder/VIP roles
+- `RemoteRegistryService` creates config-driven remotes at runtime
+- `TeleportService` handles safe teleports with cooldowns
+- `InteractionService` centralizes prompt logic and future role-gated hooks
+- `AppShell` provides the initial client HUD layer
 
 ## Next Step
 

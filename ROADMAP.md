@@ -24,35 +24,43 @@
 - Seed founder and VIP configuration for future systems
 - Keep runtime generation compatible with Rojo workflows
 
-## Phase 3: Player Architecture
+## Phase 3: Player Systems And Interaction
+
+- Track player sessions and server-owned role state
+- Add config-driven remote event and remote function registry
+- Centralize prompts and interaction validation
+- Add anti-spam teleport rules and safe arrival handling
+- Build the first HUD, role badge, and notification shell
+
+## Phase 4: Player Architecture
 
 - Add player session lifecycle handling
 - Define profile/data interfaces
 - Establish permission and entitlement boundaries
 - Add player state replication strategy
 
-## Phase 4: World Architecture
+## Phase 5: World Architecture
 
 - Define world loading/content streaming strategy
 - Establish interactive object conventions
 - Create content authoring guidelines for map elements
 - Separate static art from runtime-driven world state
 
-## Phase 5: UI Architecture
+## Phase 6: UI Architecture
 
 - Build client app shell
 - Define screen routing/state ownership
 - Create reusable component conventions
 - Connect presentation state to replicated game state
 
-## Phase 6: Feature Production
+## Phase 7: Feature Production
 
 - Implement the first gameplay loop
 - Add onboarding flow
 - Add progression hooks
 - Add telemetry events and balancing checkpoints
 
-## Phase 7: Live Readiness
+## Phase 8: Live Readiness
 
 - Add datastore-backed persistence
 - Add analytics and moderation support hooks

@@ -23,6 +23,13 @@ Bootstrap scripts are the only files that should directly coordinate startup ord
 
 Services represent durable, cross-feature capabilities. Examples for later phases may include player sessions, data, matchmaking, economy, or telemetry. Services should have stable APIs and minimal knowledge of presentation details.
 
+Phase 3 introduces a real service split:
+
+- `PlayerSessionService` owns per-player session state and role resolution.
+- `RemoteRegistryService` owns runtime remote creation from config.
+- `TeleportService` owns safe travel rules and cooldowns.
+- `InteractionService` owns prompt validation and interaction routing.
+
 ### 3. System Layer
 
 Systems represent feature runtime behavior. Systems can depend on services and shared contracts, but they should avoid owning broad platform concerns.
@@ -37,6 +44,8 @@ In Phase 2, `WorldConfig.lua` becomes the main authoring surface for venue layou
 
 Client app and UI controllers should translate replicated state into visuals and local input behavior. They should not decide authoritative outcomes.
 
+The first UI shell is still lightweight, but it now renders role state, notifications, and venue navigation from authoritative server remotes.
+
 ### 6. Content Layer
 
 World assets and audio structures should be organized so designers can expand content safely without scattering unrelated assets across top-level service trees.
@@ -48,6 +57,10 @@ World assets and audio structures should be organized so designers can expand co
 - `Bootstrap.server.lua`: server startup entry point
 - `Services/`: long-lived server capabilities
 - `Systems/`: feature-level runtime systems
+- `Services/InteractionService.lua`: central prompt routing and validation
+- `Services/PlayerSessionService.lua`: role-aware per-player state
+- `Services/RemoteRegistryService.lua`: config-driven remote initialization
+- `Services/TeleportService.lua`: safe teleport and arrival logic
 
 ### `src/ReplicatedStorage`
 
@@ -56,10 +69,13 @@ World assets and audio structures should be organized so designers can expand co
 - `Config/`: tunable data and non-secret constants
 - `Packages/`: external packages or vendored dependencies when adopted
 - `Shared/Config/WorldConfig.lua`: source of truth for generated venue layouts
+- `Shared/Config/RemoteConfig.lua`: source of truth for runtime remotes
 
 ### `src/StarterGui`
 
 - `App/`: top-level client UI shell and screen organization
+- `App/AppShell.lua`: lightweight HUD and navigation builder
+- `App/NotificationController.lua`: toast notification presentation
 
 ### `src/StarterPlayer`
 
@@ -93,6 +109,7 @@ The current world is still generated at runtime, but it is now structured as a c
 - Remote naming should express domain and intent.
 - Validation must happen on the server even when clients pre-validate locally.
 - Avoid generic catch-all remotes.
+- Client menu actions should route through remote functions or events instead of directly mutating world state.
 
 ## Naming Conventions
 

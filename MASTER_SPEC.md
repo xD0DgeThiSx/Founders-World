@@ -52,6 +52,8 @@ The initial objective is not to ship gameplay quickly. The objective is to estab
 - World composition and content containers
 - Audio catalog and playback routing
 - VIP and founder identity configuration for future permission hooks
+- Player session tracking and role-aware interaction routing
+- Remote-driven client notifications and menu-driven venue travel
 
 ## Coding Standards
 
@@ -78,4 +80,6 @@ This phase succeeds when the repository provides:
 - A source layout that maps cleanly into Roblox services
 - Bootstrap points for future server and client initialization
 - Distinct graybox venue layouts with navigable rooms and identity
+- Player roles synced between server and client
+- A reusable remote and interaction layer for future features
 - Enough architectural guidance that multiple developers can contribute consistently

@@ -149,6 +149,7 @@ function MediaFramework.build(mediaRoot, venueConfig)
 	local venueMedia = Instance.new("Folder")
 	venueMedia.Name = venueConfig.Name
 	venueMedia.Parent = mediaRoot
+	local builtPanels = {}
 
 	for _, panelConfig in ipairs(venueConfig.MediaPanels or {}) do
 		local mediaType = panelConfig.MediaType
@@ -163,8 +164,15 @@ function MediaFramework.build(mediaRoot, venueConfig)
 
 			local _, screen = createPanelFrame(panelFolder, panelConfig, worldPosition, style)
 			createPanelGui(screen, panelConfig.Title, items, style)
+
+			table.insert(builtPanels, {
+				Config = panelConfig,
+				Screen = screen,
+			})
 		end
 	end
+
+	return builtPanels
 end
 
 return MediaFramework
