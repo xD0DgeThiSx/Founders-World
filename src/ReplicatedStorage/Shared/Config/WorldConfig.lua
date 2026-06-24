@@ -382,40 +382,54 @@ local WorldConfig = {
 					Color = Color3.fromRGB(136, 101, 72),
 					Material = Enum.Material.WoodPlanks,
 				}),
-				prop("Glass Walkway", "FloorPad", Vector3.new(0, 2.1, 28), Vector3.new(14, 0.2, 18), {
-					Color = Color3.fromRGB(227, 240, 245),
+				prop("Terrace Walkway", "FloorPad", Vector3.new(0, 2.1, 30), Vector3.new(16, 0.2, 16), {
+					Color = Color3.fromRGB(240, 245, 248),
 					Material = Enum.Material.Glass,
-					Transparency = 0.25,
+					Transparency = 0.15,
+					HideBillboard = true,
 				}),
-				prop("Pool Placeholder", "Pool", Vector3.new(-18, 0, 40), Vector3.new(24, 4, 14), {
-					Color = Color3.fromRGB(74, 142, 196),
-					Accent = Color3.fromRGB(213, 232, 247),
+				prop("Estate Pool", "Pool", Vector3.new(-20, 0, 40), Vector3.new(24, 4, 14), {
+					Color = Color3.fromRGB(96, 182, 230),
+					Accent = Color3.fromRGB(231, 244, 250),
+					Label = "Estate Pool",
+					Subtitle = "Pool Deck",
 				}),
 				prop("Pool Chair A", "PoolChair", Vector3.new(-30, 2, 35), Vector3.new(8, 3, 4), {
 					Color = Color3.fromRGB(247, 239, 230),
-					Accent = Color3.fromRGB(162, 131, 94),
+					Accent = Color3.fromRGB(231, 220, 202),
+					HideBillboard = true,
 				}),
 				prop("Pool Chair B", "PoolChair", Vector3.new(-30, 2, 45), Vector3.new(8, 3, 4), {
 					Color = Color3.fromRGB(247, 239, 230),
-					Accent = Color3.fromRGB(162, 131, 94),
+					Accent = Color3.fromRGB(231, 220, 202),
+					HideBillboard = true,
 				}),
-				prop("Cabana Daybed", "Seat", Vector3.new(0, 2, 44), Vector3.new(16, 4, 6), {
-					Color = Color3.fromRGB(188, 166, 136),
+				prop("Cabana Daybed", "Seat", Vector3.new(-6, 2, 50), Vector3.new(12, 3, 4), {
+					Color = Color3.fromRGB(214, 197, 171),
 					Material = Enum.Material.Fabric,
+					HideBillboard = true,
 				}),
-				prop("Hot Tub Placeholder", "HotTub", Vector3.new(18, 0, 40), Vector3.new(12, 4, 12), {
-					Color = Color3.fromRGB(72, 120, 158),
-					Accent = Color3.fromRGB(230, 238, 244),
+				prop("Family Spa", "HotTub", Vector3.new(20, 0, 40), Vector3.new(12, 4, 12), {
+					Color = Color3.fromRGB(106, 166, 208),
+					Accent = Color3.fromRGB(238, 244, 248),
+					Label = "Family Spa",
+					Subtitle = "Spa Terrace",
 				}),
 				prop("Fire Bowl", "Display", Vector3.new(30, 5, 42), Vector3.new(5, 5, 5), {
-					Color = Color3.fromRGB(224, 131, 68),
+					Color = Color3.fromRGB(238, 154, 82),
 					Material = Enum.Material.Neon,
 					Label = "Fire Bowl",
 					Shape = Enum.PartType.Ball,
 				}),
-				prop("Loft Console", "Table", Vector3.new(16, 2, 38), Vector3.new(10, 3, 5), {
-					Color = Color3.fromRGB(92, 71, 52),
+				prop("Spa Side Table", "Table", Vector3.new(30, 1.5, 48), Vector3.new(4, 3, 4), {
+					Color = Color3.fromRGB(156, 124, 93),
 					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Loft Console", "Table", Vector3.new(18, 2, 38), Vector3.new(8, 3, 4), {
+					Color = Color3.fromRGB(112, 92, 70),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
 				}),
 			},
 			MediaPanels = {

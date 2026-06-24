@@ -515,7 +515,9 @@ local function createStandardProp(propsFolder, venueConfig, propConfig)
 		CanCollide = true,
 	})
 
-	createBillboardText(propPart, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+	if not propConfig.HideBillboard then
+		createBillboardText(propPart, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+	end
 	return propPart
 end
 
@@ -548,7 +550,11 @@ local function createPoolPlaceholder(propsFolder, venueConfig, propConfig)
 		Material = Enum.Material.Neon,
 		CanCollide = false,
 	})
-	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, "Placeholder", venueConfig.Accent)
+	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Subtitle or "Pool", venueConfig.Accent, {
+		MaxDistance = 60,
+		Size = UDim2.fromOffset(145, 40),
+		StudsOffset = Vector3.new(0, 2.75, 0),
+	})
 end
 
 local function createHotTubPlaceholder(propsFolder, venueConfig, propConfig)
@@ -580,7 +586,11 @@ local function createHotTubPlaceholder(propsFolder, venueConfig, propConfig)
 		Material = Enum.Material.Neon,
 		CanCollide = false,
 	})
-	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, "Placeholder", venueConfig.Accent)
+	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Subtitle or "Spa", venueConfig.Accent, {
+		MaxDistance = 60,
+		Size = UDim2.fromOffset(145, 40),
+		StudsOffset = Vector3.new(0, 2.75, 0),
+	})
 end
 
 local function createSlidePlaceholder(propsFolder, venueConfig, propConfig)
@@ -756,7 +766,10 @@ local function createPoolChairProp(propsFolder, venueConfig, propConfig)
 		Material = Enum.Material.Neon,
 		CanCollide = false,
 	})
-	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+
+	if not propConfig.HideBillboard then
+		createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+	end
 end
 
 local function createVIPDisplayProp(propsFolder, venueConfig, propConfig)
