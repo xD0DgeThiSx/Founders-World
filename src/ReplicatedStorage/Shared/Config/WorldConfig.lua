@@ -1033,50 +1033,50 @@ local WorldConfig = {
 		},
 	},
 	Vehicles = {
-		vehicle("bronco-xd0dge", "Black Bronco", Vector3.new(-60, 2, 70), {
+		vehicle("bronco-xd0dge", "Black Bronco", Vector3.new(-60, 2, 5), {
 			VehicleType = "Bronco",
 			Color = Color3.fromRGB(18, 18, 18),
 			Accent = Color3.fromRGB(48, 48, 48),
 			TrimColor = Color3.fromRGB(72, 72, 72),
 			PlateText = "xD0DgeThiSx",
 			Owner = "xD0DgeThiSx",
-			Heading = 180,
+			Heading = 0,
 		}),
-		vehicle("jeep-abbie", "Pink Jeep", Vector3.new(-42, 2, 70), {
+		vehicle("jeep-abbie", "Pink Jeep", Vector3.new(-42, 2, 5), {
 			VehicleType = "Jeep",
 			Color = Color3.fromRGB(255, 130, 190),
 			Accent = Color3.fromRGB(255, 200, 230),
 			TrimColor = Color3.fromRGB(255, 255, 255),
 			PlateText = "ABBIE",
 			Owner = "Abbiejo615",
-			Heading = 180,
+			Heading = 0,
 		}),
-		vehicle("jeep-charlie", "Pink Jeep", Vector3.new(-24, 2, 70), {
+		vehicle("jeep-charlie", "Pink Jeep", Vector3.new(-24, 2, 5), {
 			VehicleType = "Jeep",
 			Color = Color3.fromRGB(255, 130, 190),
 			Accent = Color3.fromRGB(255, 200, 230),
 			TrimColor = Color3.fromRGB(255, 255, 255),
 			PlateText = "CHARLIE",
 			Owner = "Charlie",
-			Heading = 180,
+			Heading = 0,
 		}),
-		vehicle("jeep-sophia", "Pink Jeep", Vector3.new(-6, 2, 70), {
+		vehicle("jeep-sophia", "Pink Jeep", Vector3.new(-6, 2, 5), {
 			VehicleType = "Jeep",
 			Color = Color3.fromRGB(255, 130, 190),
 			Accent = Color3.fromRGB(255, 200, 230),
 			TrimColor = Color3.fromRGB(255, 255, 255),
 			PlateText = "SOPHIA",
 			Owner = "Sophia",
-			Heading = 180,
+			Heading = 0,
 		}),
-		vehicle("suv-emily", "Blacked-Out Luxury SUV", Vector3.new(16, 2, 70), {
+		vehicle("suv-emily", "Blacked-Out Luxury SUV", Vector3.new(16, 2, 5), {
 			VehicleType = "LuxurySUV",
 			Color = Color3.fromRGB(10, 10, 10),
 			Accent = Color3.fromRGB(180, 160, 80),
 			TrimColor = Color3.fromRGB(140, 120, 60),
 			PlateText = "EMILYPLAYS",
 			Owner = "Emilyplays902",
-			Heading = 180,
+			Heading = 0,
 		}),
 	},
 }
