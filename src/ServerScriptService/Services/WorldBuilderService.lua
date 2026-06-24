@@ -935,7 +935,7 @@ local function createHubDirectionalSigns(plazaFolder)
 			plazaFolder,
 			zoneConfig.Id .. "DirectionSign",
 			WorldConfig.Hub.Position + zoneConfig.HubSignOffset + Vector3.new(0, 10, 0),
-			zoneConfig.Name,
+			zoneConfig.ShortLabel or zoneConfig.Name,
 			string.format("%s | %s", zoneConfig.ZoneType == "Active" and "Travel" or "Future", zoneConfig.Status),
 			Color3.fromRGB(32, 32, 32),
 			zoneConfig.Accent,
