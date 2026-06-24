@@ -12,9 +12,14 @@ local TeleportService = require(script.Parent.TeleportService)
 local WorldBuilderService = {}
 
 local zoneLookup = {}
+local venueLookup = {}
 
 for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
 	zoneLookup[zoneConfig.Id] = zoneConfig
+end
+
+for _, venueConfig in ipairs(WorldConfig.Venues or {}) do
+	venueLookup[venueConfig.Id] = venueConfig
 end
 
 local function createFolder(name, parent)
@@ -166,26 +171,44 @@ local function worldPosition(venueConfig, offset)
 	return venueConfig.Position + offset
 end
 
-local function createNavigationPad(parent, name, position, color, label)
+local function createNavigationPad(parent, name, position, color, label, options)
+	options = options or {}
+
 	local pad = createPart(name, parent, {
-		Size = Vector3.new(14, 1, 14),
+		Size = options.PadSize or Vector3.new(14, 1, 14),
+		Position = position,
+		Color = color,
+		Material = options.PadMaterial or Enum.Material.Neon,
+		Transparency = options.PadTransparency or 0,
+		CanCollide = true,
+	})
+
+	local markerOffset = options.MarkerOffset or Vector3.new(0, 5, -7)
+	local marker = createPart(name .. "Marker", parent, {
+		Size = options.MarkerSize or Vector3.new(10, 8, 1),
+		Position = position + markerOffset,
+		Color = options.MarkerColor or Color3.fromRGB(25, 25, 25),
+		Material = options.MarkerMaterial or Enum.Material.SmoothPlastic,
+		CanCollide = true,
+	})
+
+	createSurfaceText(marker, Enum.NormalId.Front, label, options.Subtitle or "Teleport", color)
+
+	return pad
+end
+
+local function createPathMarker(parent, name, position, color, label)
+	local marker = createPart(name, parent, {
+		Size = Vector3.new(12, 0.6, 8),
 		Position = position,
 		Color = color,
 		Material = Enum.Material.Neon,
 		CanCollide = true,
 	})
 
-	local marker = createPart(name .. "Marker", parent, {
-		Size = Vector3.new(10, 8, 1),
-		Position = position + Vector3.new(0, 5, -7),
-		Color = Color3.fromRGB(25, 25, 25),
-		Material = Enum.Material.SmoothPlastic,
-		CanCollide = true,
-	})
+	createSurfaceText(marker, Enum.NormalId.Top, label, ">>", Color3.fromRGB(28, 28, 28))
 
-	createSurfaceText(marker, Enum.NormalId.Front, label, "Teleport", color)
-
-	return pad
+	return marker
 end
 
 local function createRoad(roadsFolder, roadConfig)
@@ -913,7 +936,7 @@ local function createHubDirectionalSigns(plazaFolder)
 			zoneConfig.Id .. "DirectionSign",
 			WorldConfig.Hub.Position + zoneConfig.HubSignOffset + Vector3.new(0, 10, 0),
 			zoneConfig.Name,
-			string.format("%s | %s", zoneConfig.BuildPhase, zoneConfig.Status),
+			string.format("%s | %s", zoneConfig.ZoneType == "Active" and "Travel" or "Future", zoneConfig.Status),
 			Color3.fromRGB(32, 32, 32),
 			zoneConfig.Accent,
 			Vector3.new(16, 9, 1)
@@ -927,24 +950,110 @@ local function createTeleportHubBoard(plazaFolder)
 
 	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
 		if zoneConfig.ZoneType == "Active" then
-			table.insert(activeZones, zoneConfig.Name)
+			table.insert(activeZones, zoneConfig.HubBoardLabel or zoneConfig.Name)
 		else
-			table.insert(futureZones, zoneConfig.Name)
+			table.insert(futureZones, zoneConfig.HubBoardLabel or zoneConfig.Name)
 		end
 	end
 
-	local subtitle = "Active:\n" .. table.concat(activeZones, "\n") .. "\n\nFuture:\n" .. table.concat(futureZones, "\n")
+	createSign(
+		plazaFolder,
+		"ActiveTeleportHubBoard",
+		WorldConfig.Hub.Position + WorldConfig.Hub.ActiveBoardOffset,
+		"Active Teleports",
+		table.concat(activeZones, "\n"),
+		Color3.fromRGB(24, 28, 36),
+		Color3.fromRGB(255, 201, 68),
+		WorldConfig.Hub.ActiveBoardSize
+	)
 
 	createSign(
 		plazaFolder,
-		"TeleportHubBoard",
-		WorldConfig.Hub.Position + WorldConfig.Hub.TeleportBoardOffset,
-		"Teleport Hub Board",
-		subtitle,
-		Color3.fromRGB(24, 28, 36),
-		Color3.fromRGB(255, 201, 68),
-		WorldConfig.Hub.BoardSize
+		"FutureTeleportHubBoard",
+		WorldConfig.Hub.Position + WorldConfig.Hub.FutureBoardOffset,
+		"Future Zones",
+		table.concat(futureZones, "\n"),
+		Color3.fromRGB(34, 34, 34),
+		Color3.fromRGB(196, 196, 196),
+		WorldConfig.Hub.FutureBoardSize
 	)
+end
+
+local function createHubTeleportPads(navigationFolder)
+	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
+		local padOffset = zoneConfig.HubPadOffset
+		if padOffset then
+			local padPosition = WorldConfig.Hub.Position + Vector3.new(padOffset.X, 0.5, padOffset.Z)
+
+			if zoneConfig.ZoneType == "Active" then
+				local venueConfig = venueLookup[zoneConfig.Id]
+				local padColor = (venueConfig and venueConfig.Accent) or zoneConfig.Accent
+				local hubPad = createNavigationPad(
+					navigationFolder,
+					zoneConfig.Name .. "TeleportPad",
+					padPosition,
+					padColor,
+					zoneConfig.ShortLabel or zoneConfig.Name,
+					{
+						Subtitle = "Teleport",
+					}
+				)
+
+				InteractionService.registerPrompt(hubPad, {
+					ActionType = "TeleportVenue",
+					ActionText = "Teleport",
+					ObjectText = zoneConfig.Name,
+					VenueId = zoneConfig.TeleportDestinationId or zoneConfig.Id,
+					CooldownKey = "TeleportVenue:" .. zoneConfig.Id,
+				})
+			else
+				local futurePad = createNavigationPad(
+					navigationFolder,
+					zoneConfig.Name .. "FutureMarker",
+					padPosition,
+					Color3.fromRGB(132, 132, 132),
+					zoneConfig.ShortLabel or zoneConfig.Name,
+					{
+						Subtitle = "Future",
+						PadSize = Vector3.new(10, 0.8, 10),
+						PadMaterial = Enum.Material.SmoothPlastic,
+						PadTransparency = 0.15,
+						MarkerSize = Vector3.new(9, 6, 1),
+						MarkerOffset = Vector3.new(0, 4, -5),
+						MarkerColor = Color3.fromRGB(48, 48, 48),
+					}
+				)
+
+				InteractionService.registerPrompt(futurePad, {
+					ActionType = "Notify",
+					ActionText = "Preview",
+					ObjectText = zoneConfig.Name,
+					Message = zoneConfig.FutureExpansionText,
+					CooldownKey = "FutureZone:" .. zoneConfig.Id,
+				})
+			end
+		end
+	end
+end
+
+local function createPlazaPathMarkers(navigationFolder)
+	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
+		if zoneConfig.ZoneType == "Active" and zoneConfig.PathStartOffset and zoneConfig.PathEndOffset then
+			local markerCount = math.max(zoneConfig.PathMarkerCount or 4, 2)
+
+			for index = 1, markerCount do
+				local alpha = index / markerCount
+				local pathOffset = zoneConfig.PathStartOffset:Lerp(zoneConfig.PathEndOffset, alpha)
+				createPathMarker(
+					navigationFolder,
+					string.format("%sPathMarker%d", zoneConfig.Id, index),
+					WorldConfig.Hub.Position + Vector3.new(pathOffset.X, 0.45, pathOffset.Z),
+					zoneConfig.PathColor or zoneConfig.Accent,
+					zoneConfig.ShortLabel or zoneConfig.Name
+				)
+			end
+		end
+	end
 end
 
 local function buildFounderPlaza(plazaFolder, navigationFolder, spawnFolder)
@@ -988,7 +1097,9 @@ local function buildFounderPlaza(plazaFolder, navigationFolder, spawnFolder)
 
 	createSpawn(spawnFolder, "CentralSpawn", hub.SpawnPosition, Color3.fromRGB(255, 201, 68))
 	createFounderHubMonument(plazaFolder)
-	createTeleportHubBoard(plazaFolder)
+	createTeleportHubBoard(navigationFolder)
+	createHubTeleportPads(navigationFolder)
+	createPlazaPathMarkers(navigationFolder)
 	createHubDirectionalSigns(navigationFolder)
 end
 
@@ -1040,18 +1151,6 @@ local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder,
 		ActionText = "Teleport",
 		ObjectText = "Founder's Plaza",
 		CooldownKey = "TeleportHub:" .. venueConfig.Id,
-	})
-
-	local zoneConfig = getZoneConfig(venueConfig.Id)
-	local hubPadPosition = WorldConfig.Hub.Position + (zoneConfig and zoneConfig.HubSignOffset or Vector3.new())
-	local teleportDestinationId = zoneConfig and zoneConfig.TeleportDestinationId or venueConfig.Id
-	local hubPad = createNavigationPad(navigationFolder, venueConfig.Name .. " TeleportPad", Vector3.new(hubPadPosition.X, 0.5, hubPadPosition.Z), venueConfig.Accent, venueConfig.Name)
-	InteractionService.registerPrompt(hubPad, {
-		ActionType = "TeleportVenue",
-		ActionText = "Teleport",
-		ObjectText = venueConfig.Name,
-		VenueId = teleportDestinationId,
-		CooldownKey = "TeleportVenue:" .. venueConfig.Id,
 	})
 
 	local builtPanels = MediaFramework.build(mediaFolder, venueConfig)
