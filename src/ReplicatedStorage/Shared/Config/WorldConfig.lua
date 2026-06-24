@@ -617,42 +617,63 @@ local WorldConfig = {
 			Name = "Founder Lounge",
 			Theme = "Premium founder networking graybox",
 			Position = Vector3.new(320, 0, 180),
-			Footprint = Vector3.new(102, 30, 88),
+			Footprint = Vector3.new(102, 36, 88),
 			Color = Color3.fromRGB(48, 58, 74),
 			Accent = Color3.fromRGB(215, 191, 126),
+			RoofTransparency = 0.28,
 			SpawnOffset = Vector3.new(0, 3, -22),
+			ReturnPadOffset = Vector3.new(-32, 0.5, 28),
+			ReturnPadOptions = {
+				PadSize = Vector3.new(10, 0.8, 10),
+				PadMaterial = Enum.Material.SmoothPlastic,
+				PadTransparency = 0.42,
+				MarkerSize = Vector3.new(8, 5, 1),
+				MarkerOffset = Vector3.new(0, 4, -5),
+				MarkerColor = Color3.fromRGB(28, 32, 40),
+				MarkerMaterial = Enum.Material.Metal,
+				Subtitle = "Return",
+			},
 			Rooms = {
 				room("Founder Wall", Vector3.new(-24, 0, 6), Vector3.new(28, 2, 22), {
 					OpenSides = { "East", "South" },
 					FloorColor = Color3.fromRGB(62, 73, 89),
+					WallHeight = 18,
 				}),
 				room("VIP Lounge", Vector3.new(20, 0, 6), Vector3.new(30, 2, 22), {
 					OpenSides = { "West", "South" },
 					FloorColor = Color3.fromRGB(53, 63, 79),
+					WallHeight = 18,
 				}),
 				room("Media Viewing Wall", Vector3.new(20, 0, 34), Vector3.new(30, 2, 22), {
 					OpenSides = { "West", "North" },
 					FloorColor = Color3.fromRGB(58, 68, 84),
+					WallHeight = 18,
 				}),
-				room("Spotify Station Area", Vector3.new(-24, 0, 34), Vector3.new(28, 2, 22), {
+				room("Spotify Station", Vector3.new(-24, 0, 34), Vector3.new(28, 2, 22), {
 					OpenSides = { "East", "North" },
 					FloorColor = Color3.fromRGB(46, 56, 72),
+					WallHeight = 18,
+					LabelSize = Vector3.new(12, 6, 1),
+					LabelOffset = Vector3.new(0, 13, 10.2),
+					LabelFace = Enum.NormalId.Front,
 				}),
 			},
 			Props = {
-				prop("Founder Title Display", "Display", Vector3.new(-26, 7, 4), Vector3.new(18, 10, 1), {
+				prop("Founder Title Display", "Display", Vector3.new(-26, 9, 4), Vector3.new(18, 12, 1), {
 					Color = Color3.fromRGB(35, 40, 52),
 					Label = "Founder: xD0DgeThiSx",
 				}),
 				prop("VIP Couch", "Seat", Vector3.new(22, 2, 10), Vector3.new(18, 4, 8), {
 					Color = Color3.fromRGB(79, 66, 44),
 					Material = Enum.Material.Leather,
+					HideBillboard = true,
 				}),
 				prop("VIP Table", "Table", Vector3.new(22, 1.5, 20), Vector3.new(10, 3, 6), {
 					Color = Color3.fromRGB(96, 81, 54),
 					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
 				}),
-				prop("Founder Names Wall", "Display", Vector3.new(-28, 7, 18), Vector3.new(20, 10, 1), {
+				prop("Founder Names Wall", "Display", Vector3.new(-28, 9, 18), Vector3.new(20, 12, 1), {
 					Color = Color3.fromRGB(29, 35, 45),
 					Label = "VIP Roll Call",
 				}),
@@ -671,6 +692,12 @@ local WorldConfig = {
 			Signs = {
 				sign("Founder Lounge", "Founder: xD0DgeThiSx", Vector3.new(0, 21, -47), {
 					Size = Vector3.new(18, 10, 1),
+				}),
+				sign("VIP Lounge", "Private founder seating", Vector3.new(20, 14, -4), {
+					Size = Vector3.new(12, 7, 1),
+				}),
+				sign("Founder Wall", "Founder + VIP honors", Vector3.new(-24, 14, -4), {
+					Size = Vector3.new(12, 7, 1),
 				}),
 			},
 		},

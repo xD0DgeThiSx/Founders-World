@@ -354,7 +354,7 @@ local function createVenueShell(venueFolder, venueConfig)
 		Position = Vector3.new(position.X, roofY, position.Z),
 		Color = venueConfig.Accent,
 		Material = Enum.Material.Metal,
-		Transparency = 0.08,
+		Transparency = venueConfig.RoofTransparency or 0.08,
 		CanCollide = true,
 	})
 
@@ -494,13 +494,14 @@ local function createRoom(roomsFolder, venueConfig, roomConfig)
 	end
 
 	local labelPart = createPart("RoomLabel", roomFolder, {
-		Size = Vector3.new(math.min(roomConfig.Size.X * 0.6, 16), 4, 1),
-		Position = Vector3.new(center.X, venueConfig.Position.Y + wallHeight - 2, center.Z - roomConfig.Size.Z / 2 + 0.8),
+		Size = roomConfig.LabelSize or Vector3.new(math.min(roomConfig.Size.X * 0.6, 16), 4, 1),
+		Position = roomConfig.LabelOffset and (center + roomConfig.LabelOffset)
+			or Vector3.new(center.X, venueConfig.Position.Y + wallHeight - 2, center.Z - roomConfig.Size.Z / 2 + 0.8),
 		Color = wallColor,
 		Material = Enum.Material.SmoothPlastic,
 		CanCollide = false,
 	})
-	createSurfaceText(labelPart, Enum.NormalId.Front, roomConfig.Label, venueConfig.Name, venueConfig.Color)
+	createSurfaceText(labelPart, roomConfig.LabelFace or Enum.NormalId.Front, roomConfig.Label, venueConfig.Name, venueConfig.Color)
 end
 
 local function createStandardProp(propsFolder, venueConfig, propConfig)
@@ -1173,7 +1174,15 @@ local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder,
 	createSpawn(spawnFolder, venueConfig.Name .. " Spawn", spawnPosition, venueConfig.Accent)
 	TeleportService.registerVenueTarget(venueConfig.Id, CFrame.new(spawnPosition), venueConfig.Name)
 
-	local arrivalPad = createNavigationPad(teleportFolder, venueConfig.Name .. " ReturnPad", venueConfig.Position + Vector3.new(0, 0.5, venueConfig.Footprint.Z / 2 - 14), venueConfig.Accent, "Return to Plaza")
+	local returnPadOffset = venueConfig.ReturnPadOffset or Vector3.new(0, 0.5, venueConfig.Footprint.Z / 2 - 14)
+	local arrivalPad = createNavigationPad(
+		teleportFolder,
+		venueConfig.Name .. " ReturnPad",
+		venueConfig.Position + returnPadOffset,
+		venueConfig.Accent,
+		"Return to Plaza",
+		venueConfig.ReturnPadOptions
+	)
 	InteractionService.registerPrompt(arrivalPad, {
 		ActionType = "TeleportHub",
 		ActionText = "Teleport",
