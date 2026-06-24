@@ -779,62 +779,135 @@ local WorldConfig = {
 		{
 			Id = "bo6-gaming-lounge",
 			Name = "BO6 Gaming Lounge",
-			Theme = "Competitive gaming graybox lounge",
+			Theme = "Tactical creator lounge with BO6 loadout bays",
 			Position = Vector3.new(-360, 0, -40),
-			Footprint = Vector3.new(108, 28, 90),
+			Footprint = Vector3.new(108, 30, 90),
 			Color = Color3.fromRGB(40, 40, 40),
 			Accent = Color3.fromRGB(255, 111, 0),
+			RoofTransparency = 0.24,
 			SpawnOffset = Vector3.new(0, 3, -22),
+			ReturnPadOffset = Vector3.new(0, 0.5, 28),
+			ReturnPadOptions = {
+				MarkerOffset = Vector3.new(0, 5, -8),
+			},
 			Rooms = {
-				room("Gaming Stations", Vector3.new(-28, 0, 8), Vector3.new(32, 2, 24), {
+				room("Loadout Wall", Vector3.new(-28, 0, 8), Vector3.new(30, 2, 24), {
 					OpenSides = { "East", "South" },
-					FloorColor = Color3.fromRGB(56, 56, 56),
+					FloorColor = Color3.fromRGB(48, 48, 48),
+					WallColor = Color3.fromRGB(255, 111, 0),
+					LabelSize = Vector3.new(15, 5, 1),
 				}),
-				room("Tournament Seating", Vector3.new(22, 0, 8), Vector3.new(34, 2, 24), {
+				room("Squad Strategy Table", Vector3.new(22, 0, 8), Vector3.new(34, 2, 24), {
 					OpenSides = { "West", "South" },
 					FloorColor = Color3.fromRGB(62, 62, 62),
+					WallColor = Color3.fromRGB(94, 94, 94),
+					LabelSize = Vector3.new(18, 5, 1),
 				}),
-				room("Squad Wall", Vector3.new(-28, 0, 36), Vector3.new(32, 2, 20), {
+				room("Gaming Stations", Vector3.new(-28, 0, 36), Vector3.new(30, 2, 20), {
 					OpenSides = { "East", "North" },
-					FloorColor = Color3.fromRGB(52, 52, 52),
+					FloorColor = Color3.fromRGB(44, 44, 44),
+					WallColor = Color3.fromRGB(28, 28, 28),
+					LabelSize = Vector3.new(15, 5, 1),
 				}),
-				room("Streaming Wall", Vector3.new(22, 0, 36), Vector3.new(34, 2, 20), {
+				room("Clip Review Station", Vector3.new(22, 0, 36), Vector3.new(34, 2, 20), {
 					OpenSides = { "West", "North" },
 					FloorColor = Color3.fromRGB(49, 49, 49),
+					WallColor = Color3.fromRGB(255, 111, 0),
+					LabelSize = Vector3.new(18, 5, 1),
 				}),
 			},
 			Props = {
-				prop("Gaming Pods", "GamingStation", Vector3.new(-32, 4, 8), Vector3.new(18, 8, 6), {
+				prop("Loadout Wall Rack", "Display", Vector3.new(-40, 7, 8), Vector3.new(12, 10, 1), {
+					Color = Color3.fromRGB(24, 24, 24),
+					Label = "Loadout Wall",
+					Message = "Loadout wall shows BO6 class ideas, orange-tag perks, and squad prep notes.",
+				}),
+				prop("Founder Loadout Locker", "Display", Vector3.new(-17, 7, 8), Vector3.new(10, 10, 1), {
+					Color = Color3.fromRGB(24, 24, 24),
+					Label = "Founder Loadout Locker",
+					ActionType = "FounderAction",
+					ActionText = "Access",
+					ObjectText = "Founder Loadout Locker",
+					RoleRequired = "Founder",
+					Message = "Founder loadout locker opened with featured BO6 builds and VIP squad presets.",
+				}),
+				prop("Bravo Gaming Pods", "GamingStation", Vector3.new(-39, 4, 36), Vector3.new(12, 8, 6), {
 					Color = Color3.fromRGB(26, 26, 26),
 					Accent = Color3.fromRGB(255, 111, 0),
+					Label = "Bravo Pods",
+					Message = "Bravo pods are tuned for Warzone warmups, scrims, and quick clip captures.",
 				}),
-				prop("Tournament Benches", "Seat", Vector3.new(24, 2, 10), Vector3.new(20, 4, 8), {
-					Color = Color3.fromRGB(79, 79, 79),
+				prop("Alpha Gaming Pods", "GamingStation", Vector3.new(-18, 4, 36), Vector3.new(12, 8, 6), {
+					Color = Color3.fromRGB(26, 26, 26),
+					Accent = Color3.fromRGB(255, 111, 0),
+					Label = "Alpha Pods",
+					Message = "Alpha pods keep the main BO6 lounge grind loop active without blocking the center aisle.",
+				}),
+				prop("Tactical Strategy Table", "Display", Vector3.new(20, 3.5, 8), Vector3.new(18, 5, 10), {
+					Color = Color3.fromRGB(54, 54, 54),
 					Material = Enum.Material.Metal,
+					Label = "Squad Strategy Table",
+					Message = "Tactical strategy table maps out drops, rotations, and push calls for the squad.",
 				}),
-				prop("Squad Wall Display", "Display", Vector3.new(-34, 7, 34), Vector3.new(18, 10, 1), {
-					Color = Color3.fromRGB(26, 26, 26),
-					Label = "Squad Wall",
+				prop("Caster Bench", "Seat", Vector3.new(35, 2, 8), Vector3.new(10, 4, 8), {
+					Color = Color3.fromRGB(82, 82, 82),
+					Material = Enum.Material.Metal,
+					Label = "Caster Bench",
+					HideBillboard = true,
 				}),
-				prop("xD0DgeThiSx Feature Display", "Display", Vector3.new(34, 7, 12), Vector3.new(18, 10, 1), {
+				prop("Clip Review Console", "Display", Vector3.new(12, 6, 34), Vector3.new(10, 8, 1), {
+					Color = Color3.fromRGB(25, 25, 25),
+					Label = "Clip Review Console",
+					Message = "Clip review console queues creator cuts, stream highlights, and callout reviews.",
+				}),
+				prop("Streaming Review Desk", "Display", Vector3.new(34, 4, 37), Vector3.new(14, 6, 8), {
+					Color = Color3.fromRGB(34, 34, 34),
+					Accent = Color3.fromRGB(255, 111, 0),
+					Label = "Streaming Desk",
+					Message = "Streaming desk keeps comms, overlays, and creator review tools in one zone.",
+				}),
+				prop("Win Wall Display", "Display", Vector3.new(38, 7, 34), Vector3.new(10, 10, 1), {
+					Color = Color3.fromRGB(18, 18, 18),
+					Label = "Win Wall",
+					Message = "Win wall celebrates BO6 wins, top clips, and featured squad moments.",
+				}),
+				prop("Squad Callout Board", "Display", Vector3.new(-27, 7, 44), Vector3.new(18, 10, 1), {
+					Color = Color3.fromRGB(24, 24, 24),
+					Label = "Squad Callouts",
+					Message = "Squad callout board tracks role tags, stack timing, and drop plans.",
+				}),
+				prop("xD0DgeThiSx Victory Crest", "Display", Vector3.new(37, 7, 14), Vector3.new(16, 10, 1), {
 					Color = Color3.fromRGB(26, 26, 26),
-					Label = "Featured Founder: xD0DgeThiSx",
+					Label = "xD0DgeThiSx Victory Crest",
+					Message = "Featured founder wall spotlights xD0DgeThiSx and the BO6 creator-lounge identity.",
 				}),
 			},
 			MediaPanels = {
-				mediaPanel("BO6 Streaming Wall", "Twitch", Vector3.new(30, 8, 34), Vector3.new(18, 10, 1), {
-					Title = "BO6 Streaming Wall",
+				mediaPanel("BO6 Streaming Wall", "Twitch", Vector3.new(26, 8, 43), Vector3.new(14, 9, 1), {
+					Title = "Live Squad Streams",
 				}),
-				mediaPanel("BO6 Showcase", "YouTube", Vector3.new(30, 8, 44), Vector3.new(18, 10, 1), {
-					Title = "BO6 Showcase",
+				mediaPanel("BO6 Showcase", "YouTube", Vector3.new(12, 8, 43), Vector3.new(12, 9, 1), {
+					Title = "BO6 Clip Showcase",
 				}),
-				mediaPanel("Pre-Match Playlist", "Spotify", Vector3.new(-14, 5, 34), Vector3.new(12, 8, 3), {
-					Title = "Pre-Match Playlist",
+				mediaPanel("Pre-Match Playlist", "Spotify", Vector3.new(-16, 6, 44), Vector3.new(12, 8, 1), {
+					Title = "Squad Warmup Playlist",
 				}),
 			},
 			Signs = {
-				sign("BO6 Gaming Lounge", "xD0DgeThiSx Feature Zone", Vector3.new(0, 20, -44), {
+				sign("BO6 Gaming Lounge", "xD0DgeThiSx Feature Zone", Vector3.new(0, 22, -44), {
 					Size = Vector3.new(20, 10, 1),
+				}),
+				sign("Loadouts Ready", "Founder locker and squad prep", Vector3.new(-28, 13, -10), {
+					Size = Vector3.new(16, 8, 1),
+					Color = Color3.fromRGB(20, 20, 20),
+				}),
+				sign("Squad Briefing", "Push plans, rotations, callouts", Vector3.new(22, 13, -10), {
+					Size = Vector3.new(16, 8, 1),
+					Color = Color3.fromRGB(20, 20, 20),
+				}),
+				sign("Creator Review", "Streams, clips, and the win wall", Vector3.new(22, 13, 22), {
+					Size = Vector3.new(18, 8, 1),
+					Color = Color3.fromRGB(20, 20, 20),
 				}),
 			},
 		},

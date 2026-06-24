@@ -864,6 +864,30 @@ local function createProp(propsFolder, venueConfig, propConfig)
 end
 
 local function getPropInteractionDefinition(venueConfig, propConfig)
+	local function applyInteractionOverrides(definition)
+		if propConfig.ActionType then
+			definition.ActionType = propConfig.ActionType
+		end
+
+		if propConfig.ActionText then
+			definition.ActionText = propConfig.ActionText
+		end
+
+		if propConfig.ObjectText then
+			definition.ObjectText = propConfig.ObjectText
+		end
+
+		if propConfig.Message then
+			definition.Message = propConfig.Message
+		end
+
+		if propConfig.RoleRequired then
+			definition.RoleRequired = propConfig.RoleRequired
+		end
+
+		return definition
+	end
+
 	if propConfig.Kind == "Display" then
 		local actionType = "Notify"
 		local message = "Viewing " .. (propConfig.Label or propConfig.Name)
@@ -875,46 +899,46 @@ local function getPropInteractionDefinition(venueConfig, propConfig)
 			roleRequired = "Founder"
 		end
 
-		return {
+		return applyInteractionOverrides({
 			ActionType = actionType,
 			ActionText = "Open",
 			ObjectText = propConfig.Label or propConfig.Name,
 			Message = message,
 			RoleRequired = roleRequired,
 			CooldownKey = "Prop:" .. venueConfig.Id .. ":" .. propConfig.Name,
-		}
+		})
 	end
 
 	if propConfig.Kind == "CommandCenter" then
-		return {
+		return applyInteractionOverrides({
 			ActionType = "FounderAction",
 			ActionText = "Access",
 			ObjectText = propConfig.Label or propConfig.Name,
 			Message = "AI command center placeholder opened.",
 			RoleRequired = "Founder",
 			CooldownKey = "Prop:" .. venueConfig.Id .. ":" .. propConfig.Name,
-		}
+		})
 	end
 
 	if propConfig.Kind == "Arcade" or propConfig.Kind == "GamingStation" then
-		return {
+		return applyInteractionOverrides({
 			ActionType = "Notify",
 			ActionText = "Inspect",
 			ObjectText = propConfig.Label or propConfig.Name,
 			Message = "Interaction placeholder: " .. (propConfig.Label or propConfig.Name),
 			CooldownKey = "Prop:" .. venueConfig.Id .. ":" .. propConfig.Name,
-		}
+		})
 	end
 
 	if propConfig.Kind == "VIPDisplay" then
-		return {
+		return applyInteractionOverrides({
 			ActionType = "Notify",
 			ActionText = "Enter",
 			ObjectText = propConfig.Label or propConfig.Name,
 			Message = propConfig.Message or "Welcome to the VIP area!",
 			RoleRequired = "VIP",
 			CooldownKey = "Prop:" .. venueConfig.Id .. ":" .. propConfig.Name,
-		}
+		})
 	end
 
 	return nil
