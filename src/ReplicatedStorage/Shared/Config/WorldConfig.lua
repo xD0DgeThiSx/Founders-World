@@ -1033,7 +1033,7 @@ local WorldConfig = {
 		},
 	},
 	Vehicles = {
-		vehicle("bronco-xd0dge", "Black Bronco", Vector3.new(-60, 2, 80), {
+		vehicle("bronco-xd0dge", "Black Bronco", Vector3.new(-60, 2, 70), {
 			VehicleType = "Bronco",
 			Color = Color3.fromRGB(18, 18, 18),
 			Accent = Color3.fromRGB(48, 48, 48),
@@ -1042,7 +1042,7 @@ local WorldConfig = {
 			Owner = "xD0DgeThiSx",
 			Heading = 180,
 		}),
-		vehicle("jeep-abbie", "Pink Jeep", Vector3.new(-42, 2, 80), {
+		vehicle("jeep-abbie", "Pink Jeep", Vector3.new(-42, 2, 70), {
 			VehicleType = "Jeep",
 			Color = Color3.fromRGB(255, 130, 190),
 			Accent = Color3.fromRGB(255, 200, 230),
@@ -1051,7 +1051,7 @@ local WorldConfig = {
 			Owner = "Abbiejo615",
 			Heading = 180,
 		}),
-		vehicle("jeep-charlie", "Pink Jeep", Vector3.new(-24, 2, 80), {
+		vehicle("jeep-charlie", "Pink Jeep", Vector3.new(-24, 2, 70), {
 			VehicleType = "Jeep",
 			Color = Color3.fromRGB(255, 130, 190),
 			Accent = Color3.fromRGB(255, 200, 230),
@@ -1060,7 +1060,7 @@ local WorldConfig = {
 			Owner = "Charlie",
 			Heading = 180,
 		}),
-		vehicle("jeep-sophia", "Pink Jeep", Vector3.new(-6, 2, 80), {
+		vehicle("jeep-sophia", "Pink Jeep", Vector3.new(-6, 2, 70), {
 			VehicleType = "Jeep",
 			Color = Color3.fromRGB(255, 130, 190),
 			Accent = Color3.fromRGB(255, 200, 230),
@@ -1069,7 +1069,7 @@ local WorldConfig = {
 			Owner = "Sophia",
 			Heading = 180,
 		}),
-		vehicle("suv-emily", "Blacked-Out Luxury SUV", Vector3.new(16, 2, 80), {
+		vehicle("suv-emily", "Blacked-Out Luxury SUV", Vector3.new(16, 2, 70), {
 			VehicleType = "LuxurySUV",
 			Color = Color3.fromRGB(10, 10, 10),
 			Accent = Color3.fromRGB(180, 160, 80),
