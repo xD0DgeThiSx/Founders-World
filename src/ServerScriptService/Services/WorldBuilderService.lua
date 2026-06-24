@@ -1432,6 +1432,12 @@ local function createAmbientSound()
 end
 
 function WorldBuilderService.build()
+	for _, obj in ipairs(workspace:GetDescendants()) do
+		if obj:IsA("SpawnLocation") then
+			obj:Destroy()
+		end
+	end
+
 	local folders = createWorldFolders()
 
 	createAmbientSound()
