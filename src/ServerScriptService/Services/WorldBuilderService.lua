@@ -264,13 +264,23 @@ end
 local function createZoneArrival(zoneFolder, zoneConfig)
 	local arrivalPad = createNavigationPad(zoneFolder, zoneConfig.Name .. "ArrivalPad", zoneConfig.Position + zoneConfig.ArrivalOffset, zoneConfig.Accent, zoneConfig.Name)
 
-	InteractionService.registerPrompt(arrivalPad, {
-		ActionType = "Notify",
-		ActionText = "Inspect",
-		ObjectText = zoneConfig.Name,
-		Message = zoneConfig.Name .. " arrival pad placeholder",
-		CooldownKey = "ZoneArrival:" .. zoneConfig.Id,
-	})
+	if zoneConfig.ZoneType == "Active" then
+		InteractionService.registerPrompt(arrivalPad, {
+			ActionType = "TeleportVenue",
+			ActionText = "Enter",
+			ObjectText = zoneConfig.Name,
+			VenueId = zoneConfig.TeleportDestinationId or zoneConfig.Id,
+			CooldownKey = "ZoneArrival:" .. zoneConfig.Id,
+		})
+	else
+		InteractionService.registerPrompt(arrivalPad, {
+			ActionType = "Notify",
+			ActionText = "Preview",
+			ObjectText = zoneConfig.Name,
+			Message = zoneConfig.FutureExpansionText,
+			CooldownKey = "ZoneArrival:" .. zoneConfig.Id,
+		})
+	end
 end
 
 local function createZoneMarker(zoneFolder, zoneConfig)
@@ -1036,7 +1046,7 @@ local function createHubTeleportPads(navigationFolder)
 	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
 		local padOffset = zoneConfig.HubPadOffset
 		if padOffset then
-			local padPosition = WorldConfig.Hub.Position + Vector3.new(padOffset.X, 0.5, padOffset.Z)
+			local padPosition = WorldConfig.Hub.Position + Vector3.new(padOffset.X, 2.5, padOffset.Z)
 
 			if zoneConfig.ZoneType == "Active" then
 				local venueConfig = venueLookup[zoneConfig.Id]
@@ -1198,7 +1208,7 @@ local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder,
 	createSpawn(spawnFolder, venueConfig.Name .. " Spawn", spawnPosition, venueConfig.Accent)
 	TeleportService.registerVenueTarget(venueConfig.Id, CFrame.new(spawnPosition), venueConfig.Name)
 
-	local returnPadOffset = venueConfig.ReturnPadOffset or Vector3.new(0, 0.5, venueConfig.Footprint.Z / 2 - 14)
+	local returnPadOffset = venueConfig.ReturnPadOffset or Vector3.new(0, 2.5, venueConfig.Footprint.Z / 2 - 14)
 	local arrivalPad = createNavigationPad(
 		teleportFolder,
 		venueConfig.Name .. " ReturnPad",

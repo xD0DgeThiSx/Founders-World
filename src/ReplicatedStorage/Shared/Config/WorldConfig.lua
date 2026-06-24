@@ -622,7 +622,7 @@ local WorldConfig = {
 			Accent = Color3.fromRGB(215, 191, 126),
 			RoofTransparency = 0.28,
 			SpawnOffset = Vector3.new(0, 3, -22),
-			ReturnPadOffset = Vector3.new(-32, 0.5, 28),
+			ReturnPadOffset = Vector3.new(-32, 2.5, 28),
 			ReturnPadOptions = {
 				PadSize = Vector3.new(10, 0.8, 10),
 				PadMaterial = Enum.Material.SmoothPlastic,
@@ -786,7 +786,7 @@ local WorldConfig = {
 			Accent = Color3.fromRGB(255, 111, 0),
 			RoofTransparency = 0.24,
 			SpawnOffset = Vector3.new(0, 3, -22),
-			ReturnPadOffset = Vector3.new(0, 0.5, 28),
+			ReturnPadOffset = Vector3.new(0, 2.5, 28),
 			ReturnPadOptions = {
 				MarkerOffset = Vector3.new(0, 5, -8),
 			},
