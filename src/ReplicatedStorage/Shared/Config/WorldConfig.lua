@@ -706,9 +706,10 @@ local WorldConfig = {
 			Name = "ContentForge Studio",
 			Theme = "Creator production studio graybox",
 			Position = Vector3.new(-360, 0, 210),
-			Footprint = Vector3.new(118, 30, 96),
+			Footprint = Vector3.new(118, 36, 96),
 			Color = Color3.fromRGB(68, 94, 123),
 			Accent = Color3.fromRGB(181, 224, 255),
+			RoofTransparency = 0.26,
 			SpawnOffset = Vector3.new(0, 3, -24),
 			Rooms = {
 				room("Creator Studio", Vector3.new(-28, 0, 6), Vector3.new(30, 2, 24), {
@@ -729,38 +730,49 @@ local WorldConfig = {
 				}),
 			},
 			Props = {
-				prop("Studio Desk", "Table", Vector3.new(-30, 1.5, 6), Vector3.new(16, 3, 6), {
-					Color = Color3.fromRGB(48, 68, 92),
+				prop("Studio Desk", "Table", Vector3.new(-30, 1.5, 4), Vector3.new(14, 3, 6), {
+					Color = Color3.fromRGB(42, 62, 84),
 					Material = Enum.Material.Metal,
+					HideBillboard = true,
 				}),
-				prop("Podcast Table", "Table", Vector3.new(22, 1.5, 8), Vector3.new(12, 3, 12), {
-					Color = Color3.fromRGB(55, 75, 100),
+				prop("Podcast Table", "Table", Vector3.new(20, 1.5, 6), Vector3.new(10, 3, 10), {
+					Color = Color3.fromRGB(49, 68, 92),
 					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
 				}),
-				prop("Recording Backdrop", "Display", Vector3.new(-30, 7, 34), Vector3.new(18, 10, 1), {
-					Color = Color3.fromRGB(33, 48, 66),
+				prop("Recording Backdrop", "Display", Vector3.new(-40, 8, 34), Vector3.new(10, 12, 1), {
+					Color = Color3.fromRGB(26, 40, 58),
+					Label = "Creator Backdrop",
 				}),
-				prop("AI Command Center", "CommandCenter", Vector3.new(20, 4, 34), Vector3.new(18, 8, 6), {
-					Color = Color3.fromRGB(28, 49, 72),
+				prop("AI Command Center", "CommandCenter", Vector3.new(34, 4, 34), Vector3.new(12, 7, 4), {
+					Color = Color3.fromRGB(33, 57, 82),
+					Label = "Creator Command",
 				}),
-				prop("Digital Product Showcase", "Display", Vector3.new(38, 6, 14), Vector3.new(12, 10, 1), {
-					Color = Color3.fromRGB(37, 59, 82),
+				prop("Digital Product Showcase", "Display", Vector3.new(40, 7, 18), Vector3.new(8, 11, 1), {
+					Color = Color3.fromRGB(28, 44, 64),
+					Label = "Creator Tools",
 				}),
 			},
 			MediaPanels = {
-				mediaPanel("Studio Slideshow", "Photo", Vector3.new(-12, 8, 36), Vector3.new(18, 10, 1), {
+				mediaPanel("Studio Slideshow", "Photo", Vector3.new(-40, 8, 22), Vector3.new(12, 9, 1), {
 					Title = "Studio Slideshow",
 				}),
-				mediaPanel("Creator Stream Wall", "Twitch", Vector3.new(34, 8, 36), Vector3.new(18, 10, 1), {
+				mediaPanel("Creator Stream Wall", "Twitch", Vector3.new(40, 8, 40), Vector3.new(12, 9, 1), {
 					Title = "Creator Stream Wall",
 				}),
-				mediaPanel("YouTube Recording Feed", "YouTube", Vector3.new(-12, 8, 46), Vector3.new(18, 10, 1), {
+				mediaPanel("YouTube Recording Feed", "YouTube", Vector3.new(-40, 8, 44), Vector3.new(12, 9, 1), {
 					Title = "YouTube Recording Feed",
 				}),
 			},
 			Signs = {
 				sign("ContentForge Studio", "Create. Record. Launch.", Vector3.new(0, 21, -47), {
 					Size = Vector3.new(20, 10, 1),
+				}),
+				sign("Podcast Set", "Mic check and live sessions", Vector3.new(20, 14, -4), {
+					Size = Vector3.new(12, 7, 1),
+				}),
+				sign("Creator Command", "Build tools and launch content", Vector3.new(32, 14, 24), {
+					Size = Vector3.new(12, 7, 1),
 				}),
 			},
 		},
