@@ -89,32 +89,38 @@ local function createSurfaceText(parent, face, title, subtitle, textColor)
 	return surfaceGui
 end
 
-local function createBillboardText(part, title, subtitle, textColor)
+local function createBillboardText(part, title, subtitle, textColor, options)
+	options = options or {}
+
 	local billboard = createInstance("BillboardGui", "BillboardText", part)
-	billboard.Size = UDim2.fromOffset(230, 72)
-	billboard.StudsOffset = Vector3.new(0, 4.5, 0)
-	billboard.AlwaysOnTop = true
+	billboard.Size = options.Size or UDim2.fromOffset(150, 44)
+	billboard.StudsOffset = options.StudsOffset or Vector3.new(0, 3.25, 0)
+	billboard.AlwaysOnTop = options.AlwaysOnTop or false
+	billboard.MaxDistance = options.MaxDistance or 80
 
 	local titleLabel = createInstance("TextLabel", "Title", billboard)
 	titleLabel.BackgroundTransparency = 1
-	titleLabel.Size = UDim2.fromScale(1, 0.55)
+	titleLabel.Size = subtitle and subtitle ~= "" and UDim2.fromScale(1, 0.58) or UDim2.fromScale(1, 1)
 	titleLabel.Font = Enum.Font.GothamBold
 	titleLabel.TextWrapped = true
-	titleLabel.TextScaled = true
+	titleLabel.TextScaled = false
+	titleLabel.TextSize = options.TitleTextSize or 16
 	titleLabel.TextColor3 = textColor
-	titleLabel.TextStrokeTransparency = 0.5
+	titleLabel.TextStrokeTransparency = 0.65
 	titleLabel.Text = title
 
 	local subtitleLabel = createInstance("TextLabel", "Subtitle", billboard)
 	subtitleLabel.BackgroundTransparency = 1
-	subtitleLabel.Position = UDim2.fromScale(0, 0.5)
-	subtitleLabel.Size = UDim2.fromScale(1, 0.45)
+	subtitleLabel.Position = UDim2.fromScale(0, 0.56)
+	subtitleLabel.Size = UDim2.fromScale(1, 0.34)
 	subtitleLabel.Font = Enum.Font.Gotham
 	subtitleLabel.TextWrapped = true
-	subtitleLabel.TextScaled = true
+	subtitleLabel.TextScaled = false
+	subtitleLabel.TextSize = options.SubtitleTextSize or 11
 	subtitleLabel.TextColor3 = textColor
-	subtitleLabel.TextStrokeTransparency = 0.5
-	subtitleLabel.Text = subtitle
+	subtitleLabel.TextStrokeTransparency = 0.75
+	subtitleLabel.Visible = subtitle ~= nil and subtitle ~= ""
+	subtitleLabel.Text = subtitle or ""
 
 	return billboard
 end
@@ -276,7 +282,16 @@ local function createZoneMarker(zoneFolder, zoneConfig)
 		CanCollide = true,
 	})
 
-	createBillboardText(marker, zoneConfig.Status, zoneConfig.FutureExpansionText, zoneConfig.Accent)
+	local markerTitle = zoneConfig.ZoneType == "Active" and (zoneConfig.ShortLabel or zoneConfig.Name) or "Future"
+	local markerSubtitle = zoneConfig.ZoneType == "Active" and "" or (zoneConfig.ShortLabel or "Future")
+
+	createBillboardText(marker, markerTitle, markerSubtitle, zoneConfig.Accent, {
+		Size = UDim2.fromOffset(120, 34),
+		StudsOffset = Vector3.new(0, 2.5, 0),
+		MaxDistance = zoneConfig.ZoneType == "Active" and 55 or 45,
+		TitleTextSize = 14,
+		SubtitleTextSize = 10,
+	})
 
 	InteractionService.registerPrompt(marker, {
 		ActionType = "Notify",
