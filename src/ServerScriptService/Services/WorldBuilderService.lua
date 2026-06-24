@@ -954,6 +954,335 @@ local function getPropInteractionDefinition(venueConfig, propConfig)
 	return nil
 end
 
+local function createVehicleWheels(folder, pivot, offsets, wheelSize, rimSize, rimColor)
+	for i, off in ipairs(offsets) do
+		createPart("Wheel" .. i, folder, {
+			Shape = Enum.PartType.Ball,
+			Size = Vector3.new(wheelSize, wheelSize, wheelSize),
+			CFrame = pivot * CFrame.new(off),
+			Color = Color3.fromRGB(28, 28, 28),
+			Material = Enum.Material.SmoothPlastic,
+			CanCollide = true,
+		})
+		createPart("Rim" .. i, folder, {
+			Shape = Enum.PartType.Cylinder,
+			Size = Vector3.new(rimSize, wheelSize - 0.6, wheelSize - 0.6),
+			CFrame = pivot * CFrame.new(off) * CFrame.Angles(0, 0, math.rad(90)),
+			Color = rimColor,
+			Material = Enum.Material.Metal,
+			CanCollide = false,
+		})
+	end
+end
+
+local function attachVehicleLabel(folder, pivot, localOffset, vehicleConfig)
+	local anchor = createPart("OwnerAnchor", folder, {
+		Size = Vector3.new(1, 0.2, 1),
+		CFrame = pivot * CFrame.new(localOffset),
+		Color = vehicleConfig.Accent,
+		Material = Enum.Material.Neon,
+		Transparency = 1,
+		CanCollide = false,
+	})
+	createBillboardText(anchor, vehicleConfig.PlateText, vehicleConfig.Owner or vehicleConfig.Name, Color3.fromRGB(255, 255, 255), {
+		AlwaysOnTop = false,
+		MaxDistance = 60,
+		Size = UDim2.fromOffset(160, 44),
+		StudsOffset = Vector3.new(0, 2, 0),
+	})
+end
+
+local function createBronco(folder, config)
+	local c = config.Color
+	local trim = config.TrimColor or Color3.fromRGB(72, 72, 72)
+	local pivot = CFrame.new(config.Position) * CFrame.Angles(0, math.rad(config.Heading or 0), 0)
+
+	createVehicleWheels(folder, pivot, {
+		Vector3.new(-5.5, 2, -6), Vector3.new(5.5, 2, -6),
+		Vector3.new(-5.5, 2, 6), Vector3.new(5.5, 2, 6),
+	}, 4, 1.5, trim)
+
+	local body = createPart("Body", folder, {
+		Size = Vector3.new(9, 5, 18),
+		CFrame = pivot * CFrame.new(0, 4.5, 0),
+		Color = c, Material = Enum.Material.SmoothPlastic, CanCollide = true,
+	})
+	createPart("Cab", folder, {
+		Size = Vector3.new(8.5, 3, 9),
+		CFrame = pivot * CFrame.new(0, 8, -1.5),
+		Color = c, Material = Enum.Material.SmoothPlastic, CanCollide = true,
+	})
+	createPart("Hood", folder, {
+		Size = Vector3.new(9, 1.5, 3),
+		CFrame = pivot * CFrame.new(0, 4, 8.5),
+		Color = c, Material = Enum.Material.SmoothPlastic, CanCollide = true,
+	})
+	createPart("FrontBumper", folder, {
+		Size = Vector3.new(9.5, 2, 1),
+		CFrame = pivot * CFrame.new(0, 3, 9.5),
+		Color = trim, Material = Enum.Material.Metal, CanCollide = true,
+	})
+	createPart("RearBumper", folder, {
+		Size = Vector3.new(9.5, 2, 1),
+		CFrame = pivot * CFrame.new(0, 3, -9.5),
+		Color = trim, Material = Enum.Material.Metal, CanCollide = true,
+	})
+	createPart("Grille", folder, {
+		Size = Vector3.new(7, 2.5, 0.6),
+		CFrame = pivot * CFrame.new(0, 4, 9.3),
+		Color = trim, Material = Enum.Material.Metal, CanCollide = true,
+	})
+	createPart("Windshield", folder, {
+		Size = Vector3.new(8, 4, 0.5),
+		CFrame = pivot * CFrame.new(0, 6.5, 5) * CFrame.Angles(math.rad(-28), 0, 0),
+		Color = Color3.fromRGB(180, 210, 230), Material = Enum.Material.Glass,
+		Transparency = 0.3, CanCollide = false,
+	})
+	createPart("RearGlass", folder, {
+		Size = Vector3.new(8, 3.5, 0.5),
+		CFrame = pivot * CFrame.new(0, 6.5, -6) * CFrame.Angles(math.rad(22), 0, 0),
+		Color = Color3.fromRGB(160, 190, 210), Material = Enum.Material.Glass,
+		Transparency = 0.35, CanCollide = false,
+	})
+	createPart("HeadlightL", folder, {
+		Size = Vector3.new(2.5, 1.5, 0.4),
+		CFrame = pivot * CFrame.new(-3.2, 4, 9.4),
+		Color = Color3.fromRGB(255, 252, 220), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	createPart("HeadlightR", folder, {
+		Size = Vector3.new(2.5, 1.5, 0.4),
+		CFrame = pivot * CFrame.new(3.2, 4, 9.4),
+		Color = Color3.fromRGB(255, 252, 220), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	createPart("TaillightL", folder, {
+		Size = Vector3.new(2.5, 1.5, 0.4),
+		CFrame = pivot * CFrame.new(-3.2, 4, -9.4),
+		Color = Color3.fromRGB(255, 50, 50), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	createPart("TaillightR", folder, {
+		Size = Vector3.new(2.5, 1.5, 0.4),
+		CFrame = pivot * CFrame.new(3.2, 4, -9.4),
+		Color = Color3.fromRGB(255, 50, 50), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	local plate = createPart("LicensePlate", folder, {
+		Size = Vector3.new(5, 1.5, 0.4),
+		CFrame = pivot * CFrame.new(0, 2.5, 9.4),
+		Color = Color3.fromRGB(245, 245, 245), Material = Enum.Material.SmoothPlastic, CanCollide = false,
+	})
+	createBillboardText(plate, config.PlateText, "", Color3.fromRGB(20, 20, 20), {
+		AlwaysOnTop = false, MaxDistance = 30, Size = UDim2.fromOffset(110, 24), StudsOffset = Vector3.new(0, 0, 0),
+	})
+	attachVehicleLabel(folder, pivot, Vector3.new(0, 11, 0), config)
+
+	return body
+end
+
+local function createJeep(folder, config)
+	local c = config.Color
+	local trim = config.TrimColor or Color3.fromRGB(255, 255, 255)
+	local pivot = CFrame.new(config.Position) * CFrame.Angles(0, math.rad(config.Heading or 0), 0)
+
+	createVehicleWheels(folder, pivot, {
+		Vector3.new(-5, 2, -5.5), Vector3.new(5, 2, -5.5),
+		Vector3.new(-5, 2, 5.5), Vector3.new(5, 2, 5.5),
+	}, 4, 1.5, trim)
+
+	local body = createPart("Body", folder, {
+		Size = Vector3.new(8.5, 4.5, 16),
+		CFrame = pivot * CFrame.new(0, 4.5, 0),
+		Color = c, Material = Enum.Material.SmoothPlastic, CanCollide = true,
+	})
+	createPart("RollBarL", folder, {
+		Size = Vector3.new(0.8, 4.5, 0.8),
+		CFrame = pivot * CFrame.new(-3.5, 7.5, 0),
+		Color = trim, Material = Enum.Material.Metal, CanCollide = true,
+	})
+	createPart("RollBarR", folder, {
+		Size = Vector3.new(0.8, 4.5, 0.8),
+		CFrame = pivot * CFrame.new(3.5, 7.5, 0),
+		Color = trim, Material = Enum.Material.Metal, CanCollide = true,
+	})
+	createPart("RollBarTop", folder, {
+		Size = Vector3.new(8, 0.8, 4),
+		CFrame = pivot * CFrame.new(0, 9.8, 0),
+		Color = trim, Material = Enum.Material.Metal, CanCollide = true,
+	})
+	createPart("Hood", folder, {
+		Size = Vector3.new(8.5, 1.5, 3),
+		CFrame = pivot * CFrame.new(0, 4.5, 7.5),
+		Color = c, Material = Enum.Material.SmoothPlastic, CanCollide = true,
+	})
+	createPart("FrontBumper", folder, {
+		Size = Vector3.new(9, 2, 1),
+		CFrame = pivot * CFrame.new(0, 3, 8.5),
+		Color = trim, Material = Enum.Material.Metal, CanCollide = true,
+	})
+	createPart("RearBumper", folder, {
+		Size = Vector3.new(9, 2, 1),
+		CFrame = pivot * CFrame.new(0, 3, -8.5),
+		Color = trim, Material = Enum.Material.Metal, CanCollide = true,
+	})
+	createPart("Windshield", folder, {
+		Size = Vector3.new(7.5, 3.5, 0.5),
+		CFrame = pivot * CFrame.new(0, 6.5, 4.5) * CFrame.Angles(math.rad(-25), 0, 0),
+		Color = Color3.fromRGB(200, 225, 240), Material = Enum.Material.Glass,
+		Transparency = 0.3, CanCollide = false,
+	})
+	createPart("HeadlightL", folder, {
+		Size = Vector3.new(2, 1.5, 0.4),
+		CFrame = pivot * CFrame.new(-3, 4, 8.3),
+		Color = Color3.fromRGB(255, 252, 220), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	createPart("HeadlightR", folder, {
+		Size = Vector3.new(2, 1.5, 0.4),
+		CFrame = pivot * CFrame.new(3, 4, 8.3),
+		Color = Color3.fromRGB(255, 252, 220), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	createPart("TaillightL", folder, {
+		Size = Vector3.new(2, 1.5, 0.4),
+		CFrame = pivot * CFrame.new(-3, 4, -8.3),
+		Color = Color3.fromRGB(255, 50, 50), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	createPart("TaillightR", folder, {
+		Size = Vector3.new(2, 1.5, 0.4),
+		CFrame = pivot * CFrame.new(3, 4, -8.3),
+		Color = Color3.fromRGB(255, 50, 50), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	local plate = createPart("LicensePlate", folder, {
+		Size = Vector3.new(5, 1.5, 0.4),
+		CFrame = pivot * CFrame.new(0, 2.5, 8.4),
+		Color = Color3.fromRGB(245, 245, 245), Material = Enum.Material.SmoothPlastic, CanCollide = false,
+	})
+	createBillboardText(plate, config.PlateText, "", Color3.fromRGB(20, 20, 20), {
+		AlwaysOnTop = false, MaxDistance = 30, Size = UDim2.fromOffset(110, 24), StudsOffset = Vector3.new(0, 0, 0),
+	})
+	attachVehicleLabel(folder, pivot, Vector3.new(0, 12, 0), config)
+
+	return body
+end
+
+local function createLuxurySUV(folder, config)
+	local c = config.Color
+	local accent = config.Accent
+	local trim = config.TrimColor or Color3.fromRGB(140, 120, 60)
+	local pivot = CFrame.new(config.Position) * CFrame.Angles(0, math.rad(config.Heading or 0), 0)
+
+	createVehicleWheels(folder, pivot, {
+		Vector3.new(-5.5, 2, -7.5), Vector3.new(5.5, 2, -7.5),
+		Vector3.new(-5.5, 2, 7.5), Vector3.new(5.5, 2, 7.5),
+	}, 4.5, 2, trim)
+
+	local body = createPart("Body", folder, {
+		Size = Vector3.new(10, 5.5, 22),
+		CFrame = pivot * CFrame.new(0, 4.5, 0),
+		Color = c, Material = Enum.Material.SmoothPlastic, CanCollide = true,
+	})
+	createPart("Roof", folder, {
+		Size = Vector3.new(9.5, 2, 14),
+		CFrame = pivot * CFrame.new(0, 7.5, -1),
+		Color = c, Material = Enum.Material.SmoothPlastic, CanCollide = true,
+	})
+	createPart("PanoRoof", folder, {
+		Size = Vector3.new(7, 0.4, 8),
+		CFrame = pivot * CFrame.new(0, 8.7, -0.5),
+		Color = Color3.fromRGB(30, 30, 40), Material = Enum.Material.Glass,
+		Transparency = 0.2, CanCollide = false,
+	})
+	createPart("Hood", folder, {
+		Size = Vector3.new(10, 1.5, 4),
+		CFrame = pivot * CFrame.new(0, 4.5, 9.5),
+		Color = c, Material = Enum.Material.SmoothPlastic, CanCollide = true,
+	})
+	createPart("FrontBumper", folder, {
+		Size = Vector3.new(10.5, 2.5, 1.5),
+		CFrame = pivot * CFrame.new(0, 3.5, 11),
+		Color = c, Material = Enum.Material.SmoothPlastic, CanCollide = true,
+	})
+	createPart("RearBumper", folder, {
+		Size = Vector3.new(10.5, 2.5, 1.5),
+		CFrame = pivot * CFrame.new(0, 3.5, -11),
+		Color = c, Material = Enum.Material.SmoothPlastic, CanCollide = true,
+	})
+	createPart("ChromeStripe", folder, {
+		Size = Vector3.new(10.2, 0.5, 20),
+		CFrame = pivot * CFrame.new(0, 4.5, 0),
+		Color = accent, Material = Enum.Material.Metal, CanCollide = false,
+	})
+	createPart("Grille", folder, {
+		Size = Vector3.new(8, 2.5, 0.8),
+		CFrame = pivot * CFrame.new(0, 4, 11.1),
+		Color = accent, Material = Enum.Material.Metal, CanCollide = true,
+	})
+	createPart("Windshield", folder, {
+		Size = Vector3.new(9, 4, 0.5),
+		CFrame = pivot * CFrame.new(0, 6.5, 6.5) * CFrame.Angles(math.rad(-32), 0, 0),
+		Color = Color3.fromRGB(160, 195, 220), Material = Enum.Material.Glass,
+		Transparency = 0.25, CanCollide = false,
+	})
+	createPart("RearGlass", folder, {
+		Size = Vector3.new(9, 3.5, 0.5),
+		CFrame = pivot * CFrame.new(0, 6.5, -7) * CFrame.Angles(math.rad(28), 0, 0),
+		Color = Color3.fromRGB(140, 175, 200), Material = Enum.Material.Glass,
+		Transparency = 0.3, CanCollide = false,
+	})
+	createPart("HeadlightL", folder, {
+		Size = Vector3.new(3, 1, 0.5),
+		CFrame = pivot * CFrame.new(-4, 4, 11.3),
+		Color = Color3.fromRGB(255, 252, 220), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	createPart("HeadlightR", folder, {
+		Size = Vector3.new(3, 1, 0.5),
+		CFrame = pivot * CFrame.new(4, 4, 11.3),
+		Color = Color3.fromRGB(255, 252, 220), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	createPart("TaillightL", folder, {
+		Size = Vector3.new(3, 1.5, 0.5),
+		CFrame = pivot * CFrame.new(-4, 4.5, -11.3),
+		Color = Color3.fromRGB(255, 50, 50), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	createPart("TaillightR", folder, {
+		Size = Vector3.new(3, 1.5, 0.5),
+		CFrame = pivot * CFrame.new(4, 4.5, -11.3),
+		Color = Color3.fromRGB(255, 50, 50), Material = Enum.Material.Neon, CanCollide = false,
+	})
+	local plate = createPart("LicensePlate", folder, {
+		Size = Vector3.new(6, 1.5, 0.5),
+		CFrame = pivot * CFrame.new(0, 2.5, 11.4),
+		Color = Color3.fromRGB(245, 245, 245), Material = Enum.Material.SmoothPlastic, CanCollide = false,
+	})
+	createBillboardText(plate, config.PlateText, "", Color3.fromRGB(20, 20, 20), {
+		AlwaysOnTop = false, MaxDistance = 35, Size = UDim2.fromOffset(120, 24), StudsOffset = Vector3.new(0, 0, 0),
+	})
+	attachVehicleLabel(folder, pivot, Vector3.new(0, 11, 0), config)
+
+	return body
+end
+
+local function createVehicle(vehiclesFolder, vehicleConfig)
+	local folder = createFolder(vehicleConfig.Id, vehiclesFolder)
+	local body
+
+	if vehicleConfig.VehicleType == "Bronco" then
+		body = createBronco(folder, vehicleConfig)
+	elseif vehicleConfig.VehicleType == "Jeep" then
+		body = createJeep(folder, vehicleConfig)
+	elseif vehicleConfig.VehicleType == "LuxurySUV" then
+		body = createLuxurySUV(folder, vehicleConfig)
+	end
+
+	if body then
+		InteractionService.registerPrompt(body, {
+			ActionType = "Notify",
+			ActionText = "Inspect",
+			ObjectText = vehicleConfig.Name,
+			Message = vehicleConfig.Owner
+				and (vehicleConfig.Owner .. "'s " .. vehicleConfig.Name .. " — Plate: " .. vehicleConfig.PlateText)
+				or vehicleConfig.Name,
+			CooldownKey = "Vehicle:" .. vehicleConfig.Id,
+		})
+	end
+end
+
 local function createVenueSigns(signFolder, venueConfig)
 	local shellSignPosition = Vector3.new(venueConfig.Position.X, venueConfig.Position.Y + venueConfig.Footprint.Y + 8, venueConfig.Position.Z - venueConfig.Footprint.Z / 2 + 2)
 	createSign(signFolder, "VenueSign", shellSignPosition, venueConfig.Name, venueConfig.Theme, venueConfig.Color, venueConfig.Accent, Vector3.new(18, 10, 1))
@@ -1272,6 +1601,7 @@ local function createWorldFolders()
 	local mediaFolder = createFolder("Media", mapFolder)
 	local teleportFolder = createFolder("Teleports", mapFolder)
 	local environmentFolder = createFolder("Environment", mapFolder)
+	local vehiclesFolder = createFolder("Vehicles", mapFolder)
 
 	return {
 		Map = mapFolder,
@@ -1284,6 +1614,7 @@ local function createWorldFolders()
 		Media = mediaFolder,
 		Teleports = teleportFolder,
 		Environment = environmentFolder,
+		Vehicles = vehiclesFolder,
 	}
 end
 
@@ -1318,6 +1649,10 @@ function WorldBuilderService.build()
 	for _, venueConfig in ipairs(WorldConfig.Venues or {}) do
 		local venueFolder = createFolder(venueConfig.Name, folders.Venues)
 		buildVenue(venueFolder, venueConfig, folders.Spawns, folders.Teleports, folders.Media, folders.Navigation)
+	end
+
+	for _, vehicleConfig in ipairs(WorldConfig.Vehicles or {}) do
+		createVehicle(folders.Vehicles, vehicleConfig)
 	end
 end
 

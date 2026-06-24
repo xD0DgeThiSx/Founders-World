@@ -101,6 +101,21 @@ local function road(name, startPosition, endPosition, width, options)
 	}, options)
 end
 
+local function vehicle(id, name, position, options)
+	return withOptions({
+		Id = id,
+		Name = name,
+		Position = position,
+		VehicleType = "Bronco",
+		Color = Color3.fromRGB(20, 20, 20),
+		Accent = Color3.fromRGB(60, 60, 60),
+		TrimColor = Color3.fromRGB(100, 100, 100),
+		PlateText = id,
+		Owner = nil,
+		Heading = 0,
+	}, options)
+end
+
 local WorldConfig = {
 	Hub = {
 		Name = "Founder's Plaza",
@@ -350,6 +365,14 @@ local WorldConfig = {
 					OpenSides = { "North", "West" },
 					FloorColor = Color3.fromRGB(176, 160, 136),
 				}),
+				room("Master Suite", Vector3.new(-20, 0, -36), Vector3.new(28, 2, 20), {
+					OpenSides = { "South" },
+					FloorColor = Color3.fromRGB(198, 182, 158),
+				}),
+				room("En-Suite Bath", Vector3.new(20, 0, -36), Vector3.new(24, 2, 18), {
+					OpenSides = { "South" },
+					FloorColor = Color3.fromRGB(218, 210, 198),
+				}),
 			},
 			Props = {
 				prop("Entry Fountain", "Display", Vector3.new(0, 4, -18), Vector3.new(12, 8, 12), {
@@ -431,6 +454,97 @@ local WorldConfig = {
 					Material = Enum.Material.WoodPlanks,
 					HideBillboard = true,
 				}),
+				-- Master Suite
+				prop("King Bed", "Seat", Vector3.new(-20, 2, -38), Vector3.new(16, 4, 10), {
+					Color = Color3.fromRGB(107, 79, 57),
+					Material = Enum.Material.Fabric,
+					Label = "King Bed",
+				}),
+				prop("Bed Headboard", "Display", Vector3.new(-20, 6, -44), Vector3.new(16, 8, 1), {
+					Color = Color3.fromRGB(88, 62, 40),
+					Label = "Master Suite",
+				}),
+				prop("Bedside Table A", "Table", Vector3.new(-10, 1.5, -42), Vector3.new(4, 3, 4), {
+					Color = Color3.fromRGB(115, 89, 64),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Bedside Table B", "Table", Vector3.new(-30, 1.5, -42), Vector3.new(4, 3, 4), {
+					Color = Color3.fromRGB(115, 89, 64),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Bed Lamp", "Display", Vector3.new(-9, 5, -44), Vector3.new(2, 5, 2), {
+					Color = Color3.fromRGB(255, 228, 172),
+					Material = Enum.Material.Neon,
+					Shape = Enum.PartType.Ball,
+					HideBillboard = true,
+				}),
+				prop("Armoire", "Display", Vector3.new(-30, 8, -44), Vector3.new(9, 14, 3), {
+					Color = Color3.fromRGB(88, 62, 40),
+					Label = "Armoire",
+				}),
+				-- En-Suite Bath
+				prop("Soaking Tub", "HotTub", Vector3.new(24, 0, -38), Vector3.new(10, 3, 8), {
+					Color = Color3.fromRGB(120, 172, 210),
+					Accent = Color3.fromRGB(238, 234, 228),
+					Label = "Soaking Tub",
+					Subtitle = "En-Suite",
+				}),
+				prop("Double Vanity", "Table", Vector3.new(12, 1.5, -44), Vector3.new(14, 4, 4), {
+					Color = Color3.fromRGB(210, 200, 185),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				prop("Vanity Mirror", "Display", Vector3.new(12, 8, -44), Vector3.new(14, 8, 1), {
+					Color = Color3.fromRGB(180, 175, 168),
+					Label = "Vanity Mirror",
+				}),
+				prop("Towel Rail", "Display", Vector3.new(30, 6, -42), Vector3.new(6, 4, 1), {
+					Color = Color3.fromRGB(180, 180, 180),
+					Material = Enum.Material.Metal,
+					Label = "Towel Rail",
+				}),
+				-- Family Lounge fills
+				prop("Bookshelf Wall", "Display", Vector3.new(-36, 8, 10), Vector3.new(1, 14, 14), {
+					Color = Color3.fromRGB(72, 52, 34),
+					Label = "Family Bookshelf",
+				}),
+				prop("Entertainment Console", "Table", Vector3.new(-14, 2, 22), Vector3.new(14, 4, 4), {
+					Color = Color3.fromRGB(85, 63, 44),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				-- Kitchen Suite fills
+				prop("Bar Stools", "Seat", Vector3.new(24, 2, 2), Vector3.new(14, 4, 4), {
+					Color = Color3.fromRGB(94, 72, 54),
+					Material = Enum.Material.Leather,
+					HideBillboard = true,
+				}),
+				prop("Pantry Cabinet", "Display", Vector3.new(36, 8, 4), Vector3.new(5, 14, 4), {
+					Color = Color3.fromRGB(222, 210, 186),
+					Label = "Pantry",
+				}),
+				prop("Refrigerator", "Display", Vector3.new(36, 8, 16), Vector3.new(5, 14, 4), {
+					Color = Color3.fromRGB(210, 207, 200),
+					Label = "Refrigerator",
+				}),
+				-- Grand Foyer fills
+				prop("Entry Bench", "Seat", Vector3.new(0, 1.5, -14), Vector3.new(12, 3, 4), {
+					Color = Color3.fromRGB(115, 89, 64),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Potted Plant A", "Display", Vector3.new(-14, 5, -12), Vector3.new(5, 8, 5), {
+					Color = Color3.fromRGB(76, 128, 58),
+					Shape = Enum.PartType.Ball,
+					HideBillboard = true,
+				}),
+				prop("Potted Plant B", "Display", Vector3.new(14, 5, -12), Vector3.new(5, 8, 5), {
+					Color = Color3.fromRGB(76, 128, 58),
+					Shape = Enum.PartType.Ball,
+					HideBillboard = true,
+				}),
 			},
 			MediaPanels = {
 				mediaPanel("Estate Memories", "Photo", Vector3.new(34, 8, 8), Vector3.new(18, 10, 1), {
@@ -467,6 +581,12 @@ local WorldConfig = {
 				}),
 				sign("Media Loft", "Home tours and highlight reels", Vector3.new(24, 14, 28), {
 					Size = Vector3.new(14, 8, 1),
+				}),
+				sign("Master Suite", "Private quarters", Vector3.new(-20, 14, -44), {
+					Size = Vector3.new(14, 8, 1),
+				}),
+				sign("En-Suite", "Bath and spa", Vector3.new(20, 14, -44), {
+					Size = Vector3.new(12, 8, 1),
 				}),
 			},
 		},
@@ -911,6 +1031,53 @@ local WorldConfig = {
 				}),
 			},
 		},
+	},
+	Vehicles = {
+		vehicle("bronco-xd0dge", "Black Bronco", Vector3.new(-60, 2, 80), {
+			VehicleType = "Bronco",
+			Color = Color3.fromRGB(18, 18, 18),
+			Accent = Color3.fromRGB(48, 48, 48),
+			TrimColor = Color3.fromRGB(72, 72, 72),
+			PlateText = "xD0DgeThiSx",
+			Owner = "xD0DgeThiSx",
+			Heading = 180,
+		}),
+		vehicle("jeep-abbie", "Pink Jeep", Vector3.new(-42, 2, 80), {
+			VehicleType = "Jeep",
+			Color = Color3.fromRGB(255, 130, 190),
+			Accent = Color3.fromRGB(255, 200, 230),
+			TrimColor = Color3.fromRGB(255, 255, 255),
+			PlateText = "ABBIE",
+			Owner = "Abbiejo615",
+			Heading = 180,
+		}),
+		vehicle("jeep-charlie", "Pink Jeep", Vector3.new(-24, 2, 80), {
+			VehicleType = "Jeep",
+			Color = Color3.fromRGB(255, 130, 190),
+			Accent = Color3.fromRGB(255, 200, 230),
+			TrimColor = Color3.fromRGB(255, 255, 255),
+			PlateText = "CHARLIE",
+			Owner = "Charlie",
+			Heading = 180,
+		}),
+		vehicle("jeep-sophia", "Pink Jeep", Vector3.new(-6, 2, 80), {
+			VehicleType = "Jeep",
+			Color = Color3.fromRGB(255, 130, 190),
+			Accent = Color3.fromRGB(255, 200, 230),
+			TrimColor = Color3.fromRGB(255, 255, 255),
+			PlateText = "SOPHIA",
+			Owner = "Sophia",
+			Heading = 180,
+		}),
+		vehicle("suv-emily", "Blacked-Out Luxury SUV", Vector3.new(16, 2, 80), {
+			VehicleType = "LuxurySUV",
+			Color = Color3.fromRGB(10, 10, 10),
+			Accent = Color3.fromRGB(180, 160, 80),
+			TrimColor = Color3.fromRGB(140, 120, 60),
+			PlateText = "EMILYPLAYS",
+			Owner = "Emilyplays902",
+			Heading = 180,
+		}),
 	},
 }
 
