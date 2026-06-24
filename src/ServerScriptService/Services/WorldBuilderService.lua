@@ -1328,7 +1328,15 @@ local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder,
 
 	local spawnOffset = venueConfig.SpawnOffset or Vector3.new(0, 3, -22)
 	local spawnPosition = venueConfig.Position + spawnOffset
-	createSpawn(spawnFolder, venueConfig.Name .. " Spawn", spawnPosition, venueConfig.Accent)
+	createPart(venueConfig.Name .. " ArrivalMarker", spawnFolder, {
+		Size = Vector3.new(10, 0.5, 10),
+		Position = spawnPosition + Vector3.new(0, -1.5, 0),
+		Color = venueConfig.Accent,
+		Material = Enum.Material.Neon,
+		Transparency = 0.4,
+		Anchored = true,
+		CanCollide = false,
+	})
 	TeleportService.registerVenueTarget(venueConfig.Id, CFrame.new(spawnPosition), venueConfig.Name)
 
 	local returnPadOffset = venueConfig.ReturnPadOffset or Vector3.new(0, 2.5, venueConfig.Footprint.Z / 2 - 14)
