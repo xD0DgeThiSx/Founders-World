@@ -319,69 +319,140 @@ local WorldConfig = {
 		{
 			Id = "stromblad-estate",
 			Name = "Stromblad Estate",
-			Theme = "Modern family estate graybox",
+			Theme = "Modern family estate with poolside social spaces",
 			Position = Vector3.new(-260, 0, -300),
 			Footprint = Vector3.new(112, 32, 106),
 			Color = Color3.fromRGB(162, 131, 94),
 			Accent = Color3.fromRGB(241, 219, 187),
 			SpawnOffset = Vector3.new(0, 3, -26),
 			Rooms = {
-				room("Living Room", Vector3.new(-22, 0, 8), Vector3.new(34, 2, 28), {
+				room("Grand Foyer", Vector3.new(0, 0, -8), Vector3.new(38, 2, 20), {
+					OpenSides = { "South" },
+					FloorColor = Color3.fromRGB(214, 196, 170),
+				}),
+				room("Family Lounge", Vector3.new(-24, 0, 12), Vector3.new(30, 2, 26), {
 					OpenSides = { "East", "South" },
 					FloorColor = Color3.fromRGB(189, 171, 140),
 				}),
-				room("Family Photo Hall", Vector3.new(18, 0, 10), Vector3.new(28, 2, 24), {
+				room("Kitchen Suite", Vector3.new(24, 0, 10), Vector3.new(30, 2, 24), {
 					OpenSides = { "West", "South" },
 					FloorColor = Color3.fromRGB(222, 205, 175),
 				}),
-				room("Pool Deck", Vector3.new(-18, 0, 38), Vector3.new(34, 2, 24), {
+				room("Pool Deck", Vector3.new(-18, 0, 40), Vector3.new(34, 2, 22), {
 					OpenSides = { "North", "East" },
 					FloorColor = Color3.fromRGB(170, 156, 132),
 				}),
-				room("Hot Tub Terrace", Vector3.new(22, 0, 38), Vector3.new(28, 2, 24), {
+				room("Hot Tub Terrace", Vector3.new(16, 0, 40), Vector3.new(24, 2, 22), {
 					OpenSides = { "North", "West" },
 					FloorColor = Color3.fromRGB(160, 145, 123),
 				}),
+				room("Media Loft", Vector3.new(24, 0, 38), Vector3.new(30, 2, 22), {
+					OpenSides = { "North", "West" },
+					FloorColor = Color3.fromRGB(176, 160, 136),
+				}),
 			},
 			Props = {
-				prop("Estate Sofa", "Seat", Vector3.new(-28, 2, 6), Vector3.new(14, 4, 6), {
+				prop("Entry Fountain", "Display", Vector3.new(0, 4, -18), Vector3.new(12, 8, 12), {
+					Color = Color3.fromRGB(120, 101, 79),
+					Accent = Color3.fromRGB(241, 219, 187),
+					Label = "Estate Entry Fountain",
+					Shape = Enum.PartType.Cylinder,
+				}),
+				prop("Estate Sectional", "Seat", Vector3.new(-30, 2, 12), Vector3.new(18, 4, 7), {
 					Color = Color3.fromRGB(115, 89, 62),
 					Material = Enum.Material.Fabric,
 				}),
-				prop("Coffee Table", "Table", Vector3.new(-12, 1.5, 8), Vector3.new(8, 3, 6), {
+				prop("Coffee Table", "Table", Vector3.new(-14, 1.5, 12), Vector3.new(8, 3, 6), {
 					Color = Color3.fromRGB(103, 70, 46),
 					Material = Enum.Material.WoodPlanks,
 				}),
-				prop("Family Photo Wall", "Display", Vector3.new(30, 7, -2), Vector3.new(18, 10, 1), {
+				prop("Stone Fireplace", "Display", Vector3.new(-10, 6, 12), Vector3.new(14, 10, 2), {
+					Color = Color3.fromRGB(96, 84, 70),
+					Label = "Stone Fireplace",
+				}),
+				prop("Gallery Wall", "Display", Vector3.new(34, 7, -2), Vector3.new(16, 10, 1), {
 					Color = Color3.fromRGB(58, 44, 30),
-					Label = "Family Photo Wall",
+					Label = "Family Gallery",
+				}),
+				prop("Kitchen Island", "Table", Vector3.new(24, 2, 6), Vector3.new(16, 4, 8), {
+					Color = Color3.fromRGB(118, 84, 57),
+					Material = Enum.Material.WoodPlanks,
+				}),
+				prop("Dining Table", "Table", Vector3.new(24, 2, 18), Vector3.new(18, 4, 8), {
+					Color = Color3.fromRGB(136, 101, 72),
+					Material = Enum.Material.WoodPlanks,
+				}),
+				prop("Glass Walkway", "FloorPad", Vector3.new(0, 2.1, 28), Vector3.new(14, 0.2, 18), {
+					Color = Color3.fromRGB(227, 240, 245),
+					Material = Enum.Material.Glass,
+					Transparency = 0.25,
 				}),
 				prop("Pool Placeholder", "Pool", Vector3.new(-18, 0, 40), Vector3.new(24, 4, 14), {
 					Color = Color3.fromRGB(74, 142, 196),
 					Accent = Color3.fromRGB(213, 232, 247),
 				}),
-				prop("Hot Tub Placeholder", "HotTub", Vector3.new(22, 0, 40), Vector3.new(12, 4, 12), {
+				prop("Pool Chair A", "PoolChair", Vector3.new(-30, 2, 35), Vector3.new(8, 3, 4), {
+					Color = Color3.fromRGB(247, 239, 230),
+					Accent = Color3.fromRGB(162, 131, 94),
+				}),
+				prop("Pool Chair B", "PoolChair", Vector3.new(-30, 2, 45), Vector3.new(8, 3, 4), {
+					Color = Color3.fromRGB(247, 239, 230),
+					Accent = Color3.fromRGB(162, 131, 94),
+				}),
+				prop("Cabana Daybed", "Seat", Vector3.new(0, 2, 44), Vector3.new(16, 4, 6), {
+					Color = Color3.fromRGB(188, 166, 136),
+					Material = Enum.Material.Fabric,
+				}),
+				prop("Hot Tub Placeholder", "HotTub", Vector3.new(18, 0, 40), Vector3.new(12, 4, 12), {
 					Color = Color3.fromRGB(72, 120, 158),
 					Accent = Color3.fromRGB(230, 238, 244),
 				}),
+				prop("Fire Bowl", "Display", Vector3.new(30, 5, 42), Vector3.new(5, 5, 5), {
+					Color = Color3.fromRGB(224, 131, 68),
+					Material = Enum.Material.Neon,
+					Label = "Fire Bowl",
+					Shape = Enum.PartType.Ball,
+				}),
+				prop("Loft Console", "Table", Vector3.new(16, 2, 38), Vector3.new(10, 3, 5), {
+					Color = Color3.fromRGB(92, 71, 52),
+					Material = Enum.Material.WoodPlanks,
+				}),
 			},
 			MediaPanels = {
-				mediaPanel("Estate Memories", "Photo", Vector3.new(30, 8, 8), Vector3.new(18, 10, 1), {
+				mediaPanel("Estate Memories", "Photo", Vector3.new(34, 8, 8), Vector3.new(18, 10, 1), {
 					Title = "Estate Memories",
 					Items = {
-						"Family Portrait",
-						"Living Room Snapshot",
-						"Pool Day Placeholder",
-						"Future Estate Gallery",
+						"Welcome Home Portrait",
+						"Family Lounge Snapshot",
+						"Kitchen Night Hosting",
+						"Poolside Golden Hour",
 					},
 				}),
+				mediaPanel("Home Tour Showcase", "YouTube", Vector3.new(34, 8, 38), Vector3.new(18, 10, 1), {
+					Title = "Home Tour Showcase",
+				}),
 				mediaPanel("Estate Soundtrack", "Spotify", Vector3.new(-2, 5, 30), Vector3.new(12, 8, 3), {
-					Title = "Estate Soundtrack",
+					Title = "Sunset Playlist",
 				}),
 			},
 			Signs = {
-				sign("The Stromblad's", "Modern Estate Prototype", Vector3.new(0, 22, -51), {
-					Size = Vector3.new(18, 10, 1),
+				sign("The Stromblads", "Welcome Home", Vector3.new(0, 22, -51), {
+					Size = Vector3.new(20, 10, 1),
+				}),
+				sign("Gather Here", "Family lounge + fireplace", Vector3.new(-24, 14, 2), {
+					Size = Vector3.new(14, 8, 1),
+				}),
+				sign("Kitchen Suite", "Snacks, stories, and late-night chats", Vector3.new(24, 14, 0), {
+					Size = Vector3.new(16, 8, 1),
+				}),
+				sign("Pool Deck", "Golden hour hangout", Vector3.new(-18, 14, 28), {
+					Size = Vector3.new(12, 8, 1),
+				}),
+				sign("Spa Terrace", "Hot tub + fire bowl", Vector3.new(18, 14, 28), {
+					Size = Vector3.new(12, 8, 1),
+				}),
+				sign("Media Loft", "Home tours and highlight reels", Vector3.new(24, 14, 28), {
+					Size = Vector3.new(14, 8, 1),
 				}),
 			},
 		},
