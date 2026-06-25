@@ -279,15 +279,19 @@ local WorldConfig = {
 		zone("drive-in-theater", "Drive-In Theater", Vector3.new(0, 0, -560), Vector3.new(240, 2, 210), {
 			Color = Color3.fromRGB(66, 55, 78),
 			Accent = Color3.fromRGB(222, 205, 255),
-			Status = "Placeholder",
-			Category = "Future Expansion",
-			ZoneType = "Placeholder",
+			Status = "Active",
+			Category = "Venue",
+			ZoneType = "Active",
 			HubSignOffset = Vector3.new(0, 0, -130),
 			HubPadOffset = Vector3.new(80, 0, 78),
 			HubBoardLabel = "Drive-In",
 			ShortLabel = "Drive-In",
-			LargeSignSubtitle = "Placeholder zone",
-			FutureExpansionText = "Future movie nights and theater features",
+			LargeSignSubtitle = "Movie nights and watch parties",
+			FutureExpansionText = "Active theater district with snack bar and projection booth",
+			TeleportDestinationId = "drive-in-theater",
+			PathColor = Color3.fromRGB(222, 205, 255),
+			PathStartOffset = Vector3.new(0, 0, -36),
+			PathEndOffset = Vector3.new(0, 0, -128),
 		}),
 		zone("offroad-track", "Offroad Track", Vector3.new(-580, 0, -320), Vector3.new(240, 2, 210), {
 			Color = Color3.fromRGB(108, 85, 62),
@@ -1600,6 +1604,181 @@ local WorldConfig = {
 				sign("Gaming Stations", "Alpha + Bravo pods", Vector3.new(-28, 13, 22), {
 					Size = Vector3.new(16, 8, 1),
 					Color = Color3.fromRGB(20, 20, 20),
+				}),
+			},
+		},
+		{
+			Id = "drive-in-theater",
+			Name = "Drive-In Theater",
+			Theme = "Open-air movie lot with snack bar, projection booth, and blanket lounge",
+			Position = Vector3.new(0, 0, -560),
+			Footprint = Vector3.new(138, 28, 118),
+			Color = Color3.fromRGB(48, 42, 62),
+			Accent = Color3.fromRGB(222, 205, 255),
+			RoofTransparency = 0.97,
+			SpawnOffset = Vector3.new(0, 3, -36),
+			AmbientSoundId = 0, -- replace with soft outdoor cinema ambience asset ID
+			ReturnPadOffset = Vector3.new(0, 0.5, 34),
+			ReturnPadOptions = {
+				MarkerOffset = Vector3.new(0, 5, -8),
+				MarkerColor = Color3.fromRGB(34, 28, 42),
+				Subtitle = "Return",
+			},
+			Rooms = {
+				room("Marquee Entrance", Vector3.new(0, 0, -36), Vector3.new(40, 2, 18), {
+					OpenSides = { "North", "South" },
+					FloorColor = Color3.fromRGB(86, 72, 103),
+					WallColor = Color3.fromRGB(222, 205, 255),
+				}),
+				room("Parking Deck", Vector3.new(0, 0, 2), Vector3.new(92, 2, 52), {
+					OpenSides = { "North", "South", "East", "West" },
+					FloorColor = Color3.fromRGB(62, 58, 72),
+					LabelSize = Vector3.new(18, 5, 1),
+				}),
+				room("Snack Bar", Vector3.new(-34, 0, 30), Vector3.new(26, 2, 22), {
+					OpenSides = { "East", "North" },
+					FloorColor = Color3.fromRGB(74, 60, 90),
+					WallColor = Color3.fromRGB(255, 162, 110),
+				}),
+				room("Blanket Lounge", Vector3.new(0, 0, 34), Vector3.new(30, 2, 18), {
+					OpenSides = { "North", "East", "West" },
+					FloorColor = Color3.fromRGB(70, 61, 85),
+					WallColor = Color3.fromRGB(196, 158, 255),
+				}),
+				room("Projection Booth", Vector3.new(34, 0, 30), Vector3.new(24, 2, 22), {
+					OpenSides = { "West", "North" },
+					FloorColor = Color3.fromRGB(58, 52, 70),
+					WallColor = Color3.fromRGB(160, 140, 196),
+				}),
+			},
+			Props = {
+				prop("Drive-In Marquee", "Display", Vector3.new(0, 12, -28), Vector3.new(34, 12, 2), {
+					Color = Color3.fromRGB(64, 50, 84),
+					Accent = Color3.fromRGB(255, 182, 120),
+					Material = Enum.Material.Metal,
+					Label = "Tonight's Double Feature",
+					Message = "Feature night at the Drive-In: trailers, watch parties, and founder movie moments.",
+				}),
+				prop("Ticket Booth", "Display", Vector3.new(0, 6, -20), Vector3.new(16, 8, 8), {
+					Color = Color3.fromRGB(78, 64, 99),
+					Accent = Color3.fromRGB(255, 182, 120),
+					Label = "Ticket Booth",
+					Message = "Ticket booth is serving popcorn passes, blankets, and movie night access.",
+				}),
+				prop("Parking Row Front", "FloorPad", Vector3.new(0, 2.1, -2), Vector3.new(92, 0.2, 0.8), {
+					Color = Color3.fromRGB(188, 178, 205),
+					Material = Enum.Material.Neon,
+					Transparency = 0.22,
+					HideBillboard = true,
+				}),
+				prop("Parking Row Rear", "FloorPad", Vector3.new(0, 2.1, 18), Vector3.new(92, 0.2, 0.8), {
+					Color = Color3.fromRGB(188, 178, 205),
+					Material = Enum.Material.Neon,
+					Transparency = 0.22,
+					HideBillboard = true,
+				}),
+				prop("Front Lounge Pad", "FloorPad", Vector3.new(0, 2.15, 30), Vector3.new(28, 0.2, 14), {
+					Color = Color3.fromRGB(145, 108, 210),
+					Material = Enum.Material.Neon,
+					Transparency = 0.26,
+					HideBillboard = true,
+				}),
+				prop("Blanket Couch Left", "Seat", Vector3.new(-10, 2, 30), Vector3.new(12, 4, 6), {
+					Color = Color3.fromRGB(96, 72, 132),
+					Material = Enum.Material.Fabric,
+					HideBillboard = true,
+				}),
+				prop("Blanket Couch Right", "Seat", Vector3.new(10, 2, 30), Vector3.new(12, 4, 6), {
+					Color = Color3.fromRGB(96, 72, 132),
+					Material = Enum.Material.Fabric,
+					HideBillboard = true,
+				}),
+				prop("Main Feature Screen", "CinemaScreen", Vector3.new(0, 12, 48), Vector3.new(36, 18, 1), {
+					Color = Color3.fromRGB(52, 42, 64),
+					Accent = Color3.fromRGB(222, 205, 255),
+					Label = "Main Feature Screen",
+					HideBillboard = true,
+				}),
+				prop("Screen Base", "Display", Vector3.new(0, 4, 48), Vector3.new(42, 4, 6), {
+					Color = Color3.fromRGB(44, 38, 54),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				prop("Snack Counter", "Table", Vector3.new(-34, 4, 28), Vector3.new(16, 4, 6), {
+					Color = Color3.fromRGB(108, 72, 96),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Popcorn Wall", "Display", Vector3.new(-34, 8, 38), Vector3.new(16, 10, 1), {
+					Color = Color3.fromRGB(92, 62, 86),
+					Label = "Popcorn + Sweets",
+					Message = "Snack bar lineup: popcorn tubs, soda floats, candy bins, and birthday cupcakes.",
+				}),
+				prop("Neon Menu Board", "Display", Vector3.new(-34, 10, 20), Vector3.new(12, 8, 1), {
+					Color = Color3.fromRGB(255, 120, 160),
+					Material = Enum.Material.Neon,
+					Transparency = 0.08,
+					Label = "Late Night Menu",
+					Message = "The late-night menu keeps the movie crowd fueled with snacks, sweets, and frozen drinks.",
+				}),
+				prop("Projection Console", "Display", Vector3.new(34, 7, 28), Vector3.new(14, 10, 4), {
+					Color = Color3.fromRGB(62, 58, 78),
+					Accent = Color3.fromRGB(222, 205, 255),
+					Label = "Projection Console",
+					ActionType = "FounderAction",
+					ActionText = "Cue Reel",
+					ObjectText = "Projection Console",
+					RoleRequired = "Founder",
+					Message = "Founder projection console queued the next trailer reel and special feature intro.",
+				}),
+				prop("Clip Review Monitor", "Display", Vector3.new(34, 10, 38), Vector3.new(12, 8, 1), {
+					Color = Color3.fromRGB(58, 52, 72),
+					Label = "Watch Party Monitor",
+					Message = "Watch party monitor rotates fan clips, birthday edits, and feature previews.",
+				}),
+				prop("Speaker Post Left", "Display", Vector3.new(-44, 6, 10), Vector3.new(3, 12, 3), {
+					Color = Color3.fromRGB(74, 68, 86),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				prop("Speaker Post Right", "Display", Vector3.new(44, 6, 10), Vector3.new(3, 12, 3), {
+					Color = Color3.fromRGB(74, 68, 86),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				prop("Star Lane Strip", "FloorPad", Vector3.new(0, 2.18, 40), Vector3.new(76, 0.15, 0.6), {
+					Color = Color3.fromRGB(255, 197, 120),
+					Material = Enum.Material.Neon,
+					Transparency = 0.18,
+					HideBillboard = true,
+				}),
+			},
+			MediaPanels = {
+				mediaPanel("Feature Trailer Board", "YouTube", Vector3.new(-34, 9, 44), Vector3.new(14, 9, 1), {
+					Title = "Feature Trailer Board",
+				}),
+				mediaPanel("Snack Bar Playlist", "Spotify", Vector3.new(-18, 6, 38), Vector3.new(12, 8, 1), {
+					Title = "Snack Bar Playlist",
+				}),
+				mediaPanel("Watch Party Feed", "Twitch", Vector3.new(18, 9, 44), Vector3.new(14, 9, 1), {
+					Title = "Watch Party Feed",
+				}),
+			},
+			Signs = {
+				sign("Drive-In Theater", "Movie nights, trailers, and watch parties", Vector3.new(0, 21, -58), {
+					Size = Vector3.new(24, 10, 1),
+				}),
+				sign("Snack Bar", "Popcorn, sweets, and frozen drinks", Vector3.new(-34, 14, 18), {
+					Size = Vector3.new(14, 8, 1),
+					Color = Color3.fromRGB(52, 42, 64),
+				}),
+				sign("Projection Booth", "Founder reel control", Vector3.new(34, 14, 18), {
+					Size = Vector3.new(14, 8, 1),
+					Color = Color3.fromRGB(52, 42, 64),
+				}),
+				sign("Blanket Lounge", "Front-row couches and blankets", Vector3.new(0, 12, 20), {
+					Size = Vector3.new(16, 8, 1),
+					Color = Color3.fromRGB(52, 42, 64),
 				}),
 			},
 		},
