@@ -608,33 +608,95 @@ local function createSlidePlaceholder(propsFolder, venueConfig, propConfig)
 	local slideFolder = createFolder(propConfig.Name, propsFolder)
 	local center = worldPosition(venueConfig, propConfig.Offset)
 	local slideSize = propConfig.Size
+	local color = propConfig.Color or venueConfig.Color
+	local accent = propConfig.Accent or venueConfig.Accent
 
+	-- Top platform
 	createPart("SlidePlatform", slideFolder, {
-		Size = Vector3.new(6, 1, 6),
+		Size = Vector3.new(7, 1, 7),
 		Position = center + Vector3.new(-slideSize.X / 4, slideSize.Y, 0),
-		Color = propConfig.Accent or venueConfig.Accent,
+		Color = accent,
 		Material = Enum.Material.Metal,
 		CanCollide = true,
 	})
 
+	-- Platform safety railing (back + one side)
+	createPart("PlatformRailBack", slideFolder, {
+		Size = Vector3.new(7, 3, 0.4),
+		Position = center + Vector3.new(-slideSize.X / 4, slideSize.Y + 2, -3.5),
+		Color = Color3.fromRGB(195, 210, 220),
+		Material = Enum.Material.Metal,
+		CanCollide = false,
+	})
+	createPart("PlatformRailSide", slideFolder, {
+		Size = Vector3.new(0.4, 3, 7),
+		Position = center + Vector3.new(-slideSize.X / 4 - 3.5, slideSize.Y + 2, 0),
+		Color = Color3.fromRGB(195, 210, 220),
+		Material = Enum.Material.Metal,
+		CanCollide = false,
+	})
+
+	-- Slide ramp (WedgePart rotated so slope runs along X)
 	createPart("SlideRamp", slideFolder, {
 		ClassName = "WedgePart",
 		Size = Vector3.new(slideSize.X, slideSize.Y, slideSize.Z),
 		Position = center + Vector3.new(0, slideSize.Y / 2, 0),
-		Color = propConfig.Color or venueConfig.Color,
+		Color = color,
 		Material = Enum.Material.SmoothPlastic,
 		CFrame = CFrame.new(center + Vector3.new(0, slideSize.Y / 2, 0)) * CFrame.Angles(0, math.rad(90), 0),
 		CanCollide = true,
 	})
 
+	-- Support column under the platform
+	createPart("SlideColumn", slideFolder, {
+		Size = Vector3.new(2, slideSize.Y, 2),
+		Position = center + Vector3.new(-slideSize.X / 4, slideSize.Y / 2, 0),
+		Color = Color3.fromRGB(170, 185, 198),
+		Material = Enum.Material.Metal,
+		CanCollide = true,
+	})
+
+	-- Ladder rungs (4 evenly spaced up the column)
+	for r = 1, 4 do
+		createPart("LadderRung" .. r, slideFolder, {
+			Size = Vector3.new(3.5, 0.4, 0.4),
+			Position = Vector3.new(
+				center.X - slideSize.X / 4,
+				center.Y + slideSize.Y * (r / 5),
+				center.Z - 1.2
+			),
+			Color = Color3.fromRGB(155, 175, 190),
+			Material = Enum.Material.Metal,
+			CanCollide = true,
+		})
+	end
+
+	-- Splash pool at the landing zone (opposite side from platform)
+	createPart("SplashPool", slideFolder, {
+		Size = Vector3.new(slideSize.Z + 4, 2, 8),
+		Position = center + Vector3.new(slideSize.X * 0.44, 1, 0),
+		Color = Color3.fromRGB(60, 170, 230),
+		Material = Enum.Material.Glass,
+		Transparency = 0.3,
+		CanCollide = true,
+	})
+	createPart("SplashFoam", slideFolder, {
+		Size = Vector3.new(slideSize.Z + 4, 0.3, 8.2),
+		Position = center + Vector3.new(slideSize.X * 0.44, 2.2, 0),
+		Color = Color3.fromRGB(200, 238, 255),
+		Material = Enum.Material.Neon,
+		Transparency = 0.18,
+		CanCollide = false,
+	})
+
 	local labelAnchor = createPart("SlideLabel", slideFolder, {
 		Size = Vector3.new(4, 1, 4),
-		Position = center + Vector3.new(0, slideSize.Y + 3, 0),
-		Color = propConfig.Accent or venueConfig.Accent,
+		Position = center + Vector3.new(0, slideSize.Y + 4, 0),
+		Color = accent,
 		Material = Enum.Material.Neon,
 		CanCollide = false,
 	})
-	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, "Placeholder", venueConfig.Accent)
+	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, "Water Slide", venueConfig.Accent)
 end
 
 local function createArcadeCabinetProp(propsFolder, venueConfig, propConfig)

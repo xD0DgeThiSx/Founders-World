@@ -249,15 +249,19 @@ local WorldConfig = {
 		zone("water-park", "Water Park", Vector3.new(0, 0, 500), Vector3.new(210, 2, 180), {
 			Color = Color3.fromRGB(95, 185, 230),
 			Accent = Color3.fromRGB(225, 247, 255),
-			Status = "Placeholder",
-			Category = "Future Expansion",
-			ZoneType = "Placeholder",
+			Status = "Active",
+			Category = "Venue",
+			ZoneType = "Active",
 			HubSignOffset = Vector3.new(0, 0, 126),
 			HubPadOffset = Vector3.new(0, 0, 78),
 			HubBoardLabel = "Water Park",
-			ShortLabel = "Water",
-			LargeSignSubtitle = "Placeholder zone",
-			FutureExpansionText = "Future water attractions and slides",
+			ShortLabel = "Water Park",
+			LargeSignSubtitle = "Slides, splash pads & lazy river",
+			FutureExpansionText = "Water attractions, slides, and splash zones",
+			TeleportDestinationId = "water-park",
+			PathColor = Color3.fromRGB(95, 185, 230),
+			PathStartOffset = Vector3.new(0, 0, 42),
+			PathEndOffset = Vector3.new(0, 0, 132),
 		}),
 		zone("outdoor-mall", "Outdoor Mall", Vector3.new(520, 0, 40), Vector3.new(210, 2, 180), {
 			Color = Color3.fromRGB(201, 196, 174),
@@ -1596,6 +1600,229 @@ local WorldConfig = {
 				sign("Gaming Stations", "Alpha + Bravo pods", Vector3.new(-28, 13, 22), {
 					Size = Vector3.new(16, 8, 1),
 					Color = Color3.fromRGB(20, 20, 20),
+				}),
+			},
+		},
+		{
+			Id = "water-park",
+			Name = "Water Park",
+			Theme = "Outdoor water park with slides, lazy river, and splash zones",
+			Position = Vector3.new(0, 0, 500),
+			Footprint = Vector3.new(140, 28, 110),
+			Color = Color3.fromRGB(60, 155, 210),
+			Accent = Color3.fromRGB(220, 245, 255),
+			RoofTransparency = 0.96,
+			SpawnOffset = Vector3.new(0, 3, -32),
+			AmbientSoundId = 0, -- replace with summer/splash sound asset ID
+			Rooms = {
+				room("Entrance Hall", Vector3.new(0, 0, -40), Vector3.new(52, 2, 22), {
+					OpenSides = { "South", "North" },
+					FloorColor = Color3.fromRGB(215, 235, 245),
+				}),
+				room("Main Pool Deck", Vector3.new(8, 0, 8), Vector3.new(80, 2, 54), {
+					OpenSides = { "North", "East", "West", "South" },
+					FloorColor = Color3.fromRGB(185, 225, 245),
+				}),
+				room("Slide Tower Zone", Vector3.new(-36, 0, 36), Vector3.new(32, 2, 30), {
+					OpenSides = { "East", "South" },
+					FloorColor = Color3.fromRGB(175, 218, 240),
+				}),
+				room("River Run", Vector3.new(44, 0, 16), Vector3.new(36, 2, 50), {
+					OpenSides = { "West", "South" },
+					FloorColor = Color3.fromRGB(190, 228, 246),
+				}),
+			},
+			Props = {
+				-- === WAVE POOL ===
+				prop("Wave Pool", "Pool", Vector3.new(4, 0, 8), Vector3.new(52, 5, 30), {
+					Color = Color3.fromRGB(60, 160, 220),
+					Accent = Color3.fromRGB(215, 245, 255),
+					Label = "Wave Pool",
+					Subtitle = "Main Pool",
+				}),
+				prop("Wave Pool Neon Edge", "FloorPad", Vector3.new(4, 2.15, 23.5), Vector3.new(54, 0.2, 0.5), {
+					Color = Color3.fromRGB(80, 200, 255),
+					Material = Enum.Material.Neon,
+					Transparency = 0.15,
+					HideBillboard = true,
+				}),
+				-- === LAZY RIVER ===
+				prop("Lazy River", "Pool", Vector3.new(44, 0, 16), Vector3.new(28, 3, 44), {
+					Color = Color3.fromRGB(50, 145, 200),
+					Accent = Color3.fromRGB(200, 240, 255),
+					Label = "Lazy River",
+					Subtitle = "River Run",
+				}),
+				prop("River Current Foam", "FloorPad", Vector3.new(44, 2.15, 16), Vector3.new(24, 0.2, 40), {
+					Color = Color3.fromRGB(180, 235, 255),
+					Material = Enum.Material.Neon,
+					Transparency = 0.35,
+					HideBillboard = true,
+				}),
+				-- === SLIDE TOWER ===
+				prop("Slide Tower Base", "Display", Vector3.new(-36, 12, 38), Vector3.new(22, 26, 22), {
+					Color = Color3.fromRGB(45, 120, 175),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				prop("Slide Tower Top", "Display", Vector3.new(-36, 26, 38), Vector3.new(24, 2, 24), {
+					Color = Color3.fromRGB(220, 245, 255),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				prop("Tower Rail A", "Display", Vector3.new(-24, 32, 38), Vector3.new(0.5, 12, 22), {
+					Color = Color3.fromRGB(160, 200, 220),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				prop("Tower Rail B", "Display", Vector3.new(-48, 32, 38), Vector3.new(0.5, 12, 22), {
+					Color = Color3.fromRGB(160, 200, 220),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				-- === WATER SLIDES ===
+				prop("Big Blue Slide", "Slide", Vector3.new(-22, 0, 46), Vector3.new(10, 24, 8), {
+					Color = Color3.fromRGB(30, 130, 220),
+					Accent = Color3.fromRGB(220, 245, 255),
+					Label = "Big Blue Slide",
+				}),
+				prop("Speed Slide", "Slide", Vector3.new(-38, 0, 46), Vector3.new(8, 20, 6), {
+					Color = Color3.fromRGB(255, 100, 30),
+					Accent = Color3.fromRGB(255, 200, 150),
+					Label = "Speed Slide",
+				}),
+				prop("Family Slide", "Slide", Vector3.new(-30, 0, 24), Vector3.new(12, 14, 10), {
+					Color = Color3.fromRGB(200, 80, 220),
+					Accent = Color3.fromRGB(240, 200, 255),
+					Label = "Family Slide",
+				}),
+				-- === SPLASH PAD ===
+				prop("Splash Pad Floor", "FloorPad", Vector3.new(-26, 2.1, -14), Vector3.new(28, 0.2, 22), {
+					Color = Color3.fromRGB(80, 200, 255),
+					Material = Enum.Material.Neon,
+					Transparency = 0.2,
+					Label = "Splash Pad",
+				}),
+				prop("Splash Jet A", "Display", Vector3.new(-34, 5, -8), Vector3.new(1.5, 8, 1.5), {
+					Color = Color3.fromRGB(150, 220, 255),
+					Material = Enum.Material.Neon,
+					Shape = Enum.PartType.Cylinder,
+					HideBillboard = true,
+				}),
+				prop("Splash Jet B", "Display", Vector3.new(-22, 5, -8), Vector3.new(1.5, 8, 1.5), {
+					Color = Color3.fromRGB(150, 220, 255),
+					Material = Enum.Material.Neon,
+					Shape = Enum.PartType.Cylinder,
+					HideBillboard = true,
+				}),
+				prop("Splash Jet C", "Display", Vector3.new(-34, 5, -20), Vector3.new(1.5, 8, 1.5), {
+					Color = Color3.fromRGB(100, 200, 255),
+					Material = Enum.Material.Neon,
+					Shape = Enum.PartType.Cylinder,
+					HideBillboard = true,
+				}),
+				prop("Splash Jet D", "Display", Vector3.new(-22, 5, -20), Vector3.new(1.5, 8, 1.5), {
+					Color = Color3.fromRGB(100, 200, 255),
+					Material = Enum.Material.Neon,
+					Shape = Enum.PartType.Cylinder,
+					HideBillboard = true,
+				}),
+				prop("Splash Foam Center", "FloorPad", Vector3.new(-28, 2.3, -14), Vector3.new(6, 0.2, 6), {
+					Color = Color3.fromRGB(200, 240, 255),
+					Material = Enum.Material.Neon,
+					Transparency = 0.1,
+					HideBillboard = true,
+				}),
+				-- === AMENITIES ===
+				prop("Concession Stand", "Display", Vector3.new(52, 6, -28), Vector3.new(16, 10, 8), {
+					Color = Color3.fromRGB(255, 200, 60),
+					Accent = Color3.fromRGB(255, 240, 160),
+					Label = "Concession Stand",
+					Message = "Snacks, drinks, and sunscreen! Open all day at the Water Park.",
+				}),
+				prop("Concession Counter", "Table", Vector3.new(52, 3, -20), Vector3.new(14, 5, 5), {
+					Color = Color3.fromRGB(255, 220, 80),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Lifeguard Chair", "Display", Vector3.new(4, 10, -16), Vector3.new(4, 14, 4), {
+					Color = Color3.fromRGB(255, 80, 20),
+					Accent = Color3.fromRGB(255, 240, 200),
+					Label = "Lifeguard",
+					Message = "Lifeguard on duty! Stay safe and have fun.",
+				}),
+				prop("Lifeguard Seat", "Seat", Vector3.new(4, 14, -16), Vector3.new(5, 3, 4), {
+					Color = Color3.fromRGB(255, 100, 30),
+					Material = Enum.Material.Fabric,
+					HideBillboard = true,
+				}),
+				prop("Inner Tube Rack", "Display", Vector3.new(-60, 6, -30), Vector3.new(10, 10, 4), {
+					Color = Color3.fromRGB(255, 150, 40),
+					Accent = Color3.fromRGB(255, 220, 100),
+					Label = "Inner Tubes",
+					Message = "Grab a tube for the Lazy River! Return when done.",
+				}),
+				prop("Towel Station", "Table", Vector3.new(58, 3, -4), Vector3.new(8, 5, 4), {
+					Color = Color3.fromRGB(240, 240, 240),
+					Material = Enum.Material.Fabric,
+					Label = "Towel Station",
+				}),
+				prop("Pool Chairs West A", "PoolChair", Vector3.new(-60, 2, -8), Vector3.new(8, 3, 4), {
+					Color = Color3.fromRGB(255, 240, 220),
+					Accent = Color3.fromRGB(220, 245, 255),
+					HideBillboard = true,
+				}),
+				prop("Pool Chairs West B", "PoolChair", Vector3.new(-60, 2, 0), Vector3.new(8, 3, 4), {
+					Color = Color3.fromRGB(255, 240, 220),
+					Accent = Color3.fromRGB(220, 245, 255),
+					HideBillboard = true,
+				}),
+				prop("Pool Chairs East A", "PoolChair", Vector3.new(58, 2, 8), Vector3.new(8, 3, 4), {
+					Color = Color3.fromRGB(255, 240, 220),
+					Accent = Color3.fromRGB(220, 245, 255),
+					HideBillboard = true,
+				}),
+				prop("Pool Chairs East B", "PoolChair", Vector3.new(58, 2, 16), Vector3.new(8, 3, 4), {
+					Color = Color3.fromRGB(255, 240, 220),
+					Accent = Color3.fromRGB(220, 245, 255),
+					HideBillboard = true,
+				}),
+				-- === ENTRANCE ARCH ===
+				prop("Entrance Arch Left", "Display", Vector3.new(-18, 16, -52), Vector3.new(4, 28, 4), {
+					Color = Color3.fromRGB(60, 155, 210),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				prop("Entrance Arch Right", "Display", Vector3.new(18, 16, -52), Vector3.new(4, 28, 4), {
+					Color = Color3.fromRGB(60, 155, 210),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				prop("Entrance Arch Span", "Display", Vector3.new(0, 30, -52), Vector3.new(40, 4, 4), {
+					Color = Color3.fromRGB(80, 180, 240),
+					Material = Enum.Material.Neon,
+					Transparency = 0.1,
+					Label = "Water Park",
+					Message = "Welcome to the Founder's World Water Park! Slides, splash pads, and lazy river ahead.",
+				}),
+			},
+			Signs = {
+				sign("Water Park", "Slides · Lazy River · Splash Pad", Vector3.new(0, 20, -54), {
+					Size = Vector3.new(24, 10, 1),
+					Color = Color3.fromRGB(30, 100, 170),
+					Accent = Color3.fromRGB(220, 245, 255),
+				}),
+				sign("Wave Pool", "Main pool area — watch for waves!", Vector3.new(4, 14, -7), {
+					Size = Vector3.new(14, 8, 1),
+				}),
+				sign("Lazy River", "Grab a tube and float", Vector3.new(44, 14, -6), {
+					Size = Vector3.new(14, 8, 1),
+				}),
+				sign("Slides", "Big Blue · Speed · Family", Vector3.new(-36, 14, 8), {
+					Size = Vector3.new(14, 8, 1),
+				}),
+				sign("Splash Pad", "Jet zone for all ages", Vector3.new(-26, 14, -26), {
+					Size = Vector3.new(12, 8, 1),
 				}),
 			},
 		},
