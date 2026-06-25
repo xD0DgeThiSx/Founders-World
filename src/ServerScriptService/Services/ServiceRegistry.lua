@@ -8,7 +8,11 @@ local ServiceRegistry = {}
 
 function ServiceRegistry.start()
 	RemoteRegistryService.start()
-	WorldBuilderService.build()
+	local buildOk, buildErr = pcall(WorldBuilderService.build)
+	if not buildOk then
+		warn("[FoundersWorld] WorldBuilderService.build failed:", buildErr)
+		return
+	end
 	PlayerSessionService.start()
 	InteractionService.start()
 end

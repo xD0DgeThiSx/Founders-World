@@ -955,10 +955,6 @@ local function getPropInteractionDefinition(venueConfig, propConfig)
 end
 
 local function createVehicle(vehiclesFolder, vehicleConfig)
-	local folder = createFolder(vehicleConfig.Id, vehiclesFolder)
-	local px = vehicleConfig.Position.X
-	local py = vehicleConfig.Position.Y -- floor level; vehicle body sits on top of this
-	local pz = vehicleConfig.Position.Z
 	local c = vehicleConfig.Color
 	local accent = vehicleConfig.Accent or c
 	local vt = vehicleConfig.VehicleType
@@ -974,9 +970,13 @@ local function createVehicle(vehiclesFolder, vehicleConfig)
 		roofW, roofH, roofL = 9, 2, 11
 	end
 
-	-- All vehicles face +Z: front (headlights) = +Z, rear (taillights) = -Z.
-	-- Player spawns at Z=42, vehicles at Z=5, so players see the front face.
-	local function makePart(name, x, y, z, sx, sy, sz, color, material, transparency)
+	-- Build a Model so PrimaryPart + PivotTo can position the whole assembly.
+	-- All parts are built at LOCAL coordinates (origin = vehicle ground-centre).
+	-- PivotTo then moves the model to world position in one shot.
+	local model = Instance.new("Model")
+	model.Name = vehicleConfig.Id
+
+	local function makePart(name, lx, ly, lz, sx, sy, sz, color, material, transparency)
 		local part = Instance.new("Part")
 		part.Name = name
 		part.Size = Vector3.new(sx, sy, sz)
@@ -987,33 +987,30 @@ local function createVehicle(vehiclesFolder, vehicleConfig)
 		part.TopSurface = Enum.SurfaceType.Smooth
 		part.BottomSurface = Enum.SurfaceType.Smooth
 		if transparency then part.Transparency = transparency end
-		part.CFrame = CFrame.new(x, y, z) -- set position before parenting
-		part.Parent = folder
+		-- All properties set before parenting
+		part.CFrame = CFrame.new(lx, ly, lz)
+		part.Parent = model
 		return part
 	end
 
-	local bodyY = py + bodyH / 2
-	local body = makePart("Body", px, bodyY, pz, bodyW, bodyH, bodyL, c)
+	-- Body centre is bodyH/2 above ground (local Y=0 is floor surface)
+	local bodyLocalY = bodyH / 2
+	local body = makePart("Body", 0, bodyLocalY, 0, bodyW, bodyH, bodyL, c)
 
 	if hasRoof then
-		local roofY = py + bodyH + roofH / 2
-		local roofZ = pz - bodyL / 2 + roofL / 2 + 1
-		makePart("Roof", px, roofY, roofZ, roofW, roofH, roofL, c)
+		makePart("Roof", 0, bodyH + roofH / 2, -bodyL / 2 + roofL / 2 + 1, roofW, roofH, roofL, c)
 	end
 
-	-- Headlights on front face (+Z)
-	local lightY = py + bodyH - 1.5
-	local frontZ = pz + bodyL / 2
-	makePart("HeadlightL", px - bodyW / 2 + 1.8, lightY, frontZ, 2.5, 1.5, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
-	makePart("HeadlightR", px + bodyW / 2 - 1.8, lightY, frontZ, 2.5, 1.5, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
+	-- Headlights on front face (+Z), taillights on rear face (-Z)
+	local lightLocalY = bodyH - 1.5
+	local frontLZ = bodyL / 2
+	local rearLZ  = -bodyL / 2
+	makePart("HeadlightL", -bodyW / 2 + 1.8, lightLocalY, frontLZ, 2.5, 1.5, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
+	makePart("HeadlightR",  bodyW / 2 - 1.8, lightLocalY, frontLZ, 2.5, 1.5, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
+	makePart("TaillightL", -bodyW / 2 + 1.8, lightLocalY, rearLZ,  2.5, 1.5, 0.4, Color3.fromRGB(220, 30, 30),  Enum.Material.Neon)
+	makePart("TaillightR",  bodyW / 2 - 1.8, lightLocalY, rearLZ,  2.5, 1.5, 0.4, Color3.fromRGB(220, 30, 30),  Enum.Material.Neon)
 
-	-- Taillights on rear face (-Z)
-	local rearZ = pz - bodyL / 2
-	makePart("TaillightL", px - bodyW / 2 + 1.8, lightY, rearZ, 2.5, 1.5, 0.4, Color3.fromRGB(220, 30, 30), Enum.Material.Neon)
-	makePart("TaillightR", px + bodyW / 2 - 1.8, lightY, rearZ, 2.5, 1.5, 0.4, Color3.fromRGB(220, 30, 30), Enum.Material.Neon)
-
-	-- License plate on front face
-	local plate = makePart("LicensePlate", px, py + 2, frontZ, 5, 1.5, 0.4, Color3.fromRGB(245, 245, 245))
+	local plate = makePart("LicensePlate", 0, 2, frontLZ, 5, 1.5, 0.4, Color3.fromRGB(245, 245, 245))
 	createBillboardText(plate, vehicleConfig.PlateText, "", Color3.fromRGB(20, 20, 20), {
 		AlwaysOnTop = false,
 		MaxDistance = 30,
@@ -1021,15 +1018,26 @@ local function createVehicle(vehiclesFolder, vehicleConfig)
 		StudsOffset = Vector3.new(0, 0, 0),
 	})
 
-	-- Floating owner label above vehicle (invisible anchor)
-	local topY = py + bodyH + (hasRoof and roofH or 0) + 3
-	local labelAnchor = makePart("OwnerAnchor", px, topY, pz, 1, 0.2, 1, accent, Enum.Material.Neon, 1)
+	local labelAnchor = makePart("OwnerAnchor", 0, bodyH + (hasRoof and roofH or 0) + 3, 0, 1, 0.2, 1, accent, Enum.Material.Neon, 1)
 	createBillboardText(labelAnchor, vehicleConfig.PlateText, vehicleConfig.Owner or vehicleConfig.Name, Color3.fromRGB(255, 255, 255), {
 		AlwaysOnTop = false,
 		MaxDistance = 60,
 		Size = UDim2.fromOffset(160, 44),
 		StudsOffset = Vector3.new(0, 2, 0),
 	})
+
+	-- PrimaryPart must be set before PivotTo
+	model.PrimaryPart = body
+
+	-- Parent model LAST, then PivotTo world position, then wait for replication
+	model.Parent = vehiclesFolder
+	-- Config Position.Y is the floor surface; body centre is bodyH/2 above that
+	model:PivotTo(CFrame.new(
+		vehicleConfig.Position.X,
+		vehicleConfig.Position.Y + bodyLocalY,
+		vehicleConfig.Position.Z
+	))
+	task.wait()
 
 	InteractionService.registerPrompt(body, {
 		ActionType = "Notify",
@@ -1425,7 +1433,10 @@ function WorldBuilderService.build()
 	end
 
 	for _, vehicleConfig in ipairs(WorldConfig.Vehicles or {}) do
-		createVehicle(folders.Vehicles, vehicleConfig)
+		local ok, err = pcall(createVehicle, folders.Vehicles, vehicleConfig)
+		if not ok then
+			warn("[FoundersWorld] Vehicle build failed for", vehicleConfig.Id, ":", err)
+		end
 	end
 end
 
