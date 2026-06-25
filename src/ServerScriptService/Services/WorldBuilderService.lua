@@ -116,6 +116,21 @@ local function createPlateText(parent, face, text, textColor)
 	return surfaceGui
 end
 
+local function attachPointLight(part, lightConfig)
+	if not lightConfig then
+		return
+	end
+
+	local light = Instance.new("PointLight")
+	light.Name = "PointLight"
+	light.Color = lightConfig.Color or Color3.fromRGB(255, 244, 232)
+	light.Range = lightConfig.Range or 12
+	light.Brightness = lightConfig.Brightness or 1
+	light.Shadows = lightConfig.Shadows or false
+	light.Enabled = lightConfig.Enabled ~= false
+	light.Parent = part
+end
+
 local function createBillboardText(part, title, subtitle, textColor, options)
 	options = options or {}
 
@@ -604,15 +619,17 @@ local function createRoom(roomsFolder, venueConfig, roomConfig)
 		end
 	end
 
-	local labelPart = createPart("RoomLabel", roomFolder, {
-		Size = roomConfig.LabelSize or Vector3.new(math.min(roomConfig.Size.X * 0.6, 16), 4, 1),
-		Position = roomConfig.LabelOffset and (center + roomConfig.LabelOffset)
-			or Vector3.new(center.X, venueConfig.Position.Y + wallHeight - 2, center.Z - roomConfig.Size.Z / 2 + 0.8),
-		Color = wallColor,
-		Material = Enum.Material.SmoothPlastic,
-		CanCollide = false,
-	})
-	createSurfaceText(labelPart, roomConfig.LabelFace or Enum.NormalId.Front, roomConfig.Label, venueConfig.Name, venueConfig.Color)
+	if not roomConfig.HideLabel then
+		local labelPart = createPart("RoomLabel", roomFolder, {
+			Size = roomConfig.LabelSize or Vector3.new(math.min(roomConfig.Size.X * 0.6, 16), 4, 1),
+			Position = roomConfig.LabelOffset and (center + roomConfig.LabelOffset)
+				or Vector3.new(center.X, venueConfig.Position.Y + wallHeight - 2, center.Z - roomConfig.Size.Z / 2 + 0.8),
+			Color = wallColor,
+			Material = Enum.Material.SmoothPlastic,
+			CanCollide = false,
+		})
+		createSurfaceText(labelPart, roomConfig.LabelFace or Enum.NormalId.Front, roomConfig.Label, venueConfig.Name, venueConfig.Color)
+	end
 end
 
 local function createStandardProp(propsFolder, venueConfig, propConfig)
@@ -626,6 +643,8 @@ local function createStandardProp(propsFolder, venueConfig, propConfig)
 		Transparency = propConfig.Transparency,
 		CanCollide = true,
 	})
+
+	attachPointLight(propPart, propConfig.PointLight)
 
 	if not propConfig.HideBillboard then
 		createBillboardText(propPart, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
@@ -662,11 +681,13 @@ local function createPoolPlaceholder(propsFolder, venueConfig, propConfig)
 		Material = Enum.Material.Neon,
 		CanCollide = false,
 	})
-	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Subtitle or "Pool", venueConfig.Accent, {
-		MaxDistance = 60,
-		Size = UDim2.fromOffset(145, 40),
-		StudsOffset = Vector3.new(0, 2.75, 0),
-	})
+	if not propConfig.HideBillboard then
+		createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Subtitle or "Pool", venueConfig.Accent, {
+			MaxDistance = 60,
+			Size = UDim2.fromOffset(145, 40),
+			StudsOffset = Vector3.new(0, 2.75, 0),
+		})
+	end
 end
 
 local function createHotTubPlaceholder(propsFolder, venueConfig, propConfig)
@@ -698,11 +719,13 @@ local function createHotTubPlaceholder(propsFolder, venueConfig, propConfig)
 		Material = Enum.Material.Neon,
 		CanCollide = false,
 	})
-	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Subtitle or "Spa", venueConfig.Accent, {
-		MaxDistance = 60,
-		Size = UDim2.fromOffset(145, 40),
-		StudsOffset = Vector3.new(0, 2.75, 0),
-	})
+	if not propConfig.HideBillboard then
+		createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Subtitle or "Spa", venueConfig.Accent, {
+			MaxDistance = 60,
+			Size = UDim2.fromOffset(145, 40),
+			StudsOffset = Vector3.new(0, 2.75, 0),
+		})
+	end
 end
 
 local function createSlidePlaceholder(propsFolder, venueConfig, propConfig)
@@ -797,7 +820,9 @@ local function createSlidePlaceholder(propsFolder, venueConfig, propConfig)
 		Material = Enum.Material.Neon,
 		CanCollide = false,
 	})
-	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, "Water Slide", venueConfig.Accent)
+	if not propConfig.HideBillboard then
+		createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, "Water Slide", venueConfig.Accent)
+	end
 end
 
 local function createArcadeCabinetProp(propsFolder, venueConfig, propConfig)
@@ -850,7 +875,9 @@ local function createArcadeCabinetProp(propsFolder, venueConfig, propConfig)
 		Material = Enum.Material.Neon,
 		CanCollide = false,
 	})
-	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+	if not propConfig.HideBillboard then
+		createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+	end
 end
 
 local function createCinemaScreenProp(propsFolder, venueConfig, propConfig)
@@ -902,7 +929,9 @@ local function createCinemaScreenProp(propsFolder, venueConfig, propConfig)
 		Material = Enum.Material.Neon,
 		CanCollide = false,
 	})
-	createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+	if not propConfig.HideBillboard then
+		createBillboardText(labelAnchor, propConfig.Label or propConfig.Name, propConfig.Kind, venueConfig.Accent)
+	end
 end
 
 local function createPoolChairProp(propsFolder, venueConfig, propConfig)
