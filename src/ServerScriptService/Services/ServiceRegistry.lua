@@ -8,9 +8,9 @@ local ServiceRegistry = {}
 
 function ServiceRegistry.start()
 	RemoteRegistryService.start()
+	WorldBuilderService.build()
 	PlayerSessionService.start()
 	InteractionService.start()
-	WorldBuilderService.build()
 end
 
 return ServiceRegistry
