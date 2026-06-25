@@ -230,15 +230,15 @@ local WorldConfig = {
 			PathStartOffset = Vector3.new(-38, 0, 24),
 			PathEndOffset = Vector3.new(-118, 0, 96),
 		}),
-		zone("bo6-gaming-lounge", "BO6 Gaming Lounge", Vector3.new(-360, 0, -40), Vector3.new(196, 2, 168), {
+		zone("bo6-gaming-lounge", "Black Ops 7 Gaming Lounge", Vector3.new(-360, 0, -40), Vector3.new(196, 2, 168), {
 			Color = Color3.fromRGB(60, 60, 60),
 			Accent = Color3.fromRGB(255, 111, 0),
 			Category = "Venue",
 			ZoneType = "Active",
 			HubSignOffset = Vector3.new(-154, 0, -18),
 			HubPadOffset = Vector3.new(-106, 0, -10),
-			HubBoardLabel = "BO6",
-			ShortLabel = "BO6",
+			HubBoardLabel = "Black Ops 7",
+			ShortLabel = "Black Ops 7",
 			LargeSignSubtitle = "Competitive play district",
 			FutureExpansionText = "Active venue ready for tournament systems",
 			TeleportDestinationId = "bo6-gaming-lounge",
@@ -317,7 +317,7 @@ local WorldConfig = {
 		road("PlazaToGirlsHangout", Vector3.new(70, 1.1, -70), Vector3.new(220, 1.1, -240), 14),
 		road("PlazaToFounderLounge", Vector3.new(80, 1.1, 70), Vector3.new(260, 1.1, 150), 14),
 		road("PlazaToContentForge", Vector3.new(-80, 1.1, 70), Vector3.new(-300, 1.1, 170), 14),
-		road("PlazaToBO6", Vector3.new(-90, 1.1, 10), Vector3.new(-300, 1.1, -20), 14),
+		road("PlazaToBlack Ops 7", Vector3.new(-90, 1.1, 10), Vector3.new(-300, 1.1, -20), 14),
 		road("PlazaToWaterPark", Vector3.new(0, 1.1, 120), Vector3.new(0, 1.1, 410), 14),
 		road("PlazaToOutdoorMall", Vector3.new(120, 1.1, 10), Vector3.new(430, 1.1, 35), 14),
 		road("PlazaToDriveIn", Vector3.new(0, 1.1, -120), Vector3.new(0, 1.1, -470), 14),
@@ -326,7 +326,7 @@ local WorldConfig = {
 		road("StrombladToGirlsHangout", Vector3.new(-170, 1.1, -300), Vector3.new(170, 1.1, -300), 10, {
 			Color = Color3.fromRGB(92, 92, 92),
 		}),
-		road("ContentForgeToBO6", Vector3.new(-360, 1.1, 120), Vector3.new(-360, 1.1, 50), 10, {
+		road("ContentForgeToBlack Ops 7", Vector3.new(-360, 1.1, 120), Vector3.new(-360, 1.1, 50), 10, {
 			Color = Color3.fromRGB(92, 92, 92),
 		}),
 	},
@@ -454,6 +454,16 @@ local WorldConfig = {
 					Material = Enum.Material.WoodPlanks,
 					HideBillboard = true,
 				}),
+				prop("Loft Screen", "CinemaScreen", Vector3.new(24, 11, 48), Vector3.new(20, 11, 1), {
+					Color = Color3.fromRGB(162, 131, 94),
+					Accent = Color3.fromRGB(241, 219, 187),
+					Label = "Media Loft Screen",
+				}),
+				prop("Lounge TV", "CinemaScreen", Vector3.new(-14, 10, 22), Vector3.new(14, 9, 1), {
+					Color = Color3.fromRGB(50, 40, 30),
+					Accent = Color3.fromRGB(241, 219, 187),
+					Label = "Family Lounge TV",
+				}),
 				-- Master Suite
 				prop("King Bed", "Seat", Vector3.new(-20, 2, -38), Vector3.new(16, 4, 10), {
 					Color = Color3.fromRGB(107, 79, 57),
@@ -543,6 +553,17 @@ local WorldConfig = {
 				prop("Potted Plant B", "Display", Vector3.new(14, 5, -12), Vector3.new(5, 8, 5), {
 					Color = Color3.fromRGB(76, 128, 58),
 					Shape = Enum.PartType.Ball,
+					HideBillboard = true,
+				}),
+				prop("Pool Slide", "Slide", Vector3.new(-7, 0, 44), Vector3.new(8, 7, 5), {
+					Color = Color3.fromRGB(241, 219, 187),
+					Accent = Color3.fromRGB(162, 131, 94),
+					Label = "Pool Slide",
+				}),
+				prop("Pool Neon Edge", "FloorPad", Vector3.new(-20, 2.15, 47), Vector3.new(26, 0.2, 0.5), {
+					Color = Color3.fromRGB(96, 182, 230),
+					Material = Enum.Material.Neon,
+					Transparency = 0.2,
 					HideBillboard = true,
 				}),
 			},
@@ -639,6 +660,16 @@ local WorldConfig = {
 					Color = Color3.fromRGB(230, 160, 210),
 					Material = Enum.Material.WoodPlanks,
 				}),
+				prop("DJ Booth", "Table", Vector3.new(-22, 4, -2), Vector3.new(10, 6, 4), {
+					Color = Color3.fromRGB(35, 20, 45),
+					Material = Enum.Material.Metal,
+					Label = "DJ Booth",
+				}),
+				prop("DJ Light Bar", "Display", Vector3.new(-22, 8, -2), Vector3.new(10, 1.5, 1), {
+					Color = Color3.fromRGB(255, 80, 180),
+					Material = Enum.Material.Neon,
+					HideBillboard = true,
+				}),
 				prop("Cinema Screen", "CinemaScreen", Vector3.new(20, 10, -7), Vector3.new(22, 12, 1), {
 					Color = Color3.fromRGB(255, 170, 214),
 					Accent = Color3.fromRGB(255, 240, 248),
@@ -693,6 +724,21 @@ local WorldConfig = {
 					Material = Enum.Material.Neon,
 					Transparency = 0.25,
 				}),
+				prop("VIP Lounge Chair A", "PoolChair", Vector3.new(24, 2, 37), Vector3.new(7, 3, 4), {
+					Color = Color3.fromRGB(255, 200, 230),
+					Accent = Color3.fromRGB(255, 170, 214),
+					HideBillboard = true,
+				}),
+				prop("VIP Lounge Chair B", "PoolChair", Vector3.new(24, 2, 43), Vector3.new(7, 3, 4), {
+					Color = Color3.fromRGB(255, 200, 230),
+					Accent = Color3.fromRGB(255, 170, 214),
+					HideBillboard = true,
+				}),
+				prop("VIP Side Table", "Table", Vector3.new(24, 1.5, 40), Vector3.new(4, 3, 4), {
+					Color = Color3.fromRGB(220, 150, 195),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
 				prop("VIP Star Wall", "VIPDisplay", Vector3.new(34, 10, 40), Vector3.new(18, 12, 1), {
 					Color = Color3.fromRGB(255, 170, 214),
 					Accent = Color3.fromRGB(255, 240, 248),
@@ -712,7 +758,7 @@ local WorldConfig = {
 				}),
 			},
 			Signs = {
-				sign("Girls Hangout", "Abbie · Lue · Emi · Emi · Sophia", Vector3.new(0, 20, -44), {
+				sign("Girls Hangout", "Abbie · Lue · EmilyPlays · EmiGirl · Sophia", Vector3.new(0, 20, -44), {
 					Size = Vector3.new(28, 10, 1),
 				}),
 				sign("Abbie", "Arcade Captain", Vector3.new(-24, 14, -5), {
@@ -721,10 +767,10 @@ local WorldConfig = {
 				sign("Lue", "Theater Host", Vector3.new(20, 14, -5), {
 					Size = Vector3.new(10, 8, 1),
 				}),
-				sign("Emi", "Streaming Queen", Vector3.new(-24, 14, 23), {
+				sign("EmilyPlays", "Streaming Queen", Vector3.new(-24, 14, 23), {
 					Size = Vector3.new(10, 8, 1),
 				}),
-				sign("Emi", "Lounge Lead", Vector3.new(20, 14, 23), {
+				sign("EmiGirl", "Lounge Lead", Vector3.new(20, 14, 23), {
 					Size = Vector3.new(10, 8, 1),
 				}),
 				sign("Sophia", "Pool Queen", Vector3.new(0, 14, 44), {
@@ -898,8 +944,8 @@ local WorldConfig = {
 		},
 		{
 			Id = "bo6-gaming-lounge",
-			Name = "BO6 Gaming Lounge",
-			Theme = "Tactical creator lounge with BO6 loadout bays",
+			Name = "Black Ops 7 Gaming Lounge",
+			Theme = "Tactical creator lounge with Black Ops 7 loadout bays",
 			Position = Vector3.new(-360, 0, -40),
 			Footprint = Vector3.new(108, 30, 90),
 			Color = Color3.fromRGB(40, 40, 40),
@@ -940,7 +986,7 @@ local WorldConfig = {
 				prop("Loadout Wall Rack", "Display", Vector3.new(-40, 7, 8), Vector3.new(12, 10, 1), {
 					Color = Color3.fromRGB(24, 24, 24),
 					Label = "Loadout Wall",
-					Message = "Loadout wall shows BO6 class ideas, orange-tag perks, and squad prep notes.",
+					Message = "Loadout wall shows Black Ops 7 class ideas, orange-tag perks, and squad prep notes.",
 				}),
 				prop("Founder Loadout Locker", "Display", Vector3.new(-17, 7, 8), Vector3.new(10, 10, 1), {
 					Color = Color3.fromRGB(24, 24, 24),
@@ -949,7 +995,7 @@ local WorldConfig = {
 					ActionText = "Access",
 					ObjectText = "Founder Loadout Locker",
 					RoleRequired = "Founder",
-					Message = "Founder loadout locker opened with featured BO6 builds and VIP squad presets.",
+					Message = "Founder loadout locker opened with featured Black Ops 7 builds and VIP squad presets.",
 				}),
 				prop("Bravo Gaming Pods", "GamingStation", Vector3.new(-39, 4, 36), Vector3.new(12, 8, 6), {
 					Color = Color3.fromRGB(26, 26, 26),
@@ -961,7 +1007,28 @@ local WorldConfig = {
 					Color = Color3.fromRGB(26, 26, 26),
 					Accent = Color3.fromRGB(255, 111, 0),
 					Label = "Alpha Pods",
-					Message = "Alpha pods keep the main BO6 lounge grind loop active without blocking the center aisle.",
+					Message = "Alpha pods keep the main Black Ops 7 lounge grind loop active without blocking the center aisle.",
+				}),
+				prop("Gaming Chair A", "Seat", Vector3.new(-38, 2, 30), Vector3.new(4, 6, 4), {
+					Color = Color3.fromRGB(255, 111, 0),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				prop("Gaming Chair B", "Seat", Vector3.new(-28, 2, 30), Vector3.new(4, 6, 4), {
+					Color = Color3.fromRGB(255, 111, 0),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				prop("Gaming Chair C", "Seat", Vector3.new(-18, 2, 30), Vector3.new(4, 6, 4), {
+					Color = Color3.fromRGB(255, 111, 0),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				prop("Orange Floor Strip", "FloorPad", Vector3.new(-3, 2.15, 22), Vector3.new(0.5, 0.2, 56), {
+					Color = Color3.fromRGB(255, 111, 0),
+					Material = Enum.Material.Neon,
+					Transparency = 0.3,
+					HideBillboard = true,
 				}),
 				prop("Tactical Strategy Table", "Display", Vector3.new(20, 3.5, 8), Vector3.new(18, 5, 10), {
 					Color = Color3.fromRGB(54, 54, 54),
@@ -989,7 +1056,7 @@ local WorldConfig = {
 				prop("Win Wall Display", "Display", Vector3.new(38, 7, 34), Vector3.new(10, 10, 1), {
 					Color = Color3.fromRGB(18, 18, 18),
 					Label = "Win Wall",
-					Message = "Win wall celebrates BO6 wins, top clips, and featured squad moments.",
+					Message = "Win wall celebrates Black Ops 7 wins, top clips, and featured squad moments.",
 				}),
 				prop("Squad Callout Board", "Display", Vector3.new(-27, 7, 44), Vector3.new(18, 10, 1), {
 					Color = Color3.fromRGB(24, 24, 24),
@@ -999,22 +1066,22 @@ local WorldConfig = {
 				prop("xD0DgeThiSx Victory Crest", "Display", Vector3.new(37, 7, 14), Vector3.new(16, 10, 1), {
 					Color = Color3.fromRGB(26, 26, 26),
 					Label = "xD0DgeThiSx Victory Crest",
-					Message = "Featured founder wall spotlights xD0DgeThiSx and the BO6 creator-lounge identity.",
+					Message = "Featured founder wall spotlights xD0DgeThiSx and the Black Ops 7 creator-lounge identity.",
 				}),
 			},
 			MediaPanels = {
-				mediaPanel("BO6 Streaming Wall", "Twitch", Vector3.new(26, 8, 43), Vector3.new(14, 9, 1), {
+				mediaPanel("Black Ops 7 Streaming Wall", "Twitch", Vector3.new(26, 8, 43), Vector3.new(14, 9, 1), {
 					Title = "Live Squad Streams",
 				}),
-				mediaPanel("BO6 Showcase", "YouTube", Vector3.new(12, 8, 43), Vector3.new(12, 9, 1), {
-					Title = "BO6 Clip Showcase",
+				mediaPanel("Black Ops 7 Showcase", "YouTube", Vector3.new(12, 8, 43), Vector3.new(12, 9, 1), {
+					Title = "Black Ops 7 Clip Showcase",
 				}),
 				mediaPanel("Pre-Match Playlist", "Spotify", Vector3.new(-16, 6, 44), Vector3.new(12, 8, 1), {
 					Title = "Squad Warmup Playlist",
 				}),
 			},
 			Signs = {
-				sign("BO6 Gaming Lounge", "xD0DgeThiSx Feature Zone", Vector3.new(0, 22, -44), {
+				sign("Black Ops 7 Gaming Lounge", "xD0DgeThiSx Feature Zone", Vector3.new(0, 22, -44), {
 					Size = Vector3.new(20, 10, 1),
 				}),
 				sign("Loadouts Ready", "Founder locker and squad prep", Vector3.new(-28, 13, -10), {
@@ -1027,6 +1094,10 @@ local WorldConfig = {
 				}),
 				sign("Creator Review", "Streams, clips, and the win wall", Vector3.new(22, 13, 22), {
 					Size = Vector3.new(18, 8, 1),
+					Color = Color3.fromRGB(20, 20, 20),
+				}),
+				sign("Gaming Stations", "Alpha + Bravo pods", Vector3.new(-28, 13, 22), {
+					Size = Vector3.new(16, 8, 1),
 					Color = Color3.fromRGB(20, 20, 20),
 				}),
 			},
