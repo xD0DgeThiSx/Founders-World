@@ -1309,6 +1309,27 @@ local function buildFounderPlaza(plazaFolder, navigationFolder, spawnFolder)
 	createHubDirectionalSigns(navigationFolder)
 end
 
+local function createVenueAmbientSound(venueFolder, venueConfig)
+	if not venueConfig.AmbientSoundId or venueConfig.AmbientSoundId == 0 then
+		return
+	end
+
+	local emitter = createPart(venueConfig.Name .. "SoundEmitter", venueFolder, {
+		Size = Vector3.new(1, 1, 1),
+		Position = venueConfig.Position + Vector3.new(0, 8, 0),
+		Transparency = 1,
+		CanCollide = false,
+	})
+
+	local sound = createInstance("Sound", "AmbientSound", emitter)
+	sound.SoundId = "rbxassetid://" .. tostring(venueConfig.AmbientSoundId)
+	sound.Looped = true
+	sound.Volume = venueConfig.AmbientSoundVolume or 0.4
+	sound.RollOffMaxDistance = math.max(venueConfig.Footprint.X, venueConfig.Footprint.Z) * 1.5
+	sound.RollOffMinDistance = 10
+	sound:Play()
+end
+
 local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder, mediaFolder, navigationFolder)
 	createVenueShell(venueFolder, venueConfig)
 
@@ -1374,6 +1395,8 @@ local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder,
 		ObjectText = "Founder's Plaza",
 		CooldownKey = "TeleportHub:" .. venueConfig.Id,
 	})
+
+	createVenueAmbientSound(venueFolder, venueConfig)
 
 	local builtPanels = MediaFramework.build(mediaFolder, venueConfig)
 
