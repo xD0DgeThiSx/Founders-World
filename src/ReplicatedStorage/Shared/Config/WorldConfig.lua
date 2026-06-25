@@ -566,6 +566,70 @@ local WorldConfig = {
 					Transparency = 0.2,
 					HideBillboard = true,
 				}),
+				-- Phase 8: Pool Waterfall
+				prop("Pool Waterfall", "Display", Vector3.new(-18, 10, 44), Vector3.new(8, 14, 1), {
+					Color = Color3.fromRGB(80, 180, 240),
+					Material = Enum.Material.Glass,
+					Transparency = 0.22,
+					HideBillboard = true,
+				}),
+				prop("Waterfall Foam", "FloorPad", Vector3.new(-18, 2.5, 43.5), Vector3.new(8, 0.3, 2), {
+					Color = Color3.fromRGB(200, 235, 255),
+					Material = Enum.Material.Neon,
+					Transparency = 0.2,
+					HideBillboard = true,
+				}),
+				prop("Waterfall Cascade A", "Display", Vector3.new(-18, 5, 43.5), Vector3.new(6, 6, 0.5), {
+					Color = Color3.fromRGB(100, 200, 255),
+					Material = Enum.Material.Glass,
+					Transparency = 0.45,
+					HideBillboard = true,
+				}),
+				-- Phase 8: Hot Tub Bubbles
+				prop("Spa Bubbles", "FloorPad", Vector3.new(20, 2.55, 36), Vector3.new(10, 0.3, 10), {
+					Color = Color3.fromRGB(120, 200, 255),
+					Material = Enum.Material.Neon,
+					Transparency = 0.12,
+					HideBillboard = true,
+				}),
+				prop("Spa Steam", "Display", Vector3.new(20, 5, 36), Vector3.new(10, 4, 10), {
+					Color = Color3.fromRGB(200, 230, 255),
+					Material = Enum.Material.SmoothPlastic,
+					Transparency = 0.88,
+					HideBillboard = true,
+				}),
+				-- Phase 8: Stromblad Treehouse
+				prop("Estate Tree Trunk", "Display", Vector3.new(52, 26, -14), Vector3.new(4, 50, 4), {
+					Color = Color3.fromRGB(80, 55, 25),
+					Material = Enum.Material.Wood,
+					HideBillboard = true,
+				}),
+				prop("Estate Treehouse Platform", "Display", Vector3.new(52, 50, -14), Vector3.new(20, 2, 20), {
+					Color = Color3.fromRGB(120, 80, 40),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Estate Treehouse Wall S", "Display", Vector3.new(52, 60, -5), Vector3.new(20, 14, 1), {
+					Color = Color3.fromRGB(140, 100, 50),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Estate Treehouse Wall W", "Display", Vector3.new(43, 60, -14), Vector3.new(1, 14, 18), {
+					Color = Color3.fromRGB(140, 100, 50),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Estate Treehouse Roof", "Display", Vector3.new(52, 67, -14), Vector3.new(22, 2, 22), {
+					Color = Color3.fromRGB(160, 120, 60),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Estate Treehouse Sign", "Display", Vector3.new(52, 58, -4.4), Vector3.new(14, 6, 0.5), {
+					Color = Color3.fromRGB(200, 160, 90),
+					Material = Enum.Material.Neon,
+					Label = "Stromblad Treehouse",
+					Message = "Stromblad Estate Treehouse — zipline connects to Girls Hangout!",
+				}),
 			},
 			MediaPanels = {
 				mediaPanel("Estate Memories", "Photo", Vector3.new(34, 8, 8), Vector3.new(18, 10, 1), {
@@ -1178,6 +1242,62 @@ local WorldConfig = {
 					Color = Color3.fromRGB(29, 35, 45),
 					Label = "VIP Roll Call",
 				}),
+				-- Phase 8: Retina Scan Elevator
+				prop("Retina Scanner Frame", "Display", Vector3.new(-38, 8, 34), Vector3.new(6, 16, 2), {
+					Color = Color3.fromRGB(38, 44, 58),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				prop("Retina Scanner Screen", "Display", Vector3.new(-38, 10, 33.2), Vector3.new(4, 5, 0.3), {
+					Color = Color3.fromRGB(0, 200, 120),
+					Material = Enum.Material.Neon,
+					Transparency = 0.08,
+					Label = "Retina Scan Elevator",
+					ActionType = "FounderAction",
+					ActionText = "Scan",
+					ObjectText = "Retina Scanner",
+					RoleRequired = "Founder",
+					Message = "Retina scan verified: xD0DgeThiSx. Founder elevator access granted.",
+				}),
+				prop("Retina Scanner Eye", "Display", Vector3.new(-38, 10, 33.05), Vector3.new(2, 2, 0.2), {
+					Color = Color3.fromRGB(0, 255, 160),
+					Material = Enum.Material.Neon,
+					Shape = Enum.PartType.Ball,
+					HideBillboard = true,
+				}),
+				prop("Elevator Door Left", "Display", Vector3.new(-41, 10, 35), Vector3.new(5, 18, 1), {
+					Color = Color3.fromRGB(45, 52, 68),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				prop("Elevator Door Right", "Display", Vector3.new(-35, 10, 35), Vector3.new(5, 18, 1), {
+					Color = Color3.fromRGB(45, 52, 68),
+					Material = Enum.Material.Metal,
+					HideBillboard = true,
+				}),
+				prop("Elevator Neon Strip", "FloorPad", Vector3.new(-38, 19.5, 35), Vector3.new(10, 0.4, 1), {
+					Color = Color3.fromRGB(215, 191, 126),
+					Material = Enum.Material.Neon,
+					Transparency = 0.1,
+					HideBillboard = true,
+				}),
+				-- Phase 8: Founder Tablet Control Panel
+				prop("Founder Tablet Panel", "CommandCenter", Vector3.new(38, 6, 20), Vector3.new(14, 8, 3), {
+					Color = Color3.fromRGB(28, 34, 46),
+					Accent = Color3.fromRGB(215, 191, 126),
+					Label = "Founder Control Panel",
+					ActionType = "FounderAction",
+					ActionText = "Open",
+					ObjectText = "Founder Tablet",
+					RoleRequired = "Founder",
+					Message = "Founder control panel active — world settings, VIP roster, and expansion controls.",
+				}),
+				prop("Tablet Screen Glow", "Display", Vector3.new(38, 7, 18.6), Vector3.new(10, 5, 0.3), {
+					Color = Color3.fromRGB(215, 191, 126),
+					Material = Enum.Material.Neon,
+					Transparency = 0.12,
+					HideBillboard = true,
+				}),
 			},
 			MediaPanels = {
 				mediaPanel("Founder Playlist", "Spotify", Vector3.new(-20, 5, 34), Vector3.new(12, 8, 3), {
@@ -1355,6 +1475,44 @@ local WorldConfig = {
 					HideBillboard = true,
 				}),
 				prop("Gaming Chair C", "Seat", Vector3.new(-18, 2, 30), Vector3.new(4, 6, 4), {
+					Color = Color3.fromRGB(255, 111, 0),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				-- Phase 8: Alpha pod desk chairs (in front of Alpha pods)
+				prop("Alpha Desk Chair A", "Seat", Vector3.new(-20, 2, 44), Vector3.new(4, 6, 4), {
+					Color = Color3.fromRGB(255, 111, 0),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				prop("Alpha Desk Chair B", "Seat", Vector3.new(-14, 2, 44), Vector3.new(4, 6, 4), {
+					Color = Color3.fromRGB(200, 85, 0),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				-- Phase 8: Bravo pod desk chairs
+				prop("Bravo Desk Chair A", "Seat", Vector3.new(-40, 2, 44), Vector3.new(4, 6, 4), {
+					Color = Color3.fromRGB(255, 111, 0),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				prop("Bravo Desk Chair B", "Seat", Vector3.new(-34, 2, 44), Vector3.new(4, 6, 4), {
+					Color = Color3.fromRGB(200, 85, 0),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				-- Phase 8: Squad sitting area near strategy table
+				prop("Squad Chair A", "Seat", Vector3.new(10, 2, 4), Vector3.new(5, 7, 5), {
+					Color = Color3.fromRGB(255, 111, 0),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				prop("Squad Chair B", "Seat", Vector3.new(20, 2, 4), Vector3.new(5, 7, 5), {
+					Color = Color3.fromRGB(200, 85, 0),
+					Material = Enum.Material.SmoothPlastic,
+					HideBillboard = true,
+				}),
+				prop("Squad Chair C", "Seat", Vector3.new(30, 2, 4), Vector3.new(5, 7, 5), {
 					Color = Color3.fromRGB(255, 111, 0),
 					Material = Enum.Material.SmoothPlastic,
 					HideBillboard = true,
