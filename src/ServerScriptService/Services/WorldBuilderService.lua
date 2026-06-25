@@ -89,6 +89,33 @@ local function createSurfaceText(parent, face, title, subtitle, textColor)
 	return surfaceGui
 end
 
+local function createPlateText(parent, face, text, textColor)
+	local surfaceGui = createInstance("SurfaceGui", "PlateText", parent)
+	surfaceGui.Face = face
+	surfaceGui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+	surfaceGui.PixelsPerStud = 60
+
+	local padding = createInstance("UIPadding", "Padding", surfaceGui)
+	padding.PaddingLeft = UDim.new(0, 6)
+	padding.PaddingRight = UDim.new(0, 6)
+	padding.PaddingTop = UDim.new(0, 3)
+	padding.PaddingBottom = UDim.new(0, 3)
+
+	local plateLabel = createInstance("TextLabel", "Text", surfaceGui)
+	plateLabel.BackgroundTransparency = 1
+	plateLabel.Size = UDim2.fromScale(1, 1)
+	plateLabel.Font = Enum.Font.GothamBold
+	plateLabel.TextXAlignment = Enum.TextXAlignment.Center
+	plateLabel.TextYAlignment = Enum.TextYAlignment.Center
+	plateLabel.TextScaled = false
+	plateLabel.TextSize = #text > 9 and 13 or (#text > 6 and 16 or 19)
+	plateLabel.TextColor3 = textColor
+	plateLabel.TextStrokeTransparency = 0.85
+	plateLabel.Text = text
+
+	return surfaceGui
+end
+
 local function createBillboardText(part, title, subtitle, textColor, options)
 	options = options or {}
 
@@ -341,6 +368,80 @@ local function buildZone(zoneFolder, zoneConfig)
 	createZoneArrival(zoneFolder, zoneConfig)
 	createZoneMarker(zoneFolder, zoneConfig)
 	createZoneSigns(zoneFolder, zoneConfig)
+end
+
+local function createSafetyGround(environmentFolder)
+	local safetyFolder = createFolder("SafetyGround", environmentFolder)
+
+	local function createGroundPad(name, size, position, color, material, transparency)
+		return createPart(name, safetyFolder, {
+			Size = size,
+			Position = position,
+			Color = color,
+			Material = material,
+			Transparency = transparency,
+			CanCollide = true,
+		})
+	end
+
+	local hub = WorldConfig.Hub
+	createGroundPad(
+		"HubSafetyApron",
+		Vector3.new(hub.Size.X + 90, 2, hub.Size.Z + 90),
+		hub.Position + Vector3.new(0, -1, 0),
+		Color3.fromRGB(78, 90, 76),
+		Enum.Material.Grass,
+		0
+	)
+
+	local vehicleMinX, vehicleMaxX = math.huge, -math.huge
+	local vehicleMinZ, vehicleMaxZ = math.huge, -math.huge
+	local vehicleCount = 0
+
+	for _, vehicleConfig in ipairs(WorldConfig.Vehicles or {}) do
+		vehicleMinX = math.min(vehicleMinX, vehicleConfig.Position.X)
+		vehicleMaxX = math.max(vehicleMaxX, vehicleConfig.Position.X)
+		vehicleMinZ = math.min(vehicleMinZ, vehicleConfig.Position.Z)
+		vehicleMaxZ = math.max(vehicleMaxZ, vehicleConfig.Position.Z)
+		vehicleCount += 1
+	end
+
+	if vehicleCount > 0 then
+		local lotCenter = Vector3.new((vehicleMinX + vehicleMaxX) / 2, -0.95, (vehicleMinZ + vehicleMaxZ) / 2)
+		local lotSize = Vector3.new((vehicleMaxX - vehicleMinX) + 42, 1.9, (vehicleMaxZ - vehicleMinZ) + 28)
+		createGroundPad("VehicleLotSafety", lotSize, lotCenter, Color3.fromRGB(62, 62, 68), Enum.Material.Slate, 0)
+	end
+
+	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
+		if zoneConfig.ZoneType == "Active" then
+			createGroundPad(
+				zoneConfig.Id .. "SafetyApron",
+				Vector3.new(zoneConfig.Size.X + 22, 1.6, zoneConfig.Size.Z + 22),
+				zoneConfig.Position + Vector3.new(0, -0.8, 0),
+				Color3.fromRGB(82, 96, 80),
+				Enum.Material.Grass,
+				0
+			)
+		end
+	end
+
+	for _, roadConfig in ipairs(WorldConfig.Roads or {}) do
+		local direction = roadConfig.EndPosition - roadConfig.StartPosition
+		local length = direction.Magnitude
+
+		if length > 0 then
+			local shoulderCenter = roadConfig.StartPosition:Lerp(roadConfig.EndPosition, 0.5)
+			local shoulder = createGroundPad(
+				roadConfig.Name .. "SafetyFill",
+				Vector3.new(roadConfig.Width + 28, 1.2, length + 18),
+				shoulderCenter + Vector3.new(0, -0.6, 0),
+				Color3.fromRGB(72, 82, 74),
+				Enum.Material.Grass,
+				0
+			)
+			shoulder.CFrame = CFrame.lookAt(shoulderCenter + Vector3.new(0, -0.6, 0), roadConfig.EndPosition + Vector3.new(0, -0.6, 0))
+		end
+	end
 end
 
 local function createVenueShell(venueFolder, venueConfig)
@@ -1068,25 +1169,125 @@ local function createVehicle(vehiclesFolder, vehicleConfig)
 	local accent = vehicleConfig.Accent or c
 	local trim = vehicleConfig.TrimColor or Color3.fromRGB(200, 200, 200)
 	local vt = vehicleConfig.VehicleType
+	local vehicleProfiles = {
+		Bronco = {
+			bodyW = 9.6,
+			bodyL = 16.8,
+			chassisH = 2.6,
+			hoodH = 2.2,
+			cabinH = 3.2,
+			rearH = 2.4,
+			hoodL = 5.2,
+			cabinL = 6.2,
+			rearL = 5.0,
+			roofW = 8.4,
+			roofH = 1.1,
+			roofL = 7.2,
+			wheelR = 2.0,
+			wheelThickness = 1.75,
+			hasRoof = true,
+			cabinOffsetZ = -0.8,
+		},
+		Jeep = {
+			bodyW = 8.4,
+			bodyL = 14.8,
+			chassisH = 2.3,
+			hoodH = 1.9,
+			cabinH = 2.7,
+			rearH = 2.0,
+			hoodL = 4.4,
+			cabinL = 5.0,
+			rearL = 4.2,
+			roofW = 7.2,
+			roofH = 0.7,
+			roofL = 5.0,
+			wheelR = 1.8,
+			wheelThickness = 1.55,
+			hasRoof = false,
+			cabinOffsetZ = -0.4,
+		},
+		PinkJeep = "Jeep",
+		LuxurySUV = {
+			bodyW = 10.6,
+			bodyL = 20.5,
+			chassisH = 2.8,
+			hoodH = 2.0,
+			cabinH = 3.3,
+			rearH = 2.5,
+			hoodL = 6.2,
+			cabinL = 8.2,
+			rearL = 6.1,
+			roofW = 9.4,
+			roofH = 1.2,
+			roofL = 10.4,
+			wheelR = 2.1,
+			wheelThickness = 1.8,
+			hasRoof = true,
+			cabinOffsetZ = -1.2,
+		},
+		Yukon = "LuxurySUV",
+		GolfCart = {
+			bodyW = 7.8,
+			bodyL = 12.2,
+			chassisH = 2.0,
+			hoodH = 1.3,
+			cabinH = 2.0,
+			rearH = 1.7,
+			hoodL = 3.0,
+			cabinL = 4.5,
+			rearL = 3.8,
+			roofW = 7.2,
+			roofH = 0.7,
+			roofL = 6.0,
+			wheelR = 1.45,
+			wheelThickness = 1.2,
+			hasRoof = true,
+			cabinOffsetZ = -0.2,
+		},
+		GoKart = {
+			bodyW = 6.6,
+			bodyL = 10.8,
+			chassisH = 1.3,
+			hoodH = 0.9,
+			cabinH = 1.1,
+			rearH = 1.0,
+			hoodL = 2.3,
+			cabinL = 3.6,
+			rearL = 2.9,
+			roofW = 0,
+			roofH = 0,
+			roofL = 0,
+			wheelR = 1.25,
+			wheelThickness = 1.05,
+			hasRoof = false,
+			cabinOffsetZ = -0.1,
+		},
+		Buggy = {
+			bodyW = 8.2,
+			bodyL = 13.4,
+			chassisH = 1.9,
+			hoodH = 1.6,
+			cabinH = 2.0,
+			rearH = 1.8,
+			hoodL = 3.8,
+			cabinL = 4.8,
+			rearL = 3.8,
+			roofW = 6.8,
+			roofH = 0.8,
+			roofL = 4.4,
+			wheelR = 1.7,
+			wheelThickness = 1.45,
+			hasRoof = false,
+			cabinOffsetZ = -0.2,
+		},
+	}
 
-	-- Per-type dimensions (all in studs; Y=0 = ground/floor surface)
-	local bodyW, bodyH, bodyL = 9, 5, 16
-	local roofW, roofH, roofL = 8, 2.5, 9
-	local hasRoof = true
-	local wheelR, wheelW = 1.8, 1.5
-
-	if vt == "Jeep" then
-		bodyW, bodyH, bodyL = 8, 4.5, 14
-		hasRoof = false
-		wheelR, wheelW = 1.7, 1.4
-	elseif vt == "LuxurySUV" then
-		bodyW, bodyH, bodyL = 10, 5, 20
-		roofW, roofH, roofL = 9, 2, 11
-		wheelR, wheelW = 2.0, 1.6
+	local profile = vehicleProfiles[vt] or vehicleProfiles.Bronco
+	if type(profile) == "string" then
+		profile = vehicleProfiles[profile]
 	end
 
-	-- Body centre sits one wheel-radius above ground so wheels touch the floor
-	local bodyLocalY = wheelR + bodyH / 2
+	local bodyLocalY = profile.wheelR + profile.chassisH / 2
 
 	local model = Instance.new("Model")
 	model.Name = vehicleConfig.Id
@@ -1107,92 +1308,147 @@ local function createVehicle(vehiclesFolder, vehicleConfig)
 		return part
 	end
 
+	local function makeCFramePart(name, cframe, size, color, material, transparency)
+		local part = Instance.new("Part")
+		part.Name = name
+		part.Size = size
+		part.Color = color
+		part.Material = material or Enum.Material.SmoothPlastic
+		part.Anchored = true
+		part.CanCollide = false
+		part.TopSurface = Enum.SurfaceType.Smooth
+		part.BottomSurface = Enum.SurfaceType.Smooth
+		if transparency then
+			part.Transparency = transparency
+		end
+		part.CFrame = cframe
+		part.Parent = model
+		return part
+	end
+
 	local function makeWheel(name, lx, lz)
-		local ly = wheelR  -- wheel centre is one radius above ground
+		local ly = profile.wheelR
 		local tire = Instance.new("Part")
 		tire.Name = name
 		tire.Shape = Enum.PartType.Cylinder
-		tire.Size = Vector3.new(wheelW, wheelR * 2, wheelR * 2)
+		tire.Size = Vector3.new(profile.wheelThickness, profile.wheelR * 2, profile.wheelR * 2)
 		tire.Color = Color3.fromRGB(22, 22, 22)
 		tire.Material = Enum.Material.SmoothPlastic
 		tire.Anchored = true
 		tire.CanCollide = false
 		tire.TopSurface = Enum.SurfaceType.Smooth
 		tire.BottomSurface = Enum.SurfaceType.Smooth
-		-- Rotate 90° around Z so the flat face is outward (wheel orientation)
-		tire.CFrame = CFrame.new(lx, ly, lz) * CFrame.Angles(0, 0, math.pi / 2)
+		tire.CFrame = CFrame.new(lx, ly, lz)
 		tire.Parent = model
-		-- Hub cap (smaller, metallic, sits flush with outer tire face)
+
+		local sidewall = Instance.new("Part")
+		sidewall.Name = name .. "Sidewall"
+		sidewall.Shape = Enum.PartType.Cylinder
+		sidewall.Size = Vector3.new(profile.wheelThickness * 0.7, profile.wheelR * 1.7, profile.wheelR * 1.7)
+		sidewall.Color = Color3.fromRGB(42, 42, 42)
+		sidewall.Material = Enum.Material.SmoothPlastic
+		sidewall.Anchored = true
+		sidewall.CanCollide = false
+		sidewall.TopSurface = Enum.SurfaceType.Smooth
+		sidewall.BottomSurface = Enum.SurfaceType.Smooth
+		sidewall.CFrame = CFrame.new(lx, ly, lz)
+		sidewall.Parent = model
+
 		local hub = Instance.new("Part")
 		hub.Name = name .. "Hub"
 		hub.Shape = Enum.PartType.Cylinder
-		hub.Size = Vector3.new(wheelW * 0.5, wheelR * 1.1, wheelR * 1.1)
+		hub.Size = Vector3.new(profile.wheelThickness * 0.45, profile.wheelR * 0.95, profile.wheelR * 0.95)
 		hub.Color = trim
 		hub.Material = Enum.Material.Metal
 		hub.Anchored = true
 		hub.CanCollide = false
 		hub.TopSurface = Enum.SurfaceType.Smooth
 		hub.BottomSurface = Enum.SurfaceType.Smooth
-		hub.CFrame = CFrame.new(lx, ly, lz) * CFrame.Angles(0, 0, math.pi / 2)
+		hub.CFrame = CFrame.new(lx, ly, lz)
 		hub.Parent = model
 	end
 
-	-- ── Body ────────────────────────────────────────────────────────────────
-	local body = makePart("Body", 0, bodyLocalY, 0, bodyW, bodyH, bodyL, c)
+	local hoodCenterZ = profile.bodyL / 2 - profile.hoodL / 2 - 0.6
+	local cabinCenterZ = profile.cabinOffsetZ
+	local rearCenterZ = -profile.bodyL / 2 + profile.rearL / 2 + 0.6
 
-	-- ── Roof / cab ──────────────────────────────────────────────────────────
-	local roofTopY = bodyLocalY + bodyH / 2  -- top surface of body
-	local roofCenterY = roofTopY + roofH / 2
-	local roofCenterZ = -bodyL / 2 + roofL / 2 + 1  -- roof sits toward the rear
-	if hasRoof then
-		makePart("Roof", 0, roofCenterY, roofCenterZ, roofW, roofH, roofL, c)
-		-- Side windows
-		local winH = roofH - 0.3
-		makePart("WindowL", -(roofW / 2), roofCenterY, roofCenterZ, 0.22, winH, roofL - 0.6,
-			Color3.fromRGB(155, 210, 240), Enum.Material.Glass, 0.25)
-		makePart("WindowR",  (roofW / 2), roofCenterY, roofCenterZ, 0.22, winH, roofL - 0.6,
-			Color3.fromRGB(155, 210, 240), Enum.Material.Glass, 0.25)
+	local body = makePart("Body", 0, bodyLocalY, 0, profile.bodyW, profile.chassisH, profile.bodyL, c)
+	local hood = makePart("Hood", 0, bodyLocalY + profile.chassisH / 2 + profile.hoodH / 2 - 0.2, hoodCenterZ, profile.bodyW - 0.5, profile.hoodH, profile.hoodL, c)
+	local cabin = makePart("Cabin", 0, bodyLocalY + profile.chassisH / 2 + profile.cabinH / 2 - 0.1, cabinCenterZ, profile.bodyW - 1.0, profile.cabinH, profile.cabinL, c)
+	local rearDeck = makePart("RearDeck", 0, bodyLocalY + profile.chassisH / 2 + profile.rearH / 2 - 0.2, rearCenterZ, profile.bodyW - 0.8, profile.rearH, profile.rearL, c)
+
+	local fenderY = profile.wheelR + 0.55
+	makePart("FrontFenderLeft", -(profile.bodyW / 2 - 0.5), fenderY, hoodCenterZ, 0.8, 1.8, profile.hoodL - 0.3, c)
+	makePart("FrontFenderRight", profile.bodyW / 2 - 0.5, fenderY, hoodCenterZ, 0.8, 1.8, profile.hoodL - 0.3, c)
+	makePart("RearFenderLeft", -(profile.bodyW / 2 - 0.5), fenderY, rearCenterZ, 0.8, 1.8, profile.rearL - 0.3, c)
+	makePart("RearFenderRight", profile.bodyW / 2 - 0.5, fenderY, rearCenterZ, 0.8, 1.8, profile.rearL - 0.3, c)
+
+	local roofTopY = bodyLocalY + profile.chassisH / 2 + profile.cabinH
+	local roofCenterY = roofTopY + profile.roofH / 2
+	if profile.hasRoof and profile.roofW > 0 then
+		makePart("Roof", 0, roofCenterY, cabinCenterZ - 0.4, profile.roofW, profile.roofH, profile.roofL, c)
+		makePart("WindowL", -(profile.bodyW / 2 - 0.12), bodyLocalY + profile.chassisH / 2 + profile.cabinH / 2, cabinCenterZ - 0.4, 0.18, profile.cabinH - 0.35, profile.cabinL - 0.8,
+			Color3.fromRGB(155, 210, 240), Enum.Material.Glass, 0.3)
+		makePart("WindowR", profile.bodyW / 2 - 0.12, bodyLocalY + profile.chassisH / 2 + profile.cabinH / 2, cabinCenterZ - 0.4, 0.18, profile.cabinH - 0.35, profile.cabinL - 0.8,
+			Color3.fromRGB(155, 210, 240), Enum.Material.Glass, 0.3)
+	elseif vt == "Jeep" or vt == "PinkJeep" or vt == "Buggy" then
+		makePart("RollBarLeft", -(profile.bodyW / 2 - 0.5), roofTopY - 0.2, cabinCenterZ - 0.3, 0.35, profile.cabinH + 0.8, profile.cabinL - 0.7, trim, Enum.Material.Metal)
+		makePart("RollBarRight", profile.bodyW / 2 - 0.5, roofTopY - 0.2, cabinCenterZ - 0.3, 0.35, profile.cabinH + 0.8, profile.cabinL - 0.7, trim, Enum.Material.Metal)
+		makePart("RollBarTop", 0, roofTopY + profile.cabinH / 2 + 0.15, cabinCenterZ - 0.3, profile.bodyW - 1.0, 0.28, profile.cabinL - 0.9, trim, Enum.Material.Metal)
 	end
 
-	-- ── Windshield ──────────────────────────────────────────────────────────
-	-- Sits between roof front edge and body front, at top-of-body height
-	local windH = hasRoof and (roofH + 0.5) or 3.0
-	local windZ = hasRoof and (roofCenterZ + roofL / 2 + 0.5) or (bodyL / 2 - 1.5)
-	makePart("Windshield", 0, roofTopY + windH / 2 - 0.3, windZ,
-		bodyW - 0.4, windH, 0.22, Color3.fromRGB(155, 210, 240), Enum.Material.Glass, 0.18)
+	local windshieldTilt = math.rad(-28)
+	local windshieldHeight = profile.cabinH + 0.2
+	local windshieldZ = hoodCenterZ - profile.hoodL / 2 + 0.95
+	local windshieldY = bodyLocalY + profile.chassisH / 2 + profile.cabinH * 0.74
+	makeCFramePart(
+		"Windshield",
+		CFrame.new(0, windshieldY, windshieldZ) * CFrame.Angles(windshieldTilt, 0, 0),
+		Vector3.new(profile.bodyW - 1.1, windshieldHeight, 0.18),
+		Color3.fromRGB(155, 210, 240),
+		Enum.Material.Glass,
+		0.22
+	)
 
-	-- ── Bumpers ─────────────────────────────────────────────────────────────
-	local bumperY = bodyLocalY - bodyH / 2 + 0.7
-	makePart("FrontBumper", 0, bumperY,  bodyL / 2 + 0.4, bodyW + 0.6, 1.4, 0.7, trim, Enum.Material.Metal)
-	makePart("RearBumper",  0, bumperY, -bodyL / 2 - 0.4, bodyW + 0.6, 1.4, 0.7, trim, Enum.Material.Metal)
+	if profile.hasRoof then
+		local rearWindowZ = rearCenterZ + profile.rearL / 2 - 0.8
+		local rearWindowY = bodyLocalY + profile.chassisH / 2 + profile.cabinH * 0.72
+		makeCFramePart(
+			"RearWindow",
+			CFrame.new(0, rearWindowY, rearWindowZ) * CFrame.Angles(math.rad(22), 0, 0),
+			Vector3.new(profile.bodyW - 1.4, profile.cabinH, 0.16),
+			Color3.fromRGB(155, 210, 240),
+			Enum.Material.Glass,
+			0.26
+		)
+	end
 
-	-- ── Lights ──────────────────────────────────────────────────────────────
-	local lightY = bodyLocalY + bodyH / 2 - 1.2
-	makePart("HeadlightL", -bodyW / 2 + 1.8, lightY,  bodyL / 2 + 0.1, 2.5, 1.4, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
-	makePart("HeadlightR",  bodyW / 2 - 1.8, lightY,  bodyL / 2 + 0.1, 2.5, 1.4, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
-	makePart("TaillightL", -bodyW / 2 + 1.8, lightY, -bodyL / 2 - 0.1, 2.5, 1.4, 0.4, Color3.fromRGB(220, 30,  30),  Enum.Material.Neon)
-	makePart("TaillightR",  bodyW / 2 - 1.8, lightY, -bodyL / 2 - 0.1, 2.5, 1.4, 0.4, Color3.fromRGB(220, 30,  30),  Enum.Material.Neon)
+	local bumperY = profile.wheelR + 0.35
+	makePart("FrontBumper", 0, bumperY, profile.bodyL / 2 + 0.45, profile.bodyW + 0.5, 0.85, 0.72, trim, Enum.Material.Metal)
+	makePart("RearBumper", 0, bumperY, -profile.bodyL / 2 - 0.45, profile.bodyW + 0.5, 0.85, 0.72, trim, Enum.Material.Metal)
+	makePart("FrontGrille", 0, bodyLocalY + profile.chassisH / 2 + 0.4, profile.bodyL / 2 - 0.22, profile.bodyW - 1.2, 1.6, 0.32, trim, Enum.Material.Metal)
 
-	-- ── Wheels (4 corners) ──────────────────────────────────────────────────
-	local wfz =  bodyL / 2 - 2.5  -- front axle Z
-	local wrz = -bodyL / 2 + 2.5  -- rear axle Z
-	local wx  =  bodyW / 2 + wheelW / 2 + 0.15  -- outboard X
+	local lightY = bodyLocalY + profile.chassisH / 2 + 0.5
+	makePart("HeadlightL", -profile.bodyW / 2 + 1.55, lightY, profile.bodyL / 2 + 0.05, 2.0, 1.0, 0.28, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
+	makePart("HeadlightR", profile.bodyW / 2 - 1.55, lightY, profile.bodyL / 2 + 0.05, 2.0, 1.0, 0.28, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
+	makePart("TaillightL", -profile.bodyW / 2 + 1.55, lightY, -profile.bodyL / 2 - 0.05, 2.0, 1.0, 0.28, Color3.fromRGB(220, 30, 30), Enum.Material.Neon)
+	makePart("TaillightR", profile.bodyW / 2 - 1.55, lightY, -profile.bodyL / 2 - 0.05, 2.0, 1.0, 0.28, Color3.fromRGB(220, 30, 30), Enum.Material.Neon)
+
+	local wfz = profile.bodyL / 2 - math.max(profile.hoodL * 0.58, 2.5)
+	local wrz = -profile.bodyL / 2 + math.max(profile.rearL * 0.58, 2.4)
+	local wx = profile.bodyW / 2 + profile.wheelThickness / 2 - 0.1
 	makeWheel("WheelFL", -wx, wfz)
 	makeWheel("WheelFR",  wx, wfz)
 	makeWheel("WheelRL", -wx, wrz)
 	makeWheel("WheelRR",  wx, wrz)
 
-	-- ── License plate ───────────────────────────────────────────────────────
-	local plate = makePart("LicensePlate", 0, bumperY, bodyL / 2 + 0.6, 5, 1.4, 0.25, Color3.fromRGB(245, 245, 245))
-	createBillboardText(plate, vehicleConfig.PlateText, "", Color3.fromRGB(20, 20, 20), {
-		AlwaysOnTop = false,
-		MaxDistance = 30,
-		Size = UDim2.fromOffset(110, 24),
-		StudsOffset = Vector3.new(0, 0, 0),
-	})
+	local frontPlate = makePart("FrontPlate", 0, bumperY + 0.12, profile.bodyL / 2 + 0.82, 4.6, 1.35, 0.14, Color3.fromRGB(244, 242, 236))
+	local rearPlate = makePart("RearPlate", 0, bumperY + 0.12, -profile.bodyL / 2 - 0.82, 4.6, 1.35, 0.14, Color3.fromRGB(244, 242, 236))
+	createPlateText(frontPlate, Enum.NormalId.Front, vehicleConfig.PlateText, Color3.fromRGB(20, 20, 20))
+	createPlateText(rearPlate, Enum.NormalId.Back, vehicleConfig.PlateText, Color3.fromRGB(20, 20, 20))
 
-	-- ── Floating owner label ─────────────────────────────────────────────────
-	local topY = roofCenterY + roofH / 2 + 3
+	local labelBaseY = profile.hasRoof and roofCenterY or (bodyLocalY + profile.chassisH / 2 + profile.cabinH)
+	local topY = labelBaseY + 3
 	local labelAnchor = makePart("OwnerAnchor", 0, topY, 0, 1, 0.2, 1, accent, Enum.Material.Neon, 1)
 	createBillboardText(labelAnchor, vehicleConfig.PlateText, vehicleConfig.Owner or vehicleConfig.Name, Color3.fromRGB(255, 255, 255), {
 		AlwaysOnTop = false,
@@ -1716,6 +1972,8 @@ function WorldBuilderService.build()
 	if not envOk then
 		warn("[FoundersWorld] setupEnvironment failed (non-fatal):", envErr)
 	end
+
+	createSafetyGround(folders.Environment)
 
 	buildFounderPlaza(folders.Plaza, folders.Navigation, folders.Spawns)
 
