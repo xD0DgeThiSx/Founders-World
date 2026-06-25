@@ -1476,7 +1476,6 @@ end
 
 local function setupEnvironment()
 	local Lighting = game:GetService("Lighting")
-	Lighting.Technology = Enum.Technology.Future
 	Lighting.ClockTime = 18
 	Lighting.Brightness = 1.4
 	Lighting.ExposureCompensation = 0.15
