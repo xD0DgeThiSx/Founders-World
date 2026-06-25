@@ -1004,22 +1004,28 @@ end
 local function createVehicle(vehiclesFolder, vehicleConfig)
 	local c = vehicleConfig.Color
 	local accent = vehicleConfig.Accent or c
+	local trim = vehicleConfig.TrimColor or Color3.fromRGB(200, 200, 200)
 	local vt = vehicleConfig.VehicleType
 
+	-- Per-type dimensions (all in studs; Y=0 = ground/floor surface)
 	local bodyW, bodyH, bodyL = 9, 5, 16
 	local roofW, roofH, roofL = 8, 2.5, 9
 	local hasRoof = true
+	local wheelR, wheelW = 1.8, 1.5
+
 	if vt == "Jeep" then
 		bodyW, bodyH, bodyL = 8, 4.5, 14
 		hasRoof = false
+		wheelR, wheelW = 1.7, 1.4
 	elseif vt == "LuxurySUV" then
 		bodyW, bodyH, bodyL = 10, 5, 20
 		roofW, roofH, roofL = 9, 2, 11
+		wheelR, wheelW = 2.0, 1.6
 	end
 
-	-- Build a Model so PrimaryPart + PivotTo can position the whole assembly.
-	-- All parts are built at LOCAL coordinates (origin = vehicle ground-centre).
-	-- PivotTo then moves the model to world position in one shot.
+	-- Body centre sits one wheel-radius above ground so wheels touch the floor
+	local bodyLocalY = wheelR + bodyH / 2
+
 	local model = Instance.new("Model")
 	model.Name = vehicleConfig.Id
 
@@ -1034,30 +1040,88 @@ local function createVehicle(vehiclesFolder, vehicleConfig)
 		part.TopSurface = Enum.SurfaceType.Smooth
 		part.BottomSurface = Enum.SurfaceType.Smooth
 		if transparency then part.Transparency = transparency end
-		-- All properties set before parenting
 		part.CFrame = CFrame.new(lx, ly, lz)
 		part.Parent = model
 		return part
 	end
 
-	-- Body centre is bodyH/2 above ground (local Y=0 is floor surface)
-	local bodyLocalY = bodyH / 2
-	local body = makePart("Body", 0, bodyLocalY, 0, bodyW, bodyH, bodyL, c)
-
-	if hasRoof then
-		makePart("Roof", 0, bodyH + roofH / 2, -bodyL / 2 + roofL / 2 + 1, roofW, roofH, roofL, c)
+	local function makeWheel(name, lx, lz)
+		local ly = wheelR  -- wheel centre is one radius above ground
+		local tire = Instance.new("Part")
+		tire.Name = name
+		tire.Shape = Enum.PartType.Cylinder
+		tire.Size = Vector3.new(wheelW, wheelR * 2, wheelR * 2)
+		tire.Color = Color3.fromRGB(22, 22, 22)
+		tire.Material = Enum.Material.SmoothPlastic
+		tire.Anchored = true
+		tire.CanCollide = false
+		tire.TopSurface = Enum.SurfaceType.Smooth
+		tire.BottomSurface = Enum.SurfaceType.Smooth
+		-- Rotate 90° around Z so the flat face is outward (wheel orientation)
+		tire.CFrame = CFrame.new(lx, ly, lz) * CFrame.Angles(0, 0, math.pi / 2)
+		tire.Parent = model
+		-- Hub cap (smaller, metallic, sits flush with outer tire face)
+		local hub = Instance.new("Part")
+		hub.Name = name .. "Hub"
+		hub.Shape = Enum.PartType.Cylinder
+		hub.Size = Vector3.new(wheelW * 0.5, wheelR * 1.1, wheelR * 1.1)
+		hub.Color = trim
+		hub.Material = Enum.Material.Metal
+		hub.Anchored = true
+		hub.CanCollide = false
+		hub.TopSurface = Enum.SurfaceType.Smooth
+		hub.BottomSurface = Enum.SurfaceType.Smooth
+		hub.CFrame = CFrame.new(lx, ly, lz) * CFrame.Angles(0, 0, math.pi / 2)
+		hub.Parent = model
 	end
 
-	-- Headlights on front face (+Z), taillights on rear face (-Z)
-	local lightLocalY = bodyH - 1.5
-	local frontLZ = bodyL / 2
-	local rearLZ  = -bodyL / 2
-	makePart("HeadlightL", -bodyW / 2 + 1.8, lightLocalY, frontLZ, 2.5, 1.5, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
-	makePart("HeadlightR",  bodyW / 2 - 1.8, lightLocalY, frontLZ, 2.5, 1.5, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
-	makePart("TaillightL", -bodyW / 2 + 1.8, lightLocalY, rearLZ,  2.5, 1.5, 0.4, Color3.fromRGB(220, 30, 30),  Enum.Material.Neon)
-	makePart("TaillightR",  bodyW / 2 - 1.8, lightLocalY, rearLZ,  2.5, 1.5, 0.4, Color3.fromRGB(220, 30, 30),  Enum.Material.Neon)
+	-- ── Body ────────────────────────────────────────────────────────────────
+	local body = makePart("Body", 0, bodyLocalY, 0, bodyW, bodyH, bodyL, c)
 
-	local plate = makePart("LicensePlate", 0, 2, frontLZ, 5, 1.5, 0.4, Color3.fromRGB(245, 245, 245))
+	-- ── Roof / cab ──────────────────────────────────────────────────────────
+	local roofTopY = bodyLocalY + bodyH / 2  -- top surface of body
+	local roofCenterY = roofTopY + roofH / 2
+	local roofCenterZ = -bodyL / 2 + roofL / 2 + 1  -- roof sits toward the rear
+	if hasRoof then
+		makePart("Roof", 0, roofCenterY, roofCenterZ, roofW, roofH, roofL, c)
+		-- Side windows
+		local winH = roofH - 0.3
+		makePart("WindowL", -(roofW / 2), roofCenterY, roofCenterZ, 0.22, winH, roofL - 0.6,
+			Color3.fromRGB(155, 210, 240), Enum.Material.Glass, 0.25)
+		makePart("WindowR",  (roofW / 2), roofCenterY, roofCenterZ, 0.22, winH, roofL - 0.6,
+			Color3.fromRGB(155, 210, 240), Enum.Material.Glass, 0.25)
+	end
+
+	-- ── Windshield ──────────────────────────────────────────────────────────
+	-- Sits between roof front edge and body front, at top-of-body height
+	local windH = hasRoof and (roofH + 0.5) or 3.0
+	local windZ = hasRoof and (roofCenterZ + roofL / 2 + 0.5) or (bodyL / 2 - 1.5)
+	makePart("Windshield", 0, roofTopY + windH / 2 - 0.3, windZ,
+		bodyW - 0.4, windH, 0.22, Color3.fromRGB(155, 210, 240), Enum.Material.Glass, 0.18)
+
+	-- ── Bumpers ─────────────────────────────────────────────────────────────
+	local bumperY = bodyLocalY - bodyH / 2 + 0.7
+	makePart("FrontBumper", 0, bumperY,  bodyL / 2 + 0.4, bodyW + 0.6, 1.4, 0.7, trim, Enum.Material.Metal)
+	makePart("RearBumper",  0, bumperY, -bodyL / 2 - 0.4, bodyW + 0.6, 1.4, 0.7, trim, Enum.Material.Metal)
+
+	-- ── Lights ──────────────────────────────────────────────────────────────
+	local lightY = bodyLocalY + bodyH / 2 - 1.2
+	makePart("HeadlightL", -bodyW / 2 + 1.8, lightY,  bodyL / 2 + 0.1, 2.5, 1.4, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
+	makePart("HeadlightR",  bodyW / 2 - 1.8, lightY,  bodyL / 2 + 0.1, 2.5, 1.4, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
+	makePart("TaillightL", -bodyW / 2 + 1.8, lightY, -bodyL / 2 - 0.1, 2.5, 1.4, 0.4, Color3.fromRGB(220, 30,  30),  Enum.Material.Neon)
+	makePart("TaillightR",  bodyW / 2 - 1.8, lightY, -bodyL / 2 - 0.1, 2.5, 1.4, 0.4, Color3.fromRGB(220, 30,  30),  Enum.Material.Neon)
+
+	-- ── Wheels (4 corners) ──────────────────────────────────────────────────
+	local wfz =  bodyL / 2 - 2.5  -- front axle Z
+	local wrz = -bodyL / 2 + 2.5  -- rear axle Z
+	local wx  =  bodyW / 2 + wheelW / 2 + 0.15  -- outboard X
+	makeWheel("WheelFL", -wx, wfz)
+	makeWheel("WheelFR",  wx, wfz)
+	makeWheel("WheelRL", -wx, wrz)
+	makeWheel("WheelRR",  wx, wrz)
+
+	-- ── License plate ───────────────────────────────────────────────────────
+	local plate = makePart("LicensePlate", 0, bumperY, bodyL / 2 + 0.6, 5, 1.4, 0.25, Color3.fromRGB(245, 245, 245))
 	createBillboardText(plate, vehicleConfig.PlateText, "", Color3.fromRGB(20, 20, 20), {
 		AlwaysOnTop = false,
 		MaxDistance = 30,
@@ -1065,7 +1129,9 @@ local function createVehicle(vehiclesFolder, vehicleConfig)
 		StudsOffset = Vector3.new(0, 0, 0),
 	})
 
-	local labelAnchor = makePart("OwnerAnchor", 0, bodyH + (hasRoof and roofH or 0) + 3, 0, 1, 0.2, 1, accent, Enum.Material.Neon, 1)
+	-- ── Floating owner label ─────────────────────────────────────────────────
+	local topY = roofCenterY + roofH / 2 + 3
+	local labelAnchor = makePart("OwnerAnchor", 0, topY, 0, 1, 0.2, 1, accent, Enum.Material.Neon, 1)
 	createBillboardText(labelAnchor, vehicleConfig.PlateText, vehicleConfig.Owner or vehicleConfig.Name, Color3.fromRGB(255, 255, 255), {
 		AlwaysOnTop = false,
 		MaxDistance = 60,
@@ -1073,17 +1139,14 @@ local function createVehicle(vehiclesFolder, vehicleConfig)
 		StudsOffset = Vector3.new(0, 2, 0),
 	})
 
-	-- PrimaryPart must be set before PivotTo
 	model.PrimaryPart = body
-
-	-- Parent model LAST, then PivotTo world position, then wait for replication
 	model.Parent = vehiclesFolder
-	-- Config Position.Y is the floor surface; body centre is bodyH/2 above that
+	-- Position.Y is floor surface; bodyLocalY offsets body centre above it
 	model:PivotTo(CFrame.new(
 		vehicleConfig.Position.X,
 		vehicleConfig.Position.Y + bodyLocalY,
 		vehicleConfig.Position.Z
-	))
+	) * CFrame.Angles(0, math.rad(vehicleConfig.Heading or 0), 0))
 	task.wait()
 
 	InteractionService.registerPrompt(body, {
@@ -1262,6 +1325,68 @@ local function createPlazaPathMarkers(navigationFolder)
 	end
 end
 
+local function createPlazaFireworks(plazaFolder)
+	local launchPositions = {
+		Vector3.new(90, 3, -90),
+		Vector3.new(-90, 3, -90),
+		Vector3.new(90, 3, 90),
+		Vector3.new(-90, 3, 90),
+		Vector3.new(0, 3, -110),
+		Vector3.new(0, 3, 110),
+	}
+
+	local colorSets = {
+		{ Color3.fromRGB(255, 60, 60), Color3.fromRGB(255, 200, 30), Color3.fromRGB(255, 255, 120) },
+		{ Color3.fromRGB(80, 160, 255), Color3.fromRGB(100, 220, 255), Color3.fromRGB(210, 245, 255) },
+		{ Color3.fromRGB(255, 80, 200), Color3.fromRGB(255, 160, 240), Color3.fromRGB(255, 220, 255) },
+		{ Color3.fromRGB(80, 255, 120), Color3.fromRGB(200, 255, 100), Color3.fromRGB(255, 255, 200) },
+		{ Color3.fromRGB(200, 80, 255), Color3.fromRGB(255, 100, 200), Color3.fromRGB(255, 200, 255) },
+		{ Color3.fromRGB(255, 200, 60), Color3.fromRGB(255, 130, 30), Color3.fromRGB(255, 60, 80) },
+	}
+
+	local rates = { 0.6, 0.85, 0.7, 0.95, 0.65, 0.8 }
+
+	for i, launchPos in ipairs(launchPositions) do
+		local colors = colorSets[i]
+
+		local emitter = createPart("FireworkLauncher" .. i, plazaFolder, {
+			Size = Vector3.new(1, 1, 1),
+			Position = launchPos,
+			Color = colors[1],
+			Transparency = 1,
+			CanCollide = false,
+		})
+
+		local particle = createInstance("ParticleEmitter", "FireworkBurst", emitter)
+		particle.Rate = rates[i]
+		particle.Lifetime = NumberRange.new(3, 4.5)
+		particle.Speed = NumberRange.new(65, 105)
+		particle.SpreadAngle = Vector2.new(14, 14)
+		particle.RotSpeed = NumberRange.new(0, 60)
+		particle.Rotation = NumberRange.new(0, 360)
+		particle.Size = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 0.18),
+			NumberSequenceKeypoint.new(0.32, 2.8),
+			NumberSequenceKeypoint.new(0.65, 3.6),
+			NumberSequenceKeypoint.new(1, 0.08),
+		})
+		particle.Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 0),
+			NumberSequenceKeypoint.new(0.28, 0),
+			NumberSequenceKeypoint.new(0.75, 0.35),
+			NumberSequenceKeypoint.new(1, 1),
+		})
+		particle.LightEmission = 1
+		particle.LightInfluence = 0
+		particle.Acceleration = Vector3.new(0, -40, 0)
+		particle.Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, colors[1]),
+			ColorSequenceKeypoint.new(0.5, colors[2]),
+			ColorSequenceKeypoint.new(1, colors[3]),
+		})
+	end
+end
+
 local function buildFounderPlaza(plazaFolder, navigationFolder, spawnFolder)
 	local hub = WorldConfig.Hub
 
@@ -1307,6 +1432,7 @@ local function buildFounderPlaza(plazaFolder, navigationFolder, spawnFolder)
 	createHubTeleportPads(navigationFolder)
 	createPlazaPathMarkers(navigationFolder)
 	createHubDirectionalSigns(navigationFolder)
+	createPlazaFireworks(plazaFolder)
 end
 
 local function createVenueAmbientSound(venueFolder, venueConfig)
