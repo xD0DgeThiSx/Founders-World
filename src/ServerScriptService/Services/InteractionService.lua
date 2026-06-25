@@ -3,6 +3,7 @@ local TweenService = game:GetService("TweenService")
 
 local RuntimeConfig = require(ReplicatedStorage.Shared.Config.RuntimeConfig)
 
+local PlayerProfileService = require(script.Parent.PlayerProfileService)
 local PlayerSessionService = require(script.Parent.PlayerSessionService)
 local RemoteRegistryService = require(script.Parent.RemoteRegistryService)
 local TeleportService = require(script.Parent.TeleportService)
@@ -39,6 +40,11 @@ local function throttleInteraction(session, key)
 
 	session.InteractionCooldowns[key] = now + RuntimeConfig.World.InteractionCooldown
 	return true
+end
+
+local function recordInteraction(player)
+	PlayerProfileService.incrementStat(player, "Interactions", 1)
+	RemoteRegistryService.syncPlayerProfile(player, PlayerProfileService.getProfilePayload(player))
 end
 
 local function createPrompt(parent, definition)
@@ -132,6 +138,8 @@ function InteractionService.handlePrompt(player, definition)
 		return
 	end
 
+	recordInteraction(player)
+
 	if definition.ActionType == "Door" then
 		openDoor(definition)
 		return
@@ -183,6 +191,7 @@ end
 
 function InteractionService.requestMediaInteract(player, payload)
 	local panelName = payload and payload.PanelName or "Media Panel"
+	recordInteraction(player)
 	RemoteRegistryService.notifyPlayer(player, "Interaction placeholder: " .. panelName, "Info")
 
 	-- Future hook: media stations can route to richer playback systems here.
@@ -195,7 +204,7 @@ end
 function InteractionService.requestFounderAction(player, payload)
 	local actionName = payload and payload.ActionName or "Founder Action"
 
-	if not meetsRoleRequirement(player, "Founder") then
+	if not PlayerSessionService.HasPermission(player, "CanUseFounderActions") then
 		RemoteRegistryService.notifyPlayer(player, "Founder access required.", "Warning")
 		return {
 			Success = false,
@@ -203,6 +212,7 @@ function InteractionService.requestFounderAction(player, payload)
 		}
 	end
 
+	recordInteraction(player)
 	RemoteRegistryService.notifyPlayer(player, "Founder placeholder: " .. actionName, "Info")
 
 	-- Future hooks:

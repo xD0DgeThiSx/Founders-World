@@ -67,4 +67,9 @@ function RemoteRegistryService.syncPlayerRole(player, payload)
 	remote:FireClient(player, payload)
 end
 
+function RemoteRegistryService.syncPlayerProfile(player, payload)
+	local remote = RemoteRegistryService.getEvent("SyncPlayerProfile")
+	remote:FireClient(player, payload)
+end
+
 return RemoteRegistryService

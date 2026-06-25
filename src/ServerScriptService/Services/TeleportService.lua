@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local RuntimeConfig = require(ReplicatedStorage.Shared.Config.RuntimeConfig)
 
+local PlayerProfileService = require(script.Parent.PlayerProfileService)
 local PlayerSessionService = require(script.Parent.PlayerSessionService)
 local RemoteRegistryService = require(script.Parent.RemoteRegistryService)
 
@@ -49,6 +50,8 @@ function TeleportService.teleportToCFrame(player, targetCFrame, successMessage)
 
 	setCooldown(session)
 	rootPart.CFrame = targetCFrame + Vector3.new(0, RuntimeConfig.World.SafeArrivalOffsetY, 0)
+	PlayerProfileService.incrementStat(player, "Teleports", 1)
+	RemoteRegistryService.syncPlayerProfile(player, PlayerProfileService.getProfilePayload(player))
 
 	if successMessage then
 		RemoteRegistryService.notifyPlayer(player, successMessage, "Success")

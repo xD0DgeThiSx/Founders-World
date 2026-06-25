@@ -2,7 +2,7 @@
 
 Founder's World is a Roblox experience scaffolded for long-term maintainability, clean team collaboration, and safe gameplay iteration.
 
-This repository now contains the Phase 4 world-space expansion for Founder's World. The runtime-generation architecture is still intact, but the map has grown into a larger graybox world with a real plaza, readable spacing, dedicated feature zones, and roads connecting the major areas.
+This repository now contains the Phase 5 player architecture slice for Founder's World. The Phase 4 expanded graybox world is preserved, and the project now has a clean server-owned profile boundary for future persistence, entitlements, stats, and progression.
 
 ## Current Scope
 
@@ -14,7 +14,8 @@ This repository now contains the Phase 4 world-space expansion for Founder's Wor
 - Venue room, prop, sign, and media panel generation
 - VIP and founder display seed configuration
 - Player session tracking and role sync
-- Remote-driven client notification and venue navigation shell
+- Player profile defaults, permissions, entitlements, and stats
+- Remote-driven client notification, profile sync, and venue navigation shell
 - Config-driven plaza, zone, and road layout
 - Placeholder expansion districts for future major features
 
@@ -65,6 +66,15 @@ Founders-World/
 3. Add systems incrementally behind clear interfaces.
 4. Keep shared code deterministic and dependency-light.
 
+## Phase 5 Player Architecture
+
+- `ProfileConfig` defines the default player profile shape, permissions, entitlements, stats, and preferences
+- `PlayerProfileService` owns in-memory player profiles before datastore persistence is introduced
+- `PlayerSessionService` now creates, cleans up, and exposes profile payloads alongside role state
+- `RemoteConfig` and `RemoteRegistryService` now support profile replication through `SyncPlayerProfile` and `RequestPlayerProfile`
+- `TeleportService` and `InteractionService` increment player profile stats through the profile boundary
+- Founder actions now check the permission boundary instead of hardcoding role-only logic
+
 ## Phase 4 World Features
 
 - Stromblad Estate
@@ -105,4 +115,4 @@ Founders-World/
 
 ## Next Step
 
-Use `ROADMAP.md` as the implementation sequence and `ARCHITECTURE.md` as the engineering reference as this graybox world evolves into persistent systems, authored art, and full gameplay loops.
+Validate Phase 5 in Roblox Studio by confirming that role sync, profile sync, teleport stats, interaction stats, and founder permission checks work before moving into Phase 6 world architecture or Phase 8 gameplay production.

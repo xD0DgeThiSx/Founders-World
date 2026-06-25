@@ -23,9 +23,10 @@ Bootstrap scripts are the only files that should directly coordinate startup ord
 
 Services represent durable, cross-feature capabilities. Examples for later phases may include player sessions, data, matchmaking, economy, or telemetry. Services should have stable APIs and minimal knowledge of presentation details.
 
-Phase 3 introduces a real service split:
+Phase 5 keeps server-owned player state split by responsibility:
 
-- `PlayerSessionService` owns per-player session state and role resolution.
+- `PlayerSessionService` owns per-player lifecycle, role resolution, and session lookups.
+- `PlayerProfileService` owns in-memory profile defaults, permission helpers, entitlements, and player stats.
 - `RemoteRegistryService` owns runtime remote creation from config.
 - `TeleportService` owns safe travel rules and cooldowns.
 - `InteractionService` owns prompt validation and interaction routing.
@@ -40,11 +41,13 @@ Shared code contains contracts, enums, utility modules, schema definitions, and 
 
 In Phase 2, `WorldConfig.lua` becomes the main authoring surface for venue layouts. Rooms, props, media panels, signs, and VIP seed data all live in shared config so the runtime builder can stay generic.
 
+Phase 5 adds `ProfileConfig.lua` as the source of truth for default player profile shape, role permissions, and entitlement defaults. Persistence is intentionally deferred behind the profile service boundary.
+
 ### 5. Presentation Layer
 
 Client app and UI controllers should translate replicated state into visuals and local input behavior. They should not decide authoritative outcomes.
 
-The first UI shell is still lightweight, but it now renders role state, notifications, and venue navigation from authoritative server remotes.
+The first UI shell is still lightweight, but it now renders role state, notifications, venue navigation, and can consume profile state from authoritative server remotes.
 
 ### 6. Content Layer
 
@@ -60,7 +63,8 @@ Phase 4 promotes macro layout data into shared config. Plaza layout, zone footpr
 - `Services/`: long-lived server capabilities
 - `Systems/`: feature-level runtime systems
 - `Services/InteractionService.lua`: central prompt routing and validation
-- `Services/PlayerSessionService.lua`: role-aware per-player state
+- `Services/PlayerProfileService.lua`: in-memory profile, entitlement, permission, and stats boundary
+- `Services/PlayerSessionService.lua`: role-aware per-player lifecycle state
 - `Services/RemoteRegistryService.lua`: config-driven remote initialization
 - `Services/TeleportService.lua`: safe teleport and arrival logic
 - `Services/WorldBuilderService.lua`: macro and micro world generation for plaza, zones, roads, venues, and placeholder districts
@@ -71,6 +75,7 @@ Phase 4 promotes macro layout data into shared config. Plaza layout, zone footpr
 - `Remotes/`: remote event/function containers and definitions
 - `Config/`: tunable data and non-secret constants
 - `Packages/`: external packages or vendored dependencies when adopted
+- `Shared/Config/ProfileConfig.lua`: source of truth for default profile shape and role permissions
 - `Shared/Config/WorldConfig.lua`: source of truth for generated venue layouts
 - `Shared/Config/RemoteConfig.lua`: source of truth for runtime remotes
 - `Shared/Config/WorldConfig.lua`: now also defines zones, roads, hub signage positions, and future expansion metadata
@@ -104,9 +109,10 @@ The current world is still generated at runtime, but it is now structured as a c
 - Client modules may depend on shared modules.
 - Shared modules must not depend on server or client modules.
 - Systems may depend on services, but cross-system coupling should be minimized.
-- UI code must not directly own economy, combat, or persistence decisions.
+- UI code must not directly own economy, combat, persistence, or entitlement decisions.
 - World generation code should consume config data, not embed venue-specific authoring decisions inline.
 - Macro layout data should stay declarative so zone spacing, roads, and future districts can evolve without rewriting service logic.
+- Player persistence should enter through `PlayerProfileService` or a future data adapter, not directly through feature systems.
 
 ## Remote Communication Rules
 
@@ -115,6 +121,7 @@ The current world is still generated at runtime, but it is now structured as a c
 - Validation must happen on the server even when clients pre-validate locally.
 - Avoid generic catch-all remotes.
 - Client menu actions should route through remote functions or events instead of directly mutating world state.
+- Replicated player profile payloads must be safe for clients and exclude server-only data.
 
 ## Naming Conventions
 
