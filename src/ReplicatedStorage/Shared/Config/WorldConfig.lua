@@ -692,271 +692,282 @@ local WorldConfig = {
 			Name = "Girls Hangout",
 			Theme = "Bright social hangout graybox",
 			Position = Vector3.new(260, 0, -300),
-			Footprint = Vector3.new(100, 28, 96),
+			Footprint = Vector3.new(140, 30, 126),
 			Color = Color3.fromRGB(255, 170, 214),
 			Accent = Color3.fromRGB(255, 240, 248),
-			SpawnOffset = Vector3.new(0, 3, -24),
+			SpawnOffset = Vector3.new(0, 3, -32),
+			ReturnPadOffset = Vector3.new(-46, 0.5, -44),
+			ReturnPadOptions = {
+				MarkerOffset = Vector3.new(0, 5, -7),
+				MarkerColor = Color3.fromRGB(78, 38, 70),
+				Subtitle = "Return",
+			},
 			AmbientSoundId = 0, -- replace with Roblox pop/party music asset ID
 			Rooms = {
-				room("Abbie's Birthday Room", Vector3.new(0, 0, -28), Vector3.new(32, 2, 16), {
+				room("Abbie's Birthday Room", Vector3.new(0, 0, -40), Vector3.new(44, 2, 22), {
 					OpenSides = { "South" },
 					FloorColor = Color3.fromRGB(255, 220, 240),
 					WallColor = Color3.fromRGB(255, 140, 200),
+					LabelSize = Vector3.new(18, 5, 1),
 				}),
-				room("Arcade Room", Vector3.new(-24, 0, 6), Vector3.new(28, 2, 24), {
+				room("Arcade Room", Vector3.new(-36, 0, 0), Vector3.new(36, 2, 30), {
 					OpenSides = { "East", "South" },
 					FloorColor = Color3.fromRGB(255, 221, 239),
+					LabelSize = Vector3.new(16, 5, 1),
 				}),
-				room("Theater Room", Vector3.new(20, 0, 4), Vector3.new(30, 2, 26), {
+				room("Theater Room", Vector3.new(34, 0, 0), Vector3.new(40, 2, 32), {
 					OpenSides = { "West", "South" },
 					FloorColor = Color3.fromRGB(248, 206, 232),
+					LabelSize = Vector3.new(18, 5, 1),
 				}),
-				room("Streaming Corner", Vector3.new(-24, 0, 34), Vector3.new(24, 2, 22), {
+				room("Streaming Corner", Vector3.new(-38, 0, 38), Vector3.new(30, 2, 24), {
 					OpenSides = { "North", "East" },
 					FloorColor = Color3.fromRGB(242, 190, 224),
+					LabelSize = Vector3.new(16, 5, 1),
 				}),
-				room("Lounge Seating", Vector3.new(20, 0, 34), Vector3.new(30, 2, 22), {
+				room("Lounge Seating", Vector3.new(18, 0, 38), Vector3.new(38, 2, 24), {
 					OpenSides = { "North", "West" },
 					FloorColor = Color3.fromRGB(255, 230, 242),
+					LabelSize = Vector3.new(18, 5, 1),
 				}),
 			},
 			Props = {
-				prop("Arcade Cabinet A", "ArcadeCabinet", Vector3.new(-36, 5, -1), Vector3.new(5, 10, 4), {
+				prop("Arcade Cabinet A", "ArcadeCabinet", Vector3.new(-52, 5, -6), Vector3.new(5, 10, 4), {
 					Color = Color3.fromRGB(255, 94, 170),
 					Accent = Color3.fromRGB(255, 220, 240),
 				}),
-				prop("Arcade Cabinet B", "ArcadeCabinet", Vector3.new(-36, 5, 7), Vector3.new(5, 10, 4), {
+				prop("Arcade Cabinet B", "ArcadeCabinet", Vector3.new(-52, 5, 4), Vector3.new(5, 10, 4), {
 					Color = Color3.fromRGB(200, 60, 160),
 					Accent = Color3.fromRGB(255, 220, 240),
 				}),
-				prop("Arcade Cabinet C", "ArcadeCabinet", Vector3.new(-36, 5, 15), Vector3.new(5, 10, 4), {
+				prop("Arcade Cabinet C", "ArcadeCabinet", Vector3.new(-52, 5, 14), Vector3.new(5, 10, 4), {
 					Color = Color3.fromRGB(255, 130, 200),
 					Accent = Color3.fromRGB(255, 220, 240),
 				}),
-				prop("Dance Floor", "FloorPad", Vector3.new(-22, 2.1, 8), Vector3.new(18, 0.2, 16), {
+				prop("Dance Floor", "FloorPad", Vector3.new(-36, 2.1, 10), Vector3.new(24, 0.2, 20), {
 					Color = Color3.fromRGB(255, 80, 180),
 					Material = Enum.Material.Neon,
 					Transparency = 0.35,
 					HideBillboard = true,
 				}),
-				prop("Prize Counter", "Table", Vector3.new(-18, 2, -3), Vector3.new(14, 4, 4), {
+				prop("Prize Counter", "Table", Vector3.new(-34, 2, -12), Vector3.new(16, 4, 4), {
 					Color = Color3.fromRGB(230, 160, 210),
 					Material = Enum.Material.WoodPlanks,
 					HideBillboard = true,
 				}),
-				prop("DJ Booth", "Table", Vector3.new(-22, 4, -2), Vector3.new(10, 6, 4), {
+				prop("DJ Booth", "Table", Vector3.new(-48, 4, -14), Vector3.new(10, 6, 4), {
 					Color = Color3.fromRGB(35, 20, 45),
 					Material = Enum.Material.Metal,
 					Label = "DJ Booth",
 				}),
-				prop("DJ Light Bar", "Display", Vector3.new(-22, 8, -2), Vector3.new(10, 1.5, 1), {
+				prop("DJ Light Bar", "Display", Vector3.new(-48, 8, -14), Vector3.new(10, 1.5, 1), {
 					Color = Color3.fromRGB(255, 80, 180),
 					Material = Enum.Material.Neon,
 					HideBillboard = true,
 				}),
-				prop("Cinema Screen", "CinemaScreen", Vector3.new(20, 10, -7), Vector3.new(22, 12, 1), {
+				prop("Cinema Screen", "CinemaScreen", Vector3.new(34, 10, -8), Vector3.new(26, 12, 1), {
 					Color = Color3.fromRGB(255, 170, 214),
 					Accent = Color3.fromRGB(255, 240, 248),
 				}),
-				prop("Front Row Seats", "Seat", Vector3.new(20, 2, 4), Vector3.new(22, 4, 6), {
+				prop("Front Row Seats", "Seat", Vector3.new(34, 2, 4), Vector3.new(24, 4, 6), {
 					Color = Color3.fromRGB(221, 145, 195),
 					Material = Enum.Material.Fabric,
 				}),
-				prop("Back Row Seats", "Seat", Vector3.new(20, 2, 11), Vector3.new(22, 4, 6), {
+				prop("Back Row Seats", "Seat", Vector3.new(34, 2, 13), Vector3.new(24, 4, 6), {
 					Color = Color3.fromRGB(200, 120, 175),
 					Material = Enum.Material.Fabric,
 				}),
-				prop("Popcorn Stand", "Table", Vector3.new(10, 2, 15), Vector3.new(4, 6, 4), {
+				prop("Popcorn Stand", "Table", Vector3.new(16, 2, 18), Vector3.new(5, 6, 5), {
 					Color = Color3.fromRGB(240, 180, 60),
 					Material = Enum.Material.SmoothPlastic,
 				}),
-				prop("Streaming Desk", "Table", Vector3.new(-26, 1.5, 34), Vector3.new(10, 3, 5), {
+				prop("Streaming Desk", "Table", Vector3.new(-42, 1.5, 38), Vector3.new(12, 3, 5), {
 					Color = Color3.fromRGB(198, 137, 181),
 					Material = Enum.Material.WoodPlanks,
 				}),
-				prop("Ring Light", "Display", Vector3.new(-36, 9, 34), Vector3.new(6, 6, 1), {
+				prop("Ring Light", "Display", Vector3.new(-54, 9, 38), Vector3.new(6, 6, 1), {
 					Color = Color3.fromRGB(255, 250, 220),
 					Material = Enum.Material.Neon,
 					Shape = Enum.PartType.Cylinder,
 				}),
-				prop("Gaming Chair", "Seat", Vector3.new(-22, 2, 38), Vector3.new(5, 8, 5), {
+				prop("Gaming Chair", "Seat", Vector3.new(-32, 2, 42), Vector3.new(5, 8, 5), {
 					Color = Color3.fromRGB(180, 80, 150),
 					Material = Enum.Material.Fabric,
 				}),
-				prop("Pool", "Pool", Vector3.new(0, 0, 40), Vector3.new(22, 4, 12), {
+				prop("Pool", "Pool", Vector3.new(10, 0, 46), Vector3.new(28, 4, 14), {
 					Color = Color3.fromRGB(104, 193, 255),
 					Accent = Color3.fromRGB(235, 247, 255),
 				}),
-				prop("Water Slide", "Slide", Vector3.new(18, 0, 42), Vector3.new(18, 8, 6), {
+				prop("Water Slide", "Slide", Vector3.new(34, 0, 48), Vector3.new(18, 8, 6), {
 					Color = Color3.fromRGB(255, 124, 198),
 					Accent = Color3.fromRGB(255, 255, 255),
 				}),
-				prop("Pool Chair A", "PoolChair", Vector3.new(-18, 2, 36), Vector3.new(8, 3, 4), {
+				prop("Pool Chair A", "PoolChair", Vector3.new(-10, 2, 40), Vector3.new(8, 3, 4), {
 					Color = Color3.fromRGB(255, 240, 240),
 					Accent = Color3.fromRGB(255, 170, 214),
 				}),
-				prop("Pool Chair B", "PoolChair", Vector3.new(-18, 2, 44), Vector3.new(8, 3, 4), {
+				prop("Pool Chair B", "PoolChair", Vector3.new(-10, 2, 48), Vector3.new(8, 3, 4), {
 					Color = Color3.fromRGB(255, 240, 240),
 					Accent = Color3.fromRGB(255, 170, 214),
 				}),
-				prop("Umbrella Post", "Display", Vector3.new(-28, 7, 40), Vector3.new(1.5, 14, 1.5), {
+				prop("Umbrella Post", "Display", Vector3.new(-20, 7, 46), Vector3.new(1.5, 14, 1.5), {
 					Color = Color3.fromRGB(255, 240, 248),
 					Material = Enum.Material.Metal,
 				}),
-				prop("VIP Floor Pad", "FloorPad", Vector3.new(28, 2.1, 40), Vector3.new(14, 0.2, 14), {
+				prop("VIP Floor Pad", "FloorPad", Vector3.new(50, 2.1, 44), Vector3.new(18, 0.2, 18), {
 					Color = Color3.fromRGB(255, 200, 230),
 					Material = Enum.Material.Neon,
 					Transparency = 0.25,
 				}),
-				prop("VIP Lounge Chair A", "PoolChair", Vector3.new(24, 2, 37), Vector3.new(7, 3, 4), {
+				prop("VIP Lounge Chair A", "PoolChair", Vector3.new(44, 2, 40), Vector3.new(7, 3, 4), {
 					Color = Color3.fromRGB(255, 200, 230),
 					Accent = Color3.fromRGB(255, 170, 214),
 					HideBillboard = true,
 				}),
-				prop("VIP Lounge Chair B", "PoolChair", Vector3.new(24, 2, 43), Vector3.new(7, 3, 4), {
+				prop("VIP Lounge Chair B", "PoolChair", Vector3.new(44, 2, 48), Vector3.new(7, 3, 4), {
 					Color = Color3.fromRGB(255, 200, 230),
 					Accent = Color3.fromRGB(255, 170, 214),
 					HideBillboard = true,
 				}),
-				prop("VIP Side Table", "Table", Vector3.new(24, 1.5, 40), Vector3.new(4, 3, 4), {
+				prop("VIP Side Table", "Table", Vector3.new(44, 1.5, 44), Vector3.new(4, 3, 4), {
 					Color = Color3.fromRGB(220, 150, 195),
 					Material = Enum.Material.WoodPlanks,
 					HideBillboard = true,
 				}),
-				prop("VIP Star Wall", "VIPDisplay", Vector3.new(34, 10, 40), Vector3.new(18, 12, 1), {
+				prop("VIP Star Wall", "VIPDisplay", Vector3.new(60, 10, 44), Vector3.new(18, 12, 1), {
 					Color = Color3.fromRGB(255, 170, 214),
 					Accent = Color3.fromRGB(255, 240, 248),
 					Label = "VIP Star Lounge",
 					Message = "Welcome, superstar! Abbie, Lue, Emi & Sophia — this spot is yours.",
 				}),
 				-- === ABBIE'S BIRTHDAY ROOM ===
-				prop("Birthday Cake Base", "Display", Vector3.new(0, 3, -28), Vector3.new(8, 2, 8), {
+				prop("Birthday Cake Base", "Display", Vector3.new(0, 3, -40), Vector3.new(8, 2, 8), {
 					Color = Color3.fromRGB(255, 220, 150),
 					HideBillboard = true,
 				}),
-				prop("Birthday Cake Mid", "Display", Vector3.new(0, 5.5, -28), Vector3.new(6, 3, 6), {
+				prop("Birthday Cake Mid", "Display", Vector3.new(0, 5.5, -40), Vector3.new(6, 3, 6), {
 					Color = Color3.fromRGB(255, 170, 200),
 					HideBillboard = true,
 				}),
-				prop("Birthday Cake Top", "Display", Vector3.new(0, 8.5, -28), Vector3.new(4, 3, 4), {
+				prop("Birthday Cake Top", "Display", Vector3.new(0, 8.5, -40), Vector3.new(4, 3, 4), {
 					Color = Color3.fromRGB(255, 230, 240),
 					HideBillboard = true,
 				}),
-				prop("Birthday Candle Glow", "Display", Vector3.new(0, 11.5, -28), Vector3.new(2.5, 2, 2.5), {
+				prop("Birthday Candle Glow", "Display", Vector3.new(0, 11.5, -40), Vector3.new(2.5, 2, 2.5), {
 					Color = Color3.fromRGB(255, 240, 60),
 					Material = Enum.Material.Neon,
 					HideBillboard = true,
 				}),
-				prop("Balloon Pink", "Display", Vector3.new(-11, 12, -24), Vector3.new(4, 5, 4), {
+				prop("Balloon Pink", "Display", Vector3.new(-16, 12, -35), Vector3.new(4, 5, 4), {
 					Color = Color3.fromRGB(255, 100, 185),
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Balloon Purple", "Display", Vector3.new(-6, 15, -23), Vector3.new(4, 5, 4), {
+				prop("Balloon Purple", "Display", Vector3.new(-10, 15, -34), Vector3.new(4, 5, 4), {
 					Color = Color3.fromRGB(180, 80, 255),
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Balloon Gold", "Display", Vector3.new(0, 16, -26), Vector3.new(5, 6, 5), {
+				prop("Balloon Gold", "Display", Vector3.new(0, 16, -37), Vector3.new(5, 6, 5), {
 					Color = Color3.fromRGB(255, 215, 0),
 					Material = Enum.Material.Neon,
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Balloon Blue", "Display", Vector3.new(6, 14, -23), Vector3.new(4, 5, 4), {
+				prop("Balloon Blue", "Display", Vector3.new(10, 14, -34), Vector3.new(4, 5, 4), {
 					Color = Color3.fromRGB(80, 185, 255),
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Balloon Teal", "Display", Vector3.new(11, 12, -24), Vector3.new(4, 5, 4), {
+				prop("Balloon Teal", "Display", Vector3.new(16, 12, -35), Vector3.new(4, 5, 4), {
 					Color = Color3.fromRGB(80, 230, 200),
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Balloon Pink B", "Display", Vector3.new(-8, 15, -33), Vector3.new(4, 5, 4), {
+				prop("Balloon Pink B", "Display", Vector3.new(-12, 15, -47), Vector3.new(4, 5, 4), {
 					Color = Color3.fromRGB(255, 150, 210),
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Balloon Yellow", "Display", Vector3.new(8, 15, -33), Vector3.new(4, 5, 4), {
+				prop("Balloon Yellow", "Display", Vector3.new(12, 15, -47), Vector3.new(4, 5, 4), {
 					Color = Color3.fromRGB(255, 235, 80),
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Confetti Floor Pink", "FloorPad", Vector3.new(-8, 2.15, -24), Vector3.new(8, 0.2, 6), {
+				prop("Confetti Floor Pink", "FloorPad", Vector3.new(-12, 2.15, -35), Vector3.new(10, 0.2, 8), {
 					Color = Color3.fromRGB(255, 100, 180),
 					Material = Enum.Material.Neon,
 					Transparency = 0.3,
 					HideBillboard = true,
 				}),
-				prop("Confetti Floor Yellow", "FloorPad", Vector3.new(8, 2.15, -24), Vector3.new(8, 0.2, 6), {
+				prop("Confetti Floor Yellow", "FloorPad", Vector3.new(12, 2.15, -35), Vector3.new(10, 0.2, 8), {
 					Color = Color3.fromRGB(255, 235, 60),
 					Material = Enum.Material.Neon,
 					Transparency = 0.3,
 					HideBillboard = true,
 				}),
-				prop("Confetti Floor Purple", "FloorPad", Vector3.new(-8, 2.15, -31), Vector3.new(8, 0.2, 8), {
+				prop("Confetti Floor Purple", "FloorPad", Vector3.new(-12, 2.15, -45), Vector3.new(10, 0.2, 10), {
 					Color = Color3.fromRGB(180, 80, 255),
 					Material = Enum.Material.Neon,
 					Transparency = 0.3,
 					HideBillboard = true,
 				}),
-				prop("Confetti Floor Blue", "FloorPad", Vector3.new(8, 2.15, -31), Vector3.new(8, 0.2, 8), {
+				prop("Confetti Floor Blue", "FloorPad", Vector3.new(12, 2.15, -45), Vector3.new(10, 0.2, 10), {
 					Color = Color3.fromRGB(80, 185, 255),
 					Material = Enum.Material.Neon,
 					Transparency = 0.3,
 					HideBillboard = true,
 				}),
-				prop("Birthday Banner", "Display", Vector3.new(0, 11, -35.4), Vector3.new(28, 5, 0.4), {
+				prop("Birthday Banner", "Display", Vector3.new(0, 11, -51.4), Vector3.new(34, 5, 0.4), {
 					Color = Color3.fromRGB(255, 50, 160),
 					Material = Enum.Material.Neon,
 					Label = "Birthday Banner",
 					Message = "Happy 11th Birthday Abbie Jo! Love, Mom, Dad, and Charlie Lue",
 				}),
-				prop("Birthday Confetti A", "Confetti", Vector3.new(-10, 14, -25), Vector3.new(1, 1, 1), {
+				prop("Birthday Confetti A", "Confetti", Vector3.new(-12, 14, -37), Vector3.new(1, 1, 1), {
 					HideBillboard = true,
 					Rate = 18,
 				}),
-				prop("Birthday Confetti B", "Confetti", Vector3.new(10, 14, -25), Vector3.new(1, 1, 1), {
+				prop("Birthday Confetti B", "Confetti", Vector3.new(12, 14, -37), Vector3.new(1, 1, 1), {
 					HideBillboard = true,
 					Rate = 18,
 				}),
-				prop("Birthday Confetti C", "Confetti", Vector3.new(0, 14, -30), Vector3.new(1, 1, 1), {
+				prop("Birthday Confetti C", "Confetti", Vector3.new(0, 14, -43), Vector3.new(1, 1, 1), {
 					HideBillboard = true,
 					Rate = 12,
 				}),
-				prop("Ceiling Star A", "Display", Vector3.new(-10, 17.5, -25), Vector3.new(3, 3, 3), {
+				prop("Ceiling Star A", "Display", Vector3.new(-12, 17.5, -37), Vector3.new(3, 3, 3), {
 					Color = Color3.fromRGB(255, 220, 50),
 					Material = Enum.Material.Neon,
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Ceiling Star B", "Display", Vector3.new(10, 17.5, -25), Vector3.new(3, 3, 3), {
+				prop("Ceiling Star B", "Display", Vector3.new(12, 17.5, -37), Vector3.new(3, 3, 3), {
 					Color = Color3.fromRGB(255, 100, 185),
 					Material = Enum.Material.Neon,
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Ceiling Star C", "Display", Vector3.new(0, 17.5, -30), Vector3.new(3, 3, 3), {
+				prop("Ceiling Star C", "Display", Vector3.new(0, 17.5, -43), Vector3.new(3, 3, 3), {
 					Color = Color3.fromRGB(180, 80, 255),
 					Material = Enum.Material.Neon,
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Ceiling Star D", "Display", Vector3.new(-10, 17.5, -34), Vector3.new(3, 3, 3), {
+				prop("Ceiling Star D", "Display", Vector3.new(-12, 17.5, -49), Vector3.new(3, 3, 3), {
 					Color = Color3.fromRGB(80, 230, 200),
 					Material = Enum.Material.Neon,
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
-				prop("Ceiling Star E", "Display", Vector3.new(10, 17.5, -34), Vector3.new(3, 3, 3), {
+				prop("Ceiling Star E", "Display", Vector3.new(12, 17.5, -49), Vector3.new(3, 3, 3), {
 					Color = Color3.fromRGB(255, 235, 80),
 					Material = Enum.Material.Neon,
 					Shape = Enum.PartType.Ball,
 					HideBillboard = true,
 				}),
 				-- === UNDERGROUND TUNNEL ACCESS ===
-				prop("Secret Hatch", "Display", Vector3.new(0, 2.2, 10), Vector3.new(8, 0.3, 8), {
+				prop("Secret Hatch", "Display", Vector3.new(0, 2.2, 18), Vector3.new(10, 0.3, 10), {
 					Color = Color3.fromRGB(120, 60, 220),
 					Material = Enum.Material.Neon,
 					Transparency = 0.05,
@@ -966,54 +977,54 @@ local WorldConfig = {
 					ObjectText = "Secret Food Court",
 					VenueId = "underground-food-court",
 				}),
-				prop("Tunnel Shaft East", "Display", Vector3.new(4, -14, 10), Vector3.new(1, 34, 8), {
+				prop("Tunnel Shaft East", "Display", Vector3.new(5, -14, 18), Vector3.new(1, 34, 10), {
 					Color = Color3.fromRGB(75, 50, 100),
 					HideBillboard = true,
 				}),
-				prop("Tunnel Shaft West", "Display", Vector3.new(-4, -14, 10), Vector3.new(1, 34, 8), {
+				prop("Tunnel Shaft West", "Display", Vector3.new(-5, -14, 18), Vector3.new(1, 34, 10), {
 					Color = Color3.fromRGB(75, 50, 100),
 					HideBillboard = true,
 				}),
-				prop("Tunnel Shaft North", "Display", Vector3.new(0, -14, 6), Vector3.new(7, 34, 1), {
+				prop("Tunnel Shaft North", "Display", Vector3.new(0, -14, 13), Vector3.new(9, 34, 1), {
 					Color = Color3.fromRGB(75, 50, 100),
 					HideBillboard = true,
 				}),
-				prop("Tunnel Shaft South", "Display", Vector3.new(0, -14, 14), Vector3.new(7, 34, 1), {
+				prop("Tunnel Shaft South", "Display", Vector3.new(0, -14, 23), Vector3.new(9, 34, 1), {
 					Color = Color3.fromRGB(75, 50, 100),
 					HideBillboard = true,
 				}),
-				prop("Tunnel Neon Ring", "Display", Vector3.new(0, -6, 10), Vector3.new(9, 1, 9), {
+				prop("Tunnel Neon Ring", "Display", Vector3.new(0, -6, 18), Vector3.new(11, 1, 11), {
 					Color = Color3.fromRGB(140, 80, 255),
 					Material = Enum.Material.Neon,
 					HideBillboard = true,
 				}),
 				-- === TREEHOUSE + ZIPLINE ===
-				prop("Tree Trunk", "Display", Vector3.new(40, 26, -20), Vector3.new(4, 50, 4), {
+				prop("Tree Trunk", "Display", Vector3.new(58, 26, -18), Vector3.new(4, 50, 4), {
 					Color = Color3.fromRGB(80, 55, 25),
 					Material = Enum.Material.Wood,
 					HideBillboard = true,
 				}),
-				prop("Treehouse Platform", "Display", Vector3.new(40, 50, -20), Vector3.new(20, 2, 20), {
+				prop("Treehouse Platform", "Display", Vector3.new(58, 50, -18), Vector3.new(20, 2, 20), {
 					Color = Color3.fromRGB(120, 80, 40),
 					Material = Enum.Material.WoodPlanks,
 					HideBillboard = true,
 				}),
-				prop("Treehouse Wall N", "Display", Vector3.new(40, 60, -29), Vector3.new(20, 14, 1), {
+				prop("Treehouse Wall N", "Display", Vector3.new(58, 60, -27), Vector3.new(20, 14, 1), {
 					Color = Color3.fromRGB(140, 100, 50),
 					Material = Enum.Material.WoodPlanks,
 					HideBillboard = true,
 				}),
-				prop("Treehouse Wall E", "Display", Vector3.new(49, 60, -20), Vector3.new(1, 14, 18), {
+				prop("Treehouse Wall E", "Display", Vector3.new(67, 60, -18), Vector3.new(1, 14, 18), {
 					Color = Color3.fromRGB(140, 100, 50),
 					Material = Enum.Material.WoodPlanks,
 					HideBillboard = true,
 				}),
-				prop("Treehouse Roof", "Display", Vector3.new(40, 67, -20), Vector3.new(22, 2, 22), {
+				prop("Treehouse Roof", "Display", Vector3.new(58, 67, -18), Vector3.new(22, 2, 22), {
 					Color = Color3.fromRGB(160, 120, 60),
 					Material = Enum.Material.WoodPlanks,
 					HideBillboard = true,
 				}),
-				prop("Treehouse Sign", "Display", Vector3.new(40, 58, -28.4), Vector3.new(14, 6, 0.5), {
+				prop("Treehouse Sign", "Display", Vector3.new(58, 58, -26.4), Vector3.new(16, 6, 0.5), {
 					Color = Color3.fromRGB(200, 160, 90),
 					Material = Enum.Material.Neon,
 					Label = "Girls Hangout Treehouse",
@@ -1026,34 +1037,34 @@ local WorldConfig = {
 				}),
 			},
 			MediaPanels = {
-				mediaPanel("Theater Slideshow", "Photo", Vector3.new(28, 8, 2), Vector3.new(20, 10, 1), {
+				mediaPanel("Theater Slideshow", "Photo", Vector3.new(48, 8, 2), Vector3.new(20, 10, 1), {
 					Title = "Theater Slideshow",
 				}),
-				mediaPanel("Hangout Stream", "Twitch", Vector3.new(-10, 8, 34), Vector3.new(18, 10, 1), {
+				mediaPanel("Hangout Stream", "Twitch", Vector3.new(-18, 8, 38), Vector3.new(18, 10, 1), {
 					Title = "Streaming Corner",
 				}),
-				mediaPanel("Girls Playlist", "Spotify", Vector3.new(16, 5, 34), Vector3.new(12, 8, 3), {
+				mediaPanel("Girls Playlist", "Spotify", Vector3.new(12, 5, 40), Vector3.new(12, 8, 1), {
 					Title = "Girls Playlist",
 				}),
 			},
 			Signs = {
-				sign("Girls Hangout", "Abbie · Lue · EmilyPlays · EmiGirl · Sophia", Vector3.new(0, 20, -44), {
-					Size = Vector3.new(28, 10, 1),
+				sign("Girls Hangout", "Abbie · Lue · EmilyPlays · EmiGirl · Sophia", Vector3.new(0, 22, -59), {
+					Size = Vector3.new(32, 10, 1),
 				}),
-				sign("Abbie", "Arcade Captain", Vector3.new(-24, 14, -5), {
-					Size = Vector3.new(10, 8, 1),
+				sign("Abbie", "Arcade Captain", Vector3.new(-40, 14, -12), {
+					Size = Vector3.new(12, 8, 1),
 				}),
-				sign("Lue", "Theater Host", Vector3.new(20, 14, -5), {
-					Size = Vector3.new(10, 8, 1),
+				sign("Lue", "Theater Host", Vector3.new(34, 14, -12), {
+					Size = Vector3.new(12, 8, 1),
 				}),
-				sign("EmilyPlays", "Streaming Queen", Vector3.new(-24, 14, 23), {
-					Size = Vector3.new(10, 8, 1),
+				sign("EmilyPlays", "Streaming Queen", Vector3.new(-40, 14, 26), {
+					Size = Vector3.new(12, 8, 1),
 				}),
-				sign("EmiGirl", "Lounge Lead", Vector3.new(20, 14, 23), {
-					Size = Vector3.new(10, 8, 1),
+				sign("EmiGirl", "Lounge Lead", Vector3.new(28, 14, 26), {
+					Size = Vector3.new(12, 8, 1),
 				}),
-				sign("Sophia", "Pool Queen", Vector3.new(0, 14, 44), {
-					Size = Vector3.new(10, 8, 1),
+				sign("Sophia", "Pool Queen", Vector3.new(10, 14, 56), {
+					Size = Vector3.new(12, 8, 1),
 				}),
 			},
 		},

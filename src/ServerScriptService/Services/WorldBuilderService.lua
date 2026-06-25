@@ -387,9 +387,9 @@ local function createSafetyGround(environmentFolder)
 	local hub = WorldConfig.Hub
 	createGroundPad(
 		"HubSafetyApron",
-		Vector3.new(hub.Size.X + 90, 2, hub.Size.Z + 90),
-		hub.Position + Vector3.new(0, -1, 0),
-		Color3.fromRGB(78, 90, 76),
+		Vector3.new(hub.Size.X + 110, 0.8, hub.Size.Z + 110),
+		hub.Position + Vector3.new(0, 0.2, 0),
+		Color3.fromRGB(72, 92, 74),
 		Enum.Material.Grass,
 		0
 	)
@@ -407,19 +407,19 @@ local function createSafetyGround(environmentFolder)
 	end
 
 	if vehicleCount > 0 then
-		local lotCenter = Vector3.new((vehicleMinX + vehicleMaxX) / 2, -0.95, (vehicleMinZ + vehicleMaxZ) / 2)
-		local lotSize = Vector3.new((vehicleMaxX - vehicleMinX) + 42, 1.9, (vehicleMaxZ - vehicleMinZ) + 28)
-		createGroundPad("VehicleLotSafety", lotSize, lotCenter, Color3.fromRGB(62, 62, 68), Enum.Material.Slate, 0)
+		local lotCenter = Vector3.new((vehicleMinX + vehicleMaxX) / 2, 0.22, (vehicleMinZ + vehicleMaxZ) / 2)
+		local lotSize = Vector3.new((vehicleMaxX - vehicleMinX) + 48, 0.72, (vehicleMaxZ - vehicleMinZ) + 34)
+		createGroundPad("VehicleLotSafety", lotSize, lotCenter, Color3.fromRGB(78, 82, 76), Enum.Material.Ground, 0)
 	end
 
 	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
 		if zoneConfig.ZoneType == "Active" then
 			createGroundPad(
 				zoneConfig.Id .. "SafetyApron",
-				Vector3.new(zoneConfig.Size.X + 22, 1.6, zoneConfig.Size.Z + 22),
-				zoneConfig.Position + Vector3.new(0, -0.8, 0),
-				Color3.fromRGB(82, 96, 80),
-				Enum.Material.Grass,
+				Vector3.new(zoneConfig.Size.X + 34, 0.72, zoneConfig.Size.Z + 34),
+				zoneConfig.Position + Vector3.new(0, 0.22, 0),
+				Color3.fromRGB(76, 96, 78),
+				Enum.Material.Ground,
 				0
 			)
 		end
@@ -433,13 +433,13 @@ local function createSafetyGround(environmentFolder)
 			local shoulderCenter = roadConfig.StartPosition:Lerp(roadConfig.EndPosition, 0.5)
 			local shoulder = createGroundPad(
 				roadConfig.Name .. "SafetyFill",
-				Vector3.new(roadConfig.Width + 28, 1.2, length + 18),
-				shoulderCenter + Vector3.new(0, -0.6, 0),
-				Color3.fromRGB(72, 82, 74),
-				Enum.Material.Grass,
+				Vector3.new(roadConfig.Width + 16, 0.48, length + 12),
+				shoulderCenter + Vector3.new(0, 0.24, 0),
+				Color3.fromRGB(84, 98, 82),
+				Enum.Material.Ground,
 				0
 			)
-			shoulder.CFrame = CFrame.lookAt(shoulderCenter + Vector3.new(0, -0.6, 0), roadConfig.EndPosition + Vector3.new(0, -0.6, 0))
+			shoulder.CFrame = CFrame.lookAt(shoulderCenter + Vector3.new(0, 0.24, 0), roadConfig.EndPosition + Vector3.new(0, 0.24, 0))
 		end
 	end
 end
