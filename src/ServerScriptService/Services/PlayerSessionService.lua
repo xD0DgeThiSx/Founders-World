@@ -67,20 +67,29 @@ local function bindPlayer(player)
 	local session = createSession(player)
 	local firstSpawn = true
 
+	local function sendToHub(character)
+		if not firstSpawn then return end
+		firstSpawn = false
+		task.spawn(function()
+			local rootPart = character:WaitForChild("HumanoidRootPart", 10)
+			if rootPart and rootPart.Parent then
+				rootPart.CFrame = CFrame.new(WorldConfig.Hub.SpawnPosition)
+			end
+		end)
+	end
+
 	player.CharacterAdded:Connect(function(character)
-		if firstSpawn then
-			firstSpawn = false
-			task.spawn(function()
-				local rootPart = character:WaitForChild("HumanoidRootPart", 10)
-				if rootPart then
-					rootPart.CFrame = CFrame.new(WorldConfig.Hub.SpawnPosition)
-				end
-			end)
-		end
+		sendToHub(character)
 		task.defer(function()
 			RemoteRegistryService.syncPlayerRole(player, buildRolePayload(session))
 		end)
 	end)
+
+	-- In Studio, character can load before this handler is connected.
+	-- If the character already exists, teleport it now.
+	if player.Character then
+		sendToHub(player.Character)
+	end
 end
 
 local function onPlayerAdded(player)
