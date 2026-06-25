@@ -65,8 +65,18 @@ end
 
 local function bindPlayer(player)
 	local session = createSession(player)
+	local firstSpawn = true
 
-	player.CharacterAdded:Connect(function()
+	player.CharacterAdded:Connect(function(character)
+		if firstSpawn then
+			firstSpawn = false
+			task.spawn(function()
+				local rootPart = character:WaitForChild("HumanoidRootPart", 10)
+				if rootPart then
+					rootPart.CFrame = CFrame.new(WorldConfig.Hub.SpawnPosition)
+				end
+			end)
+		end
 		task.defer(function()
 			RemoteRegistryService.syncPlayerRole(player, buildRolePayload(session))
 		end)
