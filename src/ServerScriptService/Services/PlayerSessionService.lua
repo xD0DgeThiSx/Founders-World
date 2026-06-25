@@ -6,11 +6,16 @@ local WorldConfig = require(ReplicatedStorage.Shared.Config.WorldConfig)
 local RemoteRegistryService = require(script.Parent.RemoteRegistryService)
 
 local vipWelcomes = {
-	Abbiejo615 = "Happy Birthday Abbie Jo! The Birthday Room is ready for you — go find it!",
 	lue0615 = "Hey Lue! Your crew is already here. Girls Hangout is calling!",
 	BUTTERTHEMBUNS = "Welcome back! The Secret Food Court is waiting for you below Girls Hangout.",
 	Emilyplays902 = "EmilyPlays is in the building! Your streaming corner is ready.",
 	Emigirl0615 = "EmiGirl has arrived! The VIP lounge is all yours.",
+}
+
+local abbieRevealMessages = {
+	{ delay = 2,  text = "Happy 11th Birthday Abbie Jo! Your special day starts RIGHT NOW!", kind = "Birthday" },
+	{ delay = 6,  text = "Your Birthday Room is decorated just for you inside Girls Hangout!", kind = "Birthday" },
+	{ delay = 10, text = "Mom, Dad, and Charlie Lue built Founder's World just for YOU. Have the best 11th birthday ever!", kind = "Birthday" },
 }
 
 local PlayerSessionService = {}
@@ -72,6 +77,18 @@ local function createSession(player)
 end
 
 local function sendWelcomeMessage(player, session)
+	if player.Name == "Abbiejo615" then
+		for _, entry in ipairs(abbieRevealMessages) do
+			local msg, kind, delay = entry.text, entry.kind, entry.delay
+			task.delay(delay, function()
+				if player.Parent then
+					RemoteRegistryService.notifyPlayer(player, msg, kind)
+				end
+			end)
+		end
+		return
+	end
+
 	local msg
 	if session.IsFounder then
 		msg = "Welcome back, " .. WorldConfig.VIP.FounderUsername .. "! Founder's World is yours to command."
