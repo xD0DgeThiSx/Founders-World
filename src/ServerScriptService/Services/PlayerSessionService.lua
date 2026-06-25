@@ -89,20 +89,17 @@ end
 
 local function bindPlayer(player)
 	local session = createSession(player)
-	local firstSpawn = true
+	local spawned = false
 
-	local function sendToHub(character)
-		if not firstSpawn then return end
-		firstSpawn = false
-		local hubCFrame = CFrame.new(WorldConfig.Hub.SpawnPosition)
-		warn("[PSS] sendToHub: teleporting", player.Name, "→", WorldConfig.Hub.SpawnPosition)
+	local function onCharacterSpawned(character, isFirst)
 		task.spawn(function()
 			local rootPart = character:WaitForChild("HumanoidRootPart", 10)
 			if not rootPart then
 				warn("[PSS] sendToHub: HumanoidRootPart not found for", player.Name)
 				return
 			end
-			-- Retry across 3 frames so spawn physics can't override the final set
+			local hubCFrame = CFrame.new(WorldConfig.Hub.SpawnPosition)
+			warn("[PSS] sendToHub: teleporting", player.Name, "→", WorldConfig.Hub.SpawnPosition)
 			for i = 1, 3 do
 				if not rootPart.Parent then break end
 				rootPart.CFrame = hubCFrame
@@ -110,24 +107,27 @@ local function bindPlayer(player)
 			end
 			warn("[PSS] sendToHub: done for", player.Name)
 		end)
-	end
-
-	player.CharacterAdded:Connect(function(character)
-		sendToHub(character)
 		task.defer(function()
 			RemoteRegistryService.syncPlayerRole(player, buildRolePayload(session))
 		end)
-		if firstSpawn then
+		if isFirst then
 			sendWelcomeMessage(player, session)
 		end
+	end
+
+	player.CharacterAdded:Connect(function(character)
+		local isFirst = not spawned
+		spawned = true
+		onCharacterSpawned(character, isFirst)
 	end)
 
-	-- In Studio, character loads before this handler connects — handle it directly.
 	if player.Character then
-		warn("[PSS] bindPlayer:", player.Name, "already has a character, teleporting now")
-		sendToHub(player.Character)
+		warn("[PSS] bindPlayer:", player.Name, "already has character, teleporting now")
+		spawned = true
+		onCharacterSpawned(player.Character, true)
 	else
-		warn("[PSS] bindPlayer:", player.Name, "no character yet, waiting for CharacterAdded")
+		warn("[PSS] bindPlayer:", player.Name, "no character yet, loading now")
+		player:LoadCharacter()
 	end
 end
 
