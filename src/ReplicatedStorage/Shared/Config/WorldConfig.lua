@@ -266,15 +266,19 @@ local WorldConfig = {
 		zone("outdoor-mall", "Outdoor Mall", Vector3.new(520, 0, 40), Vector3.new(210, 2, 180), {
 			Color = Color3.fromRGB(201, 196, 174),
 			Accent = Color3.fromRGB(255, 247, 216),
-			Status = "Placeholder",
-			Category = "Future Expansion",
-			ZoneType = "Placeholder",
+			Status = "Active",
+			Category = "Venue",
+			ZoneType = "Active",
 			HubSignOffset = Vector3.new(126, 0, 24),
 			HubPadOffset = Vector3.new(40, 0, 78),
 			HubBoardLabel = "Outdoor Mall",
 			ShortLabel = "Mall",
-			LargeSignSubtitle = "Placeholder zone",
-			FutureExpansionText = "Future storefronts and social spaces",
+			LargeSignSubtitle = "Storefronts and social spaces",
+			FutureExpansionText = "Active shopping district with boutique row and creator pop-ups",
+			TeleportDestinationId = "outdoor-mall",
+			PathColor = Color3.fromRGB(255, 247, 216),
+			PathStartOffset = Vector3.new(42, 0, 0),
+			PathEndOffset = Vector3.new(122, 0, 22),
 		}),
 		zone("drive-in-theater", "Drive-In Theater", Vector3.new(0, 0, -560), Vector3.new(240, 2, 210), {
 			Color = Color3.fromRGB(66, 55, 78),
@@ -1604,6 +1608,182 @@ local WorldConfig = {
 				sign("Gaming Stations", "Alpha + Bravo pods", Vector3.new(-28, 13, 22), {
 					Size = Vector3.new(16, 8, 1),
 					Color = Color3.fromRGB(20, 20, 20),
+				}),
+			},
+		},
+		{
+			Id = "outdoor-mall",
+			Name = "Outdoor Mall",
+			Theme = "Open-air shopping promenade with cafes, boutiques, and creator pop-ups",
+			Position = Vector3.new(520, 0, 40),
+			Footprint = Vector3.new(136, 28, 104),
+			Color = Color3.fromRGB(194, 186, 166),
+			Accent = Color3.fromRGB(255, 247, 216),
+			RoofTransparency = 0.98,
+			SpawnOffset = Vector3.new(0, 3, -32),
+			AmbientSoundId = 0, -- replace with soft outdoor retail ambience asset ID
+			ReturnPadOffset = Vector3.new(0, 0.5, 30),
+			ReturnPadOptions = {
+				MarkerOffset = Vector3.new(0, 5, -8),
+				MarkerColor = Color3.fromRGB(92, 84, 66),
+				Subtitle = "Return",
+			},
+			Rooms = {
+				room("Mall Entrance", Vector3.new(0, 0, -32), Vector3.new(42, 2, 18), {
+					OpenSides = { "North", "South" },
+					FloorColor = Color3.fromRGB(226, 219, 201),
+					WallColor = Color3.fromRGB(255, 247, 216),
+				}),
+				room("Central Promenade", Vector3.new(0, 0, 0), Vector3.new(46, 2, 52), {
+					OpenSides = { "North", "South", "East", "West" },
+					FloorColor = Color3.fromRGB(214, 206, 188),
+					LabelSize = Vector3.new(18, 5, 1),
+				}),
+				room("Boutique Row", Vector3.new(-34, 0, 8), Vector3.new(26, 2, 42), {
+					OpenSides = { "East", "South", "North" },
+					FloorColor = Color3.fromRGB(205, 193, 176),
+					WallColor = Color3.fromRGB(220, 192, 156),
+				}),
+				room("Dessert Court", Vector3.new(34, 0, 8), Vector3.new(26, 2, 42), {
+					OpenSides = { "West", "South", "North" },
+					FloorColor = Color3.fromRGB(214, 199, 184),
+					WallColor = Color3.fromRGB(255, 182, 166),
+				}),
+				room("Creator Pop-Up", Vector3.new(0, 0, 32), Vector3.new(42, 2, 18), {
+					OpenSides = { "North", "East", "West" },
+					FloorColor = Color3.fromRGB(204, 194, 176),
+					WallColor = Color3.fromRGB(156, 128, 98),
+				}),
+			},
+			Props = {
+				prop("Mall Archway", "Display", Vector3.new(0, 10, -24), Vector3.new(34, 12, 2), {
+					Color = Color3.fromRGB(160, 146, 120),
+					Accent = Color3.fromRGB(255, 247, 216),
+					Material = Enum.Material.Metal,
+					Label = "Outdoor Mall",
+					Message = "Welcome to the Outdoor Mall promenade with cafes, boutiques, and creator showcases.",
+				}),
+				prop("Promenade Strip", "FloorPad", Vector3.new(0, 2.12, 2), Vector3.new(18, 0.15, 58), {
+					Color = Color3.fromRGB(255, 240, 196),
+					Material = Enum.Material.Neon,
+					Transparency = 0.22,
+					HideBillboard = true,
+				}),
+				prop("Center Fountain", "Display", Vector3.new(0, 4, 2), Vector3.new(14, 8, 14), {
+					Color = Color3.fromRGB(182, 176, 168),
+					Accent = Color3.fromRGB(255, 247, 216),
+					Material = Enum.Material.SmoothPlastic,
+					Shape = Enum.PartType.Cylinder,
+					Label = "Promenade Fountain",
+					Message = "The promenade fountain anchors the mall plaza and evening meetup spot.",
+				}),
+				prop("Boutique Feature Wall", "Display", Vector3.new(-40, 8, 0), Vector3.new(12, 10, 1), {
+					Color = Color3.fromRGB(190, 160, 132),
+					Label = "Style Boutique",
+					Message = "Boutique row rotates fashion drops, accessories, and seasonal highlights.",
+				}),
+				prop("Sneaker Wall", "Display", Vector3.new(-40, 8, 16), Vector3.new(12, 10, 1), {
+					Color = Color3.fromRGB(156, 132, 110),
+					Label = "Sneaker Wall",
+					Message = "Sneaker wall shows featured drops, clean colorways, and mall-exclusive looks.",
+				}),
+				prop("Window Bench Left", "Seat", Vector3.new(-26, 2, 4), Vector3.new(10, 4, 6), {
+					Color = Color3.fromRGB(176, 150, 128),
+					Material = Enum.Material.Fabric,
+					HideBillboard = true,
+				}),
+				prop("Window Bench Right", "Seat", Vector3.new(-26, 2, 20), Vector3.new(10, 4, 6), {
+					Color = Color3.fromRGB(176, 150, 128),
+					Material = Enum.Material.Fabric,
+					HideBillboard = true,
+				}),
+				prop("Dessert Counter", "Table", Vector3.new(34, 4, 2), Vector3.new(16, 4, 6), {
+					Color = Color3.fromRGB(222, 165, 150),
+					Material = Enum.Material.WoodPlanks,
+					HideBillboard = true,
+				}),
+				prop("Boba Bar", "Display", Vector3.new(40, 8, 0), Vector3.new(12, 10, 1), {
+					Color = Color3.fromRGB(230, 146, 168),
+					Label = "Boba Bar",
+					Message = "Boba Bar serves fruit teas, frozen refreshers, and mall-night favorites.",
+				}),
+				prop("Dessert Neon Menu", "Display", Vector3.new(40, 10, 16), Vector3.new(12, 8, 1), {
+					Color = Color3.fromRGB(255, 170, 190),
+					Material = Enum.Material.Neon,
+					Transparency = 0.08,
+					Label = "Dessert Menu",
+					Message = "Dessert menu highlights milk teas, cake slices, sundaes, and seasonal sweets.",
+				}),
+				prop("Cafe Seating Left", "Seat", Vector3.new(24, 2, 22), Vector3.new(8, 4, 6), {
+					Color = Color3.fromRGB(220, 198, 186),
+					Material = Enum.Material.Fabric,
+					HideBillboard = true,
+				}),
+				prop("Cafe Seating Right", "Seat", Vector3.new(42, 2, 22), Vector3.new(8, 4, 6), {
+					Color = Color3.fromRGB(220, 198, 186),
+					Material = Enum.Material.Fabric,
+					HideBillboard = true,
+				}),
+				prop("Creator Stage", "Display", Vector3.new(0, 4, 30), Vector3.new(20, 4, 10), {
+					Color = Color3.fromRGB(144, 124, 100),
+					Material = Enum.Material.WoodPlanks,
+					Label = "Creator Pop-Up Stage",
+					Message = "Creator pop-up stage hosts mini drops, shoutouts, and weekend spotlight moments.",
+				}),
+				prop("Selfie Mirror", "Display", Vector3.new(-16, 8, 38), Vector3.new(10, 12, 1), {
+					Color = Color3.fromRGB(240, 238, 232),
+					Material = Enum.Material.Glass,
+					Transparency = 0.2,
+					Label = "Selfie Mirror",
+					Message = "The selfie mirror is the mall's favorite spot for outfit pics and birthday group shots.",
+				}),
+				prop("Founder Preview Kiosk", "Display", Vector3.new(18, 8, 38), Vector3.new(12, 10, 1), {
+					Color = Color3.fromRGB(146, 118, 86),
+					Accent = Color3.fromRGB(255, 247, 216),
+					Label = "Founder Preview Kiosk",
+					ActionType = "FounderAction",
+					ActionText = "Preview",
+					ObjectText = "Founder Preview Kiosk",
+					RoleRequired = "Founder",
+					Message = "Founder preview kiosk opened upcoming mall pop-ups, storefront plans, and featured drops.",
+				}),
+				prop("Planter Row Left", "Display", Vector3.new(-14, 3, 14), Vector3.new(10, 4, 4), {
+					Color = Color3.fromRGB(116, 132, 96),
+					Material = Enum.Material.Grass,
+					HideBillboard = true,
+				}),
+				prop("Planter Row Right", "Display", Vector3.new(14, 3, 14), Vector3.new(10, 4, 4), {
+					Color = Color3.fromRGB(116, 132, 96),
+					Material = Enum.Material.Grass,
+					HideBillboard = true,
+				}),
+			},
+			MediaPanels = {
+				mediaPanel("Mall Playlist", "Spotify", Vector3.new(-14, 6, 38), Vector3.new(12, 8, 1), {
+					Title = "Mall Playlist",
+				}),
+				mediaPanel("Creator Drop Board", "YouTube", Vector3.new(14, 9, 42), Vector3.new(14, 9, 1), {
+					Title = "Creator Drop Board",
+				}),
+				mediaPanel("Pop-Up Stream", "Twitch", Vector3.new(34, 9, 32), Vector3.new(12, 9, 1), {
+					Title = "Pop-Up Stream",
+				}),
+			},
+			Signs = {
+				sign("Outdoor Mall", "Boutiques, desserts, and creator pop-ups", Vector3.new(0, 21, -50), {
+					Size = Vector3.new(24, 10, 1),
+				}),
+				sign("Boutique Row", "Style, sneakers, and social stops", Vector3.new(-34, 14, -2), {
+					Size = Vector3.new(14, 8, 1),
+					Color = Color3.fromRGB(148, 124, 102),
+				}),
+				sign("Dessert Court", "Boba, sweets, and cafe seating", Vector3.new(34, 14, -2), {
+					Size = Vector3.new(14, 8, 1),
+					Color = Color3.fromRGB(176, 132, 118),
+				}),
+				sign("Creator Pop-Up", "Weekend drops and founder previews", Vector3.new(0, 12, 20), {
+					Size = Vector3.new(18, 8, 1),
+					Color = Color3.fromRGB(148, 124, 102),
 				}),
 			},
 		},
