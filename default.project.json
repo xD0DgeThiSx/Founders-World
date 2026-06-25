@@ -18,7 +18,16 @@
       "$path": "src/StarterPlayer"
     },
     "Workspace": {
-      "$path": "src/Workspace"
+      "$path": "src/Workspace",
+      "CentralSpawn": {
+        "$className": "SpawnLocation",
+        "$properties": {
+          "Neutral": {"Bool": true},
+          "Anchored": {"Bool": true},
+          "CFrame": {"CFrame": [0, 3, 42, 1, 0, 0, 0, 1, 0, 0, 0, 1]},
+          "Size": {"Vector3": [10, 1, 10]}
+        }
+      }
     }
   }
 }

@@ -70,11 +70,21 @@ local function bindPlayer(player)
 	local function sendToHub(character)
 		if not firstSpawn then return end
 		firstSpawn = false
+		local hubCFrame = CFrame.new(WorldConfig.Hub.SpawnPosition)
+		warn("[PSS] sendToHub: teleporting", player.Name, "→", WorldConfig.Hub.SpawnPosition)
 		task.spawn(function()
 			local rootPart = character:WaitForChild("HumanoidRootPart", 10)
-			if rootPart and rootPart.Parent then
-				rootPart.CFrame = CFrame.new(WorldConfig.Hub.SpawnPosition)
+			if not rootPart then
+				warn("[PSS] sendToHub: HumanoidRootPart not found for", player.Name)
+				return
 			end
+			-- Retry across 3 frames so spawn physics can't override the final set
+			for i = 1, 3 do
+				if not rootPart.Parent then break end
+				rootPart.CFrame = hubCFrame
+				task.wait()
+			end
+			warn("[PSS] sendToHub: done for", player.Name)
 		end)
 	end
 
@@ -85,10 +95,12 @@ local function bindPlayer(player)
 		end)
 	end)
 
-	-- In Studio, character can load before this handler is connected.
-	-- If the character already exists, teleport it now.
+	-- In Studio, character loads before this handler connects — handle it directly.
 	if player.Character then
+		warn("[PSS] bindPlayer:", player.Name, "already has a character, teleporting now")
 		sendToHub(player.Character)
+	else
+		warn("[PSS] bindPlayer:", player.Name, "no character yet, waiting for CharacterAdded")
 	end
 end
 
