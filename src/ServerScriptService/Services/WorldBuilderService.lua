@@ -1524,7 +1524,12 @@ function WorldBuilderService.build()
 	local folders = createWorldFolders()
 
 	createAmbientSound()
-	setupEnvironment()
+
+	local envOk, envErr = pcall(setupEnvironment)
+	if not envOk then
+		warn("[FoundersWorld] setupEnvironment failed (non-fatal):", envErr)
+	end
+
 	buildFounderPlaza(folders.Plaza, folders.Navigation, folders.Spawns)
 
 	for _, roadConfig in ipairs(WorldConfig.Roads or {}) do
@@ -1540,7 +1545,10 @@ function WorldBuilderService.build()
 
 	for _, venueConfig in ipairs(WorldConfig.Venues or {}) do
 		local venueFolder = createFolder(venueConfig.Name, folders.Venues)
-		buildVenue(venueFolder, venueConfig, folders.Spawns, folders.Teleports, folders.Media, folders.Navigation)
+		local venueOk, venueErr = pcall(buildVenue, venueFolder, venueConfig, folders.Spawns, folders.Teleports, folders.Media, folders.Navigation)
+		if not venueOk then
+			warn("[FoundersWorld] Venue build failed for", venueConfig.Id, ":", venueErr)
+		end
 	end
 
 	for _, vehicleConfig in ipairs(WorldConfig.Vehicles or {}) do
