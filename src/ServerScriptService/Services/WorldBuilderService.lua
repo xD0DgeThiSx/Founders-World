@@ -956,7 +956,9 @@ end
 
 local function createVehicle(vehiclesFolder, vehicleConfig)
 	local folder = createFolder(vehicleConfig.Id, vehiclesFolder)
-	local pos = vehicleConfig.Position
+	local px = vehicleConfig.Position.X
+	local py = vehicleConfig.Position.Y -- floor level; vehicle body sits on top of this
+	local pz = vehicleConfig.Position.Z
 	local c = vehicleConfig.Color
 	local accent = vehicleConfig.Accent or c
 	local vt = vehicleConfig.VehicleType
@@ -972,75 +974,46 @@ local function createVehicle(vehiclesFolder, vehicleConfig)
 		roofW, roofH, roofL = 9, 2, 11
 	end
 
-	-- All vehicles face +Z (Heading=0), so front = +Z face, rear = -Z face.
-	-- pos.Y is the floor reference (Y=2); body bottom sits at pos.Y.
-	local bY = pos.Y + bodyH / 2
-
-	local body = createPart("Body", folder, {
-		Size = Vector3.new(bodyW, bodyH, bodyL),
-		Position = Vector3.new(pos.X, bY, pos.Z),
-		Color = c,
-		Material = Enum.Material.SmoothPlastic,
-		Anchored = true,
-		CanCollide = false,
-	})
-
-	if hasRoof then
-		createPart("Roof", folder, {
-			Size = Vector3.new(roofW, roofH, roofL),
-			Position = Vector3.new(pos.X, pos.Y + bodyH + roofH / 2, pos.Z - bodyL / 2 + roofL / 2 + 1),
-			Color = c,
-			Material = Enum.Material.SmoothPlastic,
-			Anchored = true,
-			CanCollide = false,
-		})
+	-- All vehicles face +Z: front (headlights) = +Z, rear (taillights) = -Z.
+	-- Player spawns at Z=42, vehicles at Z=5, so players see the front face.
+	local function makePart(name, x, y, z, sx, sy, sz, color, material, transparency)
+		local part = Instance.new("Part")
+		part.Name = name
+		part.Size = Vector3.new(sx, sy, sz)
+		part.Color = color
+		part.Material = material or Enum.Material.SmoothPlastic
+		part.Anchored = true
+		part.CanCollide = false
+		part.TopSurface = Enum.SurfaceType.Smooth
+		part.BottomSurface = Enum.SurfaceType.Smooth
+		if transparency then part.Transparency = transparency end
+		part.CFrame = CFrame.new(x, y, z) -- set position before parenting
+		part.Parent = folder
+		return part
 	end
 
-	-- Neon headlights on front face (+Z)
-	createPart("HeadlightL", folder, {
-		Size = Vector3.new(2.5, 1.5, 0.4),
-		Position = Vector3.new(pos.X - bodyW / 2 + 1.8, bY + bodyH / 2 - 1.5, pos.Z + bodyL / 2),
-		Color = Color3.fromRGB(255, 252, 220),
-		Material = Enum.Material.Neon,
-		Anchored = true,
-		CanCollide = false,
-	})
-	createPart("HeadlightR", folder, {
-		Size = Vector3.new(2.5, 1.5, 0.4),
-		Position = Vector3.new(pos.X + bodyW / 2 - 1.8, bY + bodyH / 2 - 1.5, pos.Z + bodyL / 2),
-		Color = Color3.fromRGB(255, 252, 220),
-		Material = Enum.Material.Neon,
-		Anchored = true,
-		CanCollide = false,
-	})
+	local bodyY = py + bodyH / 2
+	local body = makePart("Body", px, bodyY, pz, bodyW, bodyH, bodyL, c)
 
-	-- Neon taillights on rear face (-Z)
-	createPart("TaillightL", folder, {
-		Size = Vector3.new(2.5, 1.5, 0.4),
-		Position = Vector3.new(pos.X - bodyW / 2 + 1.8, bY + bodyH / 2 - 1.5, pos.Z - bodyL / 2),
-		Color = Color3.fromRGB(220, 30, 30),
-		Material = Enum.Material.Neon,
-		Anchored = true,
-		CanCollide = false,
-	})
-	createPart("TaillightR", folder, {
-		Size = Vector3.new(2.5, 1.5, 0.4),
-		Position = Vector3.new(pos.X + bodyW / 2 - 1.8, bY + bodyH / 2 - 1.5, pos.Z - bodyL / 2),
-		Color = Color3.fromRGB(220, 30, 30),
-		Material = Enum.Material.Neon,
-		Anchored = true,
-		CanCollide = false,
-	})
+	if hasRoof then
+		local roofY = py + bodyH + roofH / 2
+		local roofZ = pz - bodyL / 2 + roofL / 2 + 1
+		makePart("Roof", px, roofY, roofZ, roofW, roofH, roofL, c)
+	end
+
+	-- Headlights on front face (+Z)
+	local lightY = py + bodyH - 1.5
+	local frontZ = pz + bodyL / 2
+	makePart("HeadlightL", px - bodyW / 2 + 1.8, lightY, frontZ, 2.5, 1.5, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
+	makePart("HeadlightR", px + bodyW / 2 - 1.8, lightY, frontZ, 2.5, 1.5, 0.4, Color3.fromRGB(255, 252, 220), Enum.Material.Neon)
+
+	-- Taillights on rear face (-Z)
+	local rearZ = pz - bodyL / 2
+	makePart("TaillightL", px - bodyW / 2 + 1.8, lightY, rearZ, 2.5, 1.5, 0.4, Color3.fromRGB(220, 30, 30), Enum.Material.Neon)
+	makePart("TaillightR", px + bodyW / 2 - 1.8, lightY, rearZ, 2.5, 1.5, 0.4, Color3.fromRGB(220, 30, 30), Enum.Material.Neon)
 
 	-- License plate on front face
-	local plate = createPart("LicensePlate", folder, {
-		Size = Vector3.new(5, 1.5, 0.4),
-		Position = Vector3.new(pos.X, pos.Y + 2, pos.Z + bodyL / 2),
-		Color = Color3.fromRGB(245, 245, 245),
-		Material = Enum.Material.SmoothPlastic,
-		Anchored = true,
-		CanCollide = false,
-	})
+	local plate = makePart("LicensePlate", px, py + 2, frontZ, 5, 1.5, 0.4, Color3.fromRGB(245, 245, 245))
 	createBillboardText(plate, vehicleConfig.PlateText, "", Color3.fromRGB(20, 20, 20), {
 		AlwaysOnTop = false,
 		MaxDistance = 30,
@@ -1048,17 +1021,9 @@ local function createVehicle(vehiclesFolder, vehicleConfig)
 		StudsOffset = Vector3.new(0, 0, 0),
 	})
 
-	-- Floating owner label above vehicle
-	local labelY = pos.Y + bodyH + (hasRoof and roofH or 0) + 3
-	local labelAnchor = createPart("OwnerAnchor", folder, {
-		Size = Vector3.new(1, 0.2, 1),
-		Position = Vector3.new(pos.X, labelY, pos.Z),
-		Color = accent,
-		Material = Enum.Material.Neon,
-		Transparency = 1,
-		Anchored = true,
-		CanCollide = false,
-	})
+	-- Floating owner label above vehicle (invisible anchor)
+	local topY = py + bodyH + (hasRoof and roofH or 0) + 3
+	local labelAnchor = makePart("OwnerAnchor", px, topY, pz, 1, 0.2, 1, accent, Enum.Material.Neon, 1)
 	createBillboardText(labelAnchor, vehicleConfig.PlateText, vehicleConfig.Owner or vehicleConfig.Name, Color3.fromRGB(255, 255, 255), {
 		AlwaysOnTop = false,
 		MaxDistance = 60,
