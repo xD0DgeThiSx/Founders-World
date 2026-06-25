@@ -5,6 +5,14 @@ local WorldConfig = require(ReplicatedStorage.Shared.Config.WorldConfig)
 
 local RemoteRegistryService = require(script.Parent.RemoteRegistryService)
 
+local vipWelcomes = {
+	Abbiejo615 = "Happy Birthday Abbie Jo! The Birthday Room is ready for you — go find it!",
+	lue0615 = "Hey Lue! Your crew is already here. Girls Hangout is calling!",
+	BUTTERTHEMBUNS = "Welcome back! The Secret Food Court is waiting for you below Girls Hangout.",
+	Emilyplays902 = "EmilyPlays is in the building! Your streaming corner is ready.",
+	Emigirl0615 = "EmiGirl has arrived! The VIP lounge is all yours.",
+}
+
 local PlayerSessionService = {}
 
 local sessionsByUserId = {}
@@ -63,6 +71,22 @@ local function createSession(player)
 	return session
 end
 
+local function sendWelcomeMessage(player, session)
+	local msg
+	if session.IsFounder then
+		msg = "Welcome back, " .. WorldConfig.VIP.FounderUsername .. "! Founder's World is yours to command."
+	elseif session.IsVIP then
+		msg = vipWelcomes[player.Name] or ("Welcome back, " .. player.Name .. "! The Girls Hangout crew is here.")
+	end
+	if msg then
+		task.delay(1.5, function()
+			if player.Parent then
+				RemoteRegistryService.notifyPlayer(player, msg, "VIP")
+			end
+		end)
+	end
+end
+
 local function bindPlayer(player)
 	local session = createSession(player)
 	local firstSpawn = true
@@ -93,6 +117,9 @@ local function bindPlayer(player)
 		task.defer(function()
 			RemoteRegistryService.syncPlayerRole(player, buildRolePayload(session))
 		end)
+		if firstSpawn then
+			sendWelcomeMessage(player, session)
+		end
 	end)
 
 	-- In Studio, character loads before this handler connects — handle it directly.

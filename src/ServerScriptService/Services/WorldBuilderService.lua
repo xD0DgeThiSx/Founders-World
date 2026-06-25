@@ -853,8 +853,51 @@ local function createVIPDisplayProp(propsFolder, venueConfig, propConfig)
 	createBillboardText(labelAnchor, propConfig.Label or "VIP Star Lounge", "VIP Only", venueConfig.Accent)
 end
 
+local function createConfettiEmitter(propsFolder, venueConfig, propConfig)
+	local emitter = createPart(propConfig.Name, propsFolder, {
+		Size = propConfig.Size,
+		Position = worldPosition(venueConfig, propConfig.Offset),
+		Color = propConfig.Color or venueConfig.Accent,
+		Material = Enum.Material.SmoothPlastic,
+		Transparency = 1,
+		CanCollide = false,
+	})
+
+	local colors = propConfig.Colors or {
+		Color3.fromRGB(255, 100, 180),
+		Color3.fromRGB(255, 235, 60),
+		Color3.fromRGB(80, 185, 255),
+		Color3.fromRGB(180, 80, 255),
+		Color3.fromRGB(80, 230, 200),
+	}
+
+	local particle = createInstance("ParticleEmitter", "Confetti", emitter)
+	particle.Rate = propConfig.Rate or 15
+	particle.Lifetime = NumberRange.new(2, 5)
+	particle.Speed = NumberRange.new(1, 5)
+	particle.SpreadAngle = Vector2.new(180, 180)
+	particle.RotSpeed = NumberRange.new(-45, 45)
+	particle.Rotation = NumberRange.new(0, 360)
+	particle.Size = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.35),
+		NumberSequenceKeypoint.new(1, 0.08),
+	})
+	particle.LightEmission = 0.8
+	particle.LightInfluence = 0.2
+	particle.Acceleration = Vector3.new(0, -20, 0)
+	particle.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, colors[1]),
+		ColorSequenceKeypoint.new(0.25, colors[2]),
+		ColorSequenceKeypoint.new(0.5, colors[3]),
+		ColorSequenceKeypoint.new(0.75, colors[4]),
+		ColorSequenceKeypoint.new(1, colors[5] or colors[1]),
+	})
+end
+
 local function createProp(propsFolder, venueConfig, propConfig)
-	if propConfig.Kind == "Pool" then
+	if propConfig.Kind == "Confetti" then
+		createConfettiEmitter(propsFolder, venueConfig, propConfig)
+	elseif propConfig.Kind == "Pool" then
 		createPoolPlaceholder(propsFolder, venueConfig, propConfig)
 	elseif propConfig.Kind == "HotTub" then
 		createHotTubPlaceholder(propsFolder, venueConfig, propConfig)
@@ -893,6 +936,10 @@ local function getPropInteractionDefinition(venueConfig, propConfig)
 
 		if propConfig.RoleRequired then
 			definition.RoleRequired = propConfig.RoleRequired
+		end
+
+		if propConfig.VenueId then
+			definition.VenueId = propConfig.VenueId
 		end
 
 		return definition
@@ -1404,6 +1451,46 @@ local function createAmbientSound()
 	sound.Volume = 0
 end
 
+local function setupEnvironment()
+	local Lighting = game:GetService("Lighting")
+	Lighting.Technology = Enum.Technology.Future
+	Lighting.ClockTime = 18
+	Lighting.Brightness = 1.4
+	Lighting.ExposureCompensation = 0.15
+	Lighting.Ambient = Color3.fromRGB(80, 60, 120)
+	Lighting.OutdoorAmbient = Color3.fromRGB(100, 80, 140)
+
+	local function ensureChild(className, name)
+		local existing = Lighting:FindFirstChild(name)
+		if existing then
+			existing:Destroy()
+		end
+		local child = Instance.new(className)
+		child.Name = name
+		child.Parent = Lighting
+		return child
+	end
+
+	local atm = ensureChild("Atmosphere", "WorldAtmosphere")
+	atm.Density = 0.22
+	atm.Offset = 0.2
+	atm.Color = Color3.fromRGB(200, 175, 230)
+	atm.Decay = Color3.fromRGB(80, 60, 120)
+	atm.Glare = 0.2
+	atm.Haze = 0.1
+
+	local cc = ensureChild("ColorCorrectionEffect", "WorldColorCorrection")
+	cc.Brightness = 0.04
+	cc.Contrast = 0.08
+	cc.Saturation = 0.25
+	cc.TintColor = Color3.fromRGB(255, 245, 255)
+
+	local bloom = ensureChild("BloomEffect", "WorldBloom")
+	bloom.Intensity = 0.35
+	bloom.Size = 20
+	bloom.Threshold = 0.95
+end
+
 function WorldBuilderService.build()
 	for _, obj in ipairs(workspace:GetDescendants()) do
 		if obj:IsA("SpawnLocation") then
@@ -1414,6 +1501,7 @@ function WorldBuilderService.build()
 	local folders = createWorldFolders()
 
 	createAmbientSound()
+	setupEnvironment()
 	buildFounderPlaza(folders.Plaza, folders.Navigation, folders.Spawns)
 
 	for _, roadConfig in ipairs(WorldConfig.Roads or {}) do
