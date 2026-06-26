@@ -468,6 +468,29 @@ local function createSafetyGround(environmentFolder)
 		)
 	end
 
+	local function createConnector(name, startPos, endPos, width, color, material, thickness)
+		local direction = endPos - startPos
+		local length = direction.Magnitude
+		if length <= 0 then
+			return
+		end
+
+		local center = startPos:Lerp(endPos, 0.5)
+		createOrientedGroundPad(
+			name,
+			Vector3.new(width, thickness or 0.3, length + 8),
+			Vector3.new(center.X, (thickness or 0.3) / 2, center.Z),
+			Vector3.new(endPos.X, (thickness or 0.3) / 2, endPos.Z),
+			color,
+			material,
+			0
+		)
+	end
+
+	local function createRoutePocket(name, center, size, color, material, height)
+		createGroundPad(name, Vector3.new(size.X, height or 0.34, size.Z), Vector3.new(center.X, (height or 0.34) / 2, center.Z), color, material, 0)
+	end
+
 	local hub = WorldConfig.Hub
 	createGroundPad(
 		"HubSafetyApron",
@@ -483,6 +506,19 @@ local function createSafetyGround(environmentFolder)
 	createGroundPad("HubEastPromenade", Vector3.new(28, 0.34, 88), hub.Position + Vector3.new(108, 0.17, 0), Color3.fromRGB(164, 162, 154), Enum.Material.Concrete, 0)
 	createGroundPad("VehicleLotAsphalt", Vector3.new(108, 0.36, 42), Vector3.new(-24, 0.18, 6), Color3.fromRGB(92, 94, 96), Enum.Material.Asphalt, 0)
 	createGroundPad("VehicleLotWalkway", Vector3.new(108, 0.28, 12), Vector3.new(-24, 0.14, 30), Color3.fromRGB(176, 174, 168), Enum.Material.Concrete, 0)
+	createRoutePocket("HubNorthWestField", Vector3.new(-166, -4, -162), Vector3.new(164, 164), Color3.fromRGB(82, 106, 82), Enum.Material.Grass, 0.34)
+	createRoutePocket("HubNorthEastField", Vector3.new(166, -4, -162), Vector3.new(164, 164), Color3.fromRGB(84, 108, 84), Enum.Material.Grass, 0.34)
+	createRoutePocket("HubSouthWestField", Vector3.new(-170, 4, 176), Vector3.new(170, 176), Color3.fromRGB(82, 104, 82), Enum.Material.Grass, 0.34)
+	createRoutePocket("HubSouthEastField", Vector3.new(170, 4, 176), Vector3.new(170, 176), Color3.fromRGB(84, 106, 84), Enum.Material.Grass, 0.34)
+	createConnector("HubToVehicleLotBlend", Vector3.new(-36, 0, 18), Vector3.new(-36, 0, 44), 112, Color3.fromRGB(108, 112, 108), Enum.Material.Asphalt, 0.3)
+	createConnector("HubToStrombladForecourt", Vector3.new(-68, 0, -64), Vector3.new(-124, 0, -126), 42, Color3.fromRGB(92, 112, 84), Enum.Material.Grass, 0.32)
+	createConnector("HubToGirlsForecourt", Vector3.new(68, 0, -64), Vector3.new(124, 0, -126), 42, Color3.fromRGB(98, 122, 96), Enum.Material.Grass, 0.32)
+	createConnector("HubToFounderForecourt", Vector3.new(78, 0, 68), Vector3.new(146, 0, 100), 42, Color3.fromRGB(178, 176, 168), Enum.Material.Concrete, 0.28)
+	createConnector("HubToContentForgeForecourt", Vector3.new(-78, 0, 68), Vector3.new(-152, 0, 102), 42, Color3.fromRGB(170, 178, 184), Enum.Material.Concrete, 0.28)
+	createConnector("HubToBlackOpsForecourt", Vector3.new(-88, 0, 10), Vector3.new(-160, 0, 4), 38, Color3.fromRGB(112, 114, 108), Enum.Material.Asphalt, 0.3)
+	createConnector("HubToWaterParkForecourt", Vector3.new(0, 0, 112), Vector3.new(0, 0, 178), 40, Color3.fromRGB(188, 194, 190), Enum.Material.Concrete, 0.28)
+	createConnector("HubToOutdoorMallForecourt", Vector3.new(110, 0, 18), Vector3.new(196, 0, 22), 42, Color3.fromRGB(174, 172, 164), Enum.Material.Concrete, 0.28)
+	createConnector("HubToDriveInForecourt", Vector3.new(0, 0, -112), Vector3.new(0, 0, -186), 42, Color3.fromRGB(108, 110, 114), Enum.Material.Asphalt, 0.3)
 
 	local vehicleMinX, vehicleMaxX = math.huge, -math.huge
 	local vehicleMinZ, vehicleMaxZ = math.huge, -math.huge
@@ -500,6 +536,7 @@ local function createSafetyGround(environmentFolder)
 		local lotCenter = Vector3.new((vehicleMinX + vehicleMaxX) / 2, 0.22, (vehicleMinZ + vehicleMaxZ) / 2)
 		local lotSize = Vector3.new((vehicleMaxX - vehicleMinX) + 64, 0.38, (vehicleMaxZ - vehicleMinZ) + 46)
 		createGroundPad("VehicleLotSafety", lotSize, Vector3.new(lotCenter.X, 0.19, lotCenter.Z), Color3.fromRGB(98, 102, 96), Enum.Material.Asphalt, 0)
+		createRoutePocket("VehicleLotGrassBuffer", Vector3.new(lotCenter.X, 0, lotCenter.Z + 26), Vector3.new(lotSize.X + 40, 54), Color3.fromRGB(84, 104, 82), Enum.Material.Grass, 0.32)
 	end
 
 	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
@@ -530,6 +567,34 @@ local function createSafetyGround(environmentFolder)
 				0
 			)
 			createVenueApproach(zoneConfig, apronColor, apronMaterial)
+
+			if zoneConfig.Id == "stromblad-estate" then
+				createRoutePocket("StrombladNorthLawn", zoneConfig.Position + Vector3.new(0, 0, -132), Vector3.new(214, 78), Color3.fromRGB(112, 132, 94), Enum.Material.Grass, 0.34)
+				createConnector("StrombladRoadBlend", Vector3.new(-206, 0, -224), Vector3.new(-208, 0, -300), 84, Color3.fromRGB(114, 132, 96), Enum.Material.Grass, 0.34)
+				createConnector("StrombladCrossroadBlend", Vector3.new(-172, 0, -300), Vector3.new(-90, 0, -300), 68, Color3.fromRGB(118, 134, 100), Enum.Material.Grass, 0.32)
+			elseif zoneConfig.Id == "girls-hangout" then
+				createRoutePocket("GirlsNorthLawn", zoneConfig.Position + Vector3.new(0, 0, -132), Vector3.new(206, 78), Color3.fromRGB(126, 170, 126), Enum.Material.Grass, 0.34)
+				createConnector("GirlsRoadBlend", Vector3.new(206, 0, -224), Vector3.new(208, 0, -300), 84, Color3.fromRGB(132, 176, 132), Enum.Material.Grass, 0.34)
+				createConnector("GirlsCrossroadBlend", Vector3.new(172, 0, -300), Vector3.new(90, 0, -300), 68, Color3.fromRGB(132, 176, 132), Enum.Material.Grass, 0.32)
+			elseif zoneConfig.Id == "outdoor-mall" then
+				createRoutePocket("OutdoorMallForecourt", zoneConfig.Position + Vector3.new(-56, 0, -74), Vector3.new(164, 72), Color3.fromRGB(164, 162, 156), Enum.Material.Concrete, 0.32)
+				createRoutePocket("OutdoorMallParkingApron", zoneConfig.Position + Vector3.new(-44, 0, 72), Vector3.new(180, 92), Color3.fromRGB(104, 106, 108), Enum.Material.Asphalt, 0.32)
+				createConnector("OutdoorMallRoadTie", Vector3.new(430, 0, 36), Vector3.new(470, 0, 36), 88, Color3.fromRGB(112, 114, 114), Enum.Material.Asphalt, 0.32)
+			elseif zoneConfig.Id == "drive-in-theater" then
+				createRoutePocket("DriveInEntryLot", zoneConfig.Position + Vector3.new(0, 0, -102), Vector3.new(196, 82), Color3.fromRGB(98, 100, 104), Enum.Material.Asphalt, 0.34)
+				createRoutePocket("DriveInOuterBuffer", zoneConfig.Position + Vector3.new(0, 0, -178), Vector3.new(232, 84), Color3.fromRGB(108, 110, 100), Enum.Material.Ground, 0.32)
+				createConnector("DriveInRoadTie", Vector3.new(0, 0, -470), Vector3.new(0, 0, -520), 82, Color3.fromRGB(102, 104, 106), Enum.Material.Asphalt, 0.34)
+			elseif zoneConfig.Id == "water-park" then
+				createRoutePocket("WaterParkForecourt", zoneConfig.Position + Vector3.new(0, 0, -92), Vector3.new(166, 86), Color3.fromRGB(194, 200, 198), Enum.Material.Concrete, 0.32)
+				createRoutePocket("WaterParkOuterLawn", zoneConfig.Position + Vector3.new(0, 0, -154), Vector3.new(216, 84), Color3.fromRGB(94, 124, 92), Enum.Material.Grass, 0.32)
+				createConnector("WaterParkRoadTie", Vector3.new(0, 0, 410), Vector3.new(0, 0, 450), 76, Color3.fromRGB(192, 198, 196), Enum.Material.Concrete, 0.32)
+			elseif zoneConfig.Id == "founder-lounge" then
+				createRoutePocket("FounderLoungeForecourt", zoneConfig.Position + Vector3.new(-18, 0, -76), Vector3.new(150, 78), Color3.fromRGB(168, 166, 156), Enum.Material.Concrete, 0.3)
+			elseif zoneConfig.Id == "contentforge-studio" then
+				createRoutePocket("ContentForgeForecourt", zoneConfig.Position + Vector3.new(0, 0, -78), Vector3.new(162, 76), Color3.fromRGB(168, 176, 182), Enum.Material.Concrete, 0.3)
+			elseif zoneConfig.Id == "bo6-gaming-lounge" then
+				createRoutePocket("BlackOpsForecourt", zoneConfig.Position + Vector3.new(0, 0, -72), Vector3.new(156, 72), Color3.fromRGB(104, 106, 100), Enum.Material.Asphalt, 0.3)
+			end
 		end
 	end
 
@@ -616,6 +681,19 @@ local function createSafetyGround(environmentFolder)
 		end
 	end
 
+	createRoutePocket("CentralNorthGreen", Vector3.new(0, 0, -236), Vector3.new(230, 92), Color3.fromRGB(88, 112, 88), Enum.Material.Grass, 0.34)
+	createRoutePocket("CentralSouthGreen", Vector3.new(0, 0, 300), Vector3.new(212, 122), Color3.fromRGB(88, 116, 90), Enum.Material.Grass, 0.34)
+	createRoutePocket("WestActiveField", Vector3.new(-306, 0, -48), Vector3.new(176, 168), Color3.fromRGB(92, 110, 86), Enum.Material.Grass, 0.34)
+	createRoutePocket("EastActiveField", Vector3.new(378, 0, 34), Vector3.new(220, 172), Color3.fromRGB(102, 118, 94), Enum.Material.Grass, 0.34)
+	createRoutePocket("DriveInWestBuffer", Vector3.new(-122, 0, -542), Vector3.new(96, 112), Color3.fromRGB(106, 108, 98), Enum.Material.Ground, 0.34)
+	createRoutePocket("DriveInEastBuffer", Vector3.new(122, 0, -542), Vector3.new(96, 112), Color3.fromRGB(106, 108, 98), Enum.Material.Ground, 0.34)
+	createRoutePocket("WaterParkWestLawn", Vector3.new(-132, 0, 476), Vector3.new(112, 132), Color3.fromRGB(90, 124, 92), Enum.Material.Grass, 0.34)
+	createRoutePocket("WaterParkEastLawn", Vector3.new(132, 0, 476), Vector3.new(112, 132), Color3.fromRGB(90, 124, 92), Enum.Material.Grass, 0.34)
+	createRoutePocket("StrombladGirlsMedianField", Vector3.new(0, 0, -300), Vector3.new(212, 78), Color3.fromRGB(108, 134, 100), Enum.Material.Grass, 0.32)
+	createRoutePocket("OutdoorMallSouthField", Vector3.new(520, 0, 146), Vector3.new(224, 124), Color3.fromRGB(116, 122, 108), Enum.Material.Ground, 0.32)
+	createRoutePocket("OutdoorMallNorthField", Vector3.new(520, 0, -86), Vector3.new(224, 104), Color3.fromRGB(172, 170, 160), Enum.Material.Concrete, 0.28)
+	createRoutePocket("OffroadTransitionShoulder", Vector3.new(-438, 0, -214), Vector3.new(174, 122), Color3.fromRGB(132, 116, 88), Enum.Material.Ground, 0.32)
+
 	createTree("HubTreeNorthWest", Vector3.new(-138, 0, -138))
 	createTree("HubTreeNorthEast", Vector3.new(138, 0, -138))
 	createTree("HubTreeSouthWest", Vector3.new(-138, 0, 138))
@@ -648,10 +726,16 @@ local function createSafetyGround(environmentFolder)
 	createShrub("ContentForgeShrub", Vector3.new(-316, 0, 138), Vector3.new(10, 5, 10), Color3.fromRGB(78, 110, 92))
 	createRock("DriveInRockLeft", Vector3.new(-126, 0, -462), Vector3.new(8, 5, 7), Color3.fromRGB(92, 88, 96))
 	createRock("DriveInRockRight", Vector3.new(126, 0, -462), Vector3.new(8, 5, 7), Color3.fromRGB(92, 88, 96))
+	createRock("MallApproachRock", Vector3.new(392, 0, 74), Vector3.new(8, 5, 7), Color3.fromRGB(126, 122, 110))
+	createRock("WaterParkRock", Vector3.new(-118, 0, 434), Vector3.new(7, 4, 6), Color3.fromRGB(132, 138, 136))
+	createRock("GirlsFrontRock", Vector3.new(176, 0, -358), Vector3.new(7, 4, 6), Color3.fromRGB(148, 138, 148))
 	createLightPost("HubLightWest", Vector3.new(-86, 0, 84))
 	createLightPost("HubLightEast", Vector3.new(86, 0, 84))
 	createLightPost("MallLight", Vector3.new(446, 0, 62))
 	createLightPost("DriveInLight", Vector3.new(0, 0, -432))
+	createLightPost("GirlsPathLight", Vector3.new(166, 0, -214))
+	createLightPost("EstatePathLight", Vector3.new(-166, 0, -214))
+	createLightPost("WaterParkPathLight", Vector3.new(0, 0, 438))
 end
 
 local function createVenueShell(venueFolder, venueConfig)
