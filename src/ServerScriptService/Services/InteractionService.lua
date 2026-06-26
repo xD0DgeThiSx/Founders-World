@@ -51,6 +51,7 @@ local function createPrompt(parent, definition)
 	prompt.Parent = parent
 
 	prompt.Triggered:Connect(function(player)
+		warn("[InteractionService] Prompt triggered:", definition.ActionType, definition.ObjectText, "by", player and player.Name or "unknown")
 		InteractionService.handlePrompt(player, definition)
 	end)
 
@@ -119,6 +120,7 @@ function InteractionService.handlePrompt(player, definition)
 	local session = PlayerSessionService.GetSession(player)
 
 	if not session then
+		warn("[InteractionService] No session for prompt:", definition.ActionType, definition.ObjectText, "player", player and player.Name or "unknown")
 		return
 	end
 
@@ -138,16 +140,20 @@ function InteractionService.handlePrompt(player, definition)
 	end
 
 	if definition.ActionType == "TeleportVenue" then
+		warn("[InteractionService] TeleportVenue handling:", player.Name, "->", definition.VenueId)
 		local success, message = TeleportService.teleportToVenue(player, definition.VenueId)
 		if not success then
+			warn("[InteractionService] TeleportVenue failed:", player.Name, definition.VenueId, message)
 			RemoteRegistryService.notifyPlayer(player, message, "Warning")
 		end
 		return
 	end
 
 	if definition.ActionType == "TeleportHub" then
+		warn("[InteractionService] TeleportHub handling:", player.Name)
 		local success, message = TeleportService.teleportToHub(player)
 		if not success then
+			warn("[InteractionService] TeleportHub failed:", player.Name, message)
 			RemoteRegistryService.notifyPlayer(player, message, "Warning")
 		end
 		return
