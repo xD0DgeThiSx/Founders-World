@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local RuntimeConfig = require(ReplicatedStorage.Shared.Config.RuntimeConfig)
 local WorldConfig = require(ReplicatedStorage.Shared.Config.WorldConfig)
 
 local RemoteRegistryService = require(script.Parent.RemoteRegistryService)
@@ -34,6 +35,11 @@ end
 
 local function isVipName(name)
 	return vipLookup[string.lower(name)] == true
+end
+
+local function getHubSpawnCFrame()
+	local safeOffsetY = math.max((RuntimeConfig.World and RuntimeConfig.World.SafeArrivalOffsetY) or 3, 5)
+	return CFrame.new(WorldConfig.Hub.SpawnPosition + Vector3.new(0, safeOffsetY, 0))
 end
 
 local function buildRolePayload(session)
@@ -115,11 +121,19 @@ local function bindPlayer(player)
 				warn("[PSS] sendToHub: HumanoidRootPart not found for", player.Name)
 				return
 			end
-			local hubCFrame = CFrame.new(WorldConfig.Hub.SpawnPosition)
-			warn("[PSS] sendToHub: teleporting", player.Name, "→", WorldConfig.Hub.SpawnPosition)
+			local humanoid = character:FindFirstChildOfClass("Humanoid")
+			local hubCFrame = getHubSpawnCFrame()
+			warn("[PSS] sendToHub: teleporting", player.Name, "→", hubCFrame.Position)
 			for i = 1, 3 do
-				if not rootPart.Parent then break end
-				rootPart.CFrame = hubCFrame
+				if not rootPart.Parent then
+					break
+				end
+				rootPart.AssemblyLinearVelocity = Vector3.zero
+				rootPart.AssemblyAngularVelocity = Vector3.zero
+				character:PivotTo(hubCFrame)
+				if humanoid then
+					humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+				end
 				task.wait()
 			end
 			warn("[PSS] sendToHub: done for", player.Name)

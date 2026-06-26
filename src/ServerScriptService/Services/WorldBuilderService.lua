@@ -176,6 +176,8 @@ local function createSpawn(spawnFolder, name, position, color)
 	spawn.Material = Enum.Material.Neon
 	spawn.Neutral = true
 	spawn.Transparency = 0.1
+	spawn.CanCollide = false
+	spawn.CanTouch = false
 	return spawn
 end
 
@@ -387,6 +389,7 @@ end
 
 local function createSafetyGround(environmentFolder)
 	local safetyFolder = createFolder("SafetyGround", environmentFolder)
+	local landscapingFolder = createFolder("Landscaping", environmentFolder)
 
 	local function createGroundPad(name, size, position, color, material, transparency)
 		return createPart(name, safetyFolder, {
@@ -399,15 +402,87 @@ local function createSafetyGround(environmentFolder)
 		})
 	end
 
+	local function createOrientedGroundPad(name, size, position, targetPosition, color, material, transparency)
+		local pad = createGroundPad(name, size, position, color, material, transparency)
+		pad.CFrame = CFrame.lookAt(position, targetPosition)
+		return pad
+	end
+
+	local function createLandscapePart(name, size, position, color, material, transparency, shape)
+		return createPart(name, landscapingFolder, {
+			Size = size,
+			Position = position,
+			Color = color,
+			Material = material,
+			Transparency = transparency or 0,
+			CanCollide = true,
+			Shape = shape or Enum.PartType.Block,
+		})
+	end
+
+	local function createTree(name, position, options)
+		options = options or {}
+		local trunkHeight = options.TrunkHeight or 14
+		local canopySize = options.CanopySize or Vector3.new(14, 14, 14)
+		createLandscapePart(
+			name .. "Trunk",
+			Vector3.new(2.2, trunkHeight, 2.2),
+			position + Vector3.new(0, trunkHeight / 2, 0),
+			options.TrunkColor or Color3.fromRGB(104, 78, 56),
+			Enum.Material.WoodPlanks,
+			0,
+			Enum.PartType.Cylinder
+		)
+		createLandscapePart(
+			name .. "Canopy",
+			canopySize,
+			position + Vector3.new(0, trunkHeight + canopySize.Y * 0.34, 0),
+			options.CanopyColor or Color3.fromRGB(78, 120, 76),
+			Enum.Material.Grass,
+			0,
+			Enum.PartType.Ball
+		)
+	end
+
+	local function createShrub(name, position, size, color)
+		createLandscapePart(name, size, position + Vector3.new(0, size.Y / 2, 0), color, Enum.Material.Grass, 0, Enum.PartType.Ball)
+	end
+
+	local function createRock(name, position, size, color)
+		createLandscapePart(name, size, position + Vector3.new(0, size.Y / 2, 0), color, Enum.Material.Slate, 0, Enum.PartType.Ball)
+	end
+
+	local function createLightPost(name, position)
+		createLandscapePart(name .. "Pole", Vector3.new(1.2, 14, 1.2), position + Vector3.new(0, 7, 0), Color3.fromRGB(76, 76, 82), Enum.Material.Metal)
+		createLandscapePart(name .. "Lamp", Vector3.new(3, 2.4, 3), position + Vector3.new(0, 14.5, 0), Color3.fromRGB(255, 228, 172), Enum.Material.Neon, 0.08, Enum.PartType.Ball)
+	end
+
+	local function createVenueApproach(zoneConfig, color, material)
+		createGroundPad(
+			zoneConfig.Id .. "EntryApron",
+			Vector3.new(math.min(zoneConfig.Size.X * 0.62, 54), 0.36, 24),
+			zoneConfig.Position + Vector3.new(0, 0.18, -zoneConfig.Size.Z / 2 - 9),
+			color,
+			material,
+			0
+		)
+	end
+
 	local hub = WorldConfig.Hub
 	createGroundPad(
 		"HubSafetyApron",
-		Vector3.new(hub.Size.X + 110, 0.8, hub.Size.Z + 110),
-		hub.Position + Vector3.new(0, 0.2, 0),
+		Vector3.new(hub.Size.X + 180, 0.42, hub.Size.Z + 180),
+		hub.Position + Vector3.new(0, 0.21, 0),
 		Color3.fromRGB(72, 92, 74),
 		Enum.Material.Grass,
 		0
 	)
+	createGroundPad("HubNorthPromenade", Vector3.new(92, 0.34, 28), hub.Position + Vector3.new(0, 0.17, -108), Color3.fromRGB(168, 166, 158), Enum.Material.Concrete, 0)
+	createGroundPad("HubSouthPromenade", Vector3.new(88, 0.34, 30), hub.Position + Vector3.new(0, 0.17, 110), Color3.fromRGB(170, 168, 160), Enum.Material.Concrete, 0)
+	createGroundPad("HubWestPromenade", Vector3.new(28, 0.34, 88), hub.Position + Vector3.new(-108, 0.17, 0), Color3.fromRGB(164, 162, 154), Enum.Material.Concrete, 0)
+	createGroundPad("HubEastPromenade", Vector3.new(28, 0.34, 88), hub.Position + Vector3.new(108, 0.17, 0), Color3.fromRGB(164, 162, 154), Enum.Material.Concrete, 0)
+	createGroundPad("VehicleLotAsphalt", Vector3.new(108, 0.36, 42), Vector3.new(-24, 0.18, 6), Color3.fromRGB(92, 94, 96), Enum.Material.Asphalt, 0)
+	createGroundPad("VehicleLotWalkway", Vector3.new(108, 0.28, 12), Vector3.new(-24, 0.14, 30), Color3.fromRGB(176, 174, 168), Enum.Material.Concrete, 0)
 
 	local vehicleMinX, vehicleMaxX = math.huge, -math.huge
 	local vehicleMinZ, vehicleMaxZ = math.huge, -math.huge
@@ -423,20 +498,38 @@ local function createSafetyGround(environmentFolder)
 
 	if vehicleCount > 0 then
 		local lotCenter = Vector3.new((vehicleMinX + vehicleMaxX) / 2, 0.22, (vehicleMinZ + vehicleMaxZ) / 2)
-		local lotSize = Vector3.new((vehicleMaxX - vehicleMinX) + 48, 0.72, (vehicleMaxZ - vehicleMinZ) + 34)
-		createGroundPad("VehicleLotSafety", lotSize, lotCenter, Color3.fromRGB(78, 82, 76), Enum.Material.Ground, 0)
+		local lotSize = Vector3.new((vehicleMaxX - vehicleMinX) + 64, 0.38, (vehicleMaxZ - vehicleMinZ) + 46)
+		createGroundPad("VehicleLotSafety", lotSize, Vector3.new(lotCenter.X, 0.19, lotCenter.Z), Color3.fromRGB(98, 102, 96), Enum.Material.Asphalt, 0)
 	end
 
 	for _, zoneConfig in ipairs(WorldConfig.Zones or {}) do
 		if zoneConfig.ZoneType == "Active" then
+			local apronColor = Color3.fromRGB(82, 108, 84)
+			local apronMaterial = Enum.Material.Grass
+
+			if zoneConfig.Id == "outdoor-mall" then
+				apronColor = Color3.fromRGB(170, 168, 160)
+				apronMaterial = Enum.Material.Concrete
+			elseif zoneConfig.Id == "drive-in-theater" then
+				apronColor = Color3.fromRGB(88, 90, 96)
+				apronMaterial = Enum.Material.Asphalt
+			elseif zoneConfig.Id == "water-park" then
+				apronColor = Color3.fromRGB(194, 198, 196)
+				apronMaterial = Enum.Material.Concrete
+			elseif zoneConfig.Id == "stromblad-estate" or zoneConfig.Id == "girls-hangout" then
+				apronColor = Color3.fromRGB(126, 142, 108)
+				apronMaterial = Enum.Material.Grass
+			end
+
 			createGroundPad(
 				zoneConfig.Id .. "SafetyApron",
-				Vector3.new(zoneConfig.Size.X + 34, 0.72, zoneConfig.Size.Z + 34),
-				zoneConfig.Position + Vector3.new(0, 0.22, 0),
-				Color3.fromRGB(76, 96, 78),
-				Enum.Material.Ground,
+				Vector3.new(zoneConfig.Size.X + 70, 0.4, zoneConfig.Size.Z + 64),
+				zoneConfig.Position + Vector3.new(0, 0.2, 0),
+				apronColor,
+				apronMaterial,
 				0
 			)
+			createVenueApproach(zoneConfig, apronColor, apronMaterial)
 		end
 	end
 
@@ -445,18 +538,120 @@ local function createSafetyGround(environmentFolder)
 		local length = direction.Magnitude
 
 		if length > 0 then
-			local shoulderCenter = roadConfig.StartPosition:Lerp(roadConfig.EndPosition, 0.5)
-			local shoulder = createGroundPad(
-				roadConfig.Name .. "SafetyFill",
-				Vector3.new(roadConfig.Width + 16, 0.48, length + 12),
-				shoulderCenter + Vector3.new(0, 0.24, 0),
-				Color3.fromRGB(84, 98, 82),
-				Enum.Material.Ground,
+			local center = roadConfig.StartPosition:Lerp(roadConfig.EndPosition, 0.5)
+			local roadFrame = CFrame.lookAt(Vector3.new(center.X, 0.16, center.Z), Vector3.new(roadConfig.EndPosition.X, 0.16, roadConfig.EndPosition.Z))
+			local sideOffset = roadConfig.Width / 2 + 4.25
+			local roadsideMaterial = Enum.Material.Grass
+			local roadsideColor = Color3.fromRGB(84, 106, 82)
+			local shoulderMaterial = Enum.Material.Concrete
+			local shoulderColor = Color3.fromRGB(154, 156, 150)
+
+			if roadConfig.Name:find("Offroad") then
+				roadsideMaterial = Enum.Material.Ground
+				roadsideColor = Color3.fromRGB(124, 108, 82)
+				shoulderMaterial = Enum.Material.Ground
+				shoulderColor = Color3.fromRGB(138, 120, 92)
+			elseif roadConfig.Name:find("DriveIn") or roadConfig.Name:find("OutdoorMall") then
+				roadsideMaterial = Enum.Material.Ground
+				roadsideColor = Color3.fromRGB(112, 114, 110)
+				shoulderMaterial = Enum.Material.Asphalt
+				shoulderColor = Color3.fromRGB(102, 104, 106)
+			elseif roadConfig.Name:find("WaterPark") then
+				roadsideMaterial = Enum.Material.Grass
+				roadsideColor = Color3.fromRGB(88, 118, 88)
+				shoulderMaterial = Enum.Material.Concrete
+				shoulderColor = Color3.fromRGB(188, 192, 190)
+			end
+
+			createOrientedGroundPad(
+				roadConfig.Name .. "GroundBase",
+				Vector3.new(roadConfig.Width + 34, 0.34, length + 24),
+				Vector3.new(center.X, 0.17, center.Z),
+				Vector3.new(roadConfig.EndPosition.X, 0.17, roadConfig.EndPosition.Z),
+				roadsideColor,
+				roadsideMaterial,
 				0
 			)
-			shoulder.CFrame = CFrame.lookAt(shoulderCenter + Vector3.new(0, 0.24, 0), roadConfig.EndPosition + Vector3.new(0, 0.24, 0))
+
+			createOrientedGroundPad(
+				roadConfig.Name .. "ShoulderLeft",
+				Vector3.new(4.8, 0.2, length + 18),
+				Vector3.new(center.X, 0.1, center.Z) - roadFrame.RightVector * sideOffset,
+				Vector3.new(roadConfig.EndPosition.X, 0.1, roadConfig.EndPosition.Z),
+				shoulderColor,
+				shoulderMaterial,
+				0
+			)
+			createOrientedGroundPad(
+				roadConfig.Name .. "ShoulderRight",
+				Vector3.new(4.8, 0.2, length + 18),
+				Vector3.new(center.X, 0.1, center.Z) + roadFrame.RightVector * sideOffset,
+				Vector3.new(roadConfig.EndPosition.X, 0.1, roadConfig.EndPosition.Z),
+				shoulderColor,
+				shoulderMaterial,
+				0
+			)
+
+			if roadConfig.Width >= 14 and not roadConfig.Name:find("Offroad") then
+				local sidewalkOffset = roadConfig.Width / 2 + 8.5
+				createOrientedGroundPad(
+					roadConfig.Name .. "SidewalkLeft",
+					Vector3.new(3.8, 0.16, length + 8),
+					Vector3.new(center.X, 0.08, center.Z) - roadFrame.RightVector * sidewalkOffset,
+					Vector3.new(roadConfig.EndPosition.X, 0.08, roadConfig.EndPosition.Z),
+					Color3.fromRGB(196, 196, 190),
+					Enum.Material.Concrete,
+					0
+				)
+				createOrientedGroundPad(
+					roadConfig.Name .. "SidewalkRight",
+					Vector3.new(3.8, 0.16, length + 8),
+					Vector3.new(center.X, 0.08, center.Z) + roadFrame.RightVector * sidewalkOffset,
+					Vector3.new(roadConfig.EndPosition.X, 0.08, roadConfig.EndPosition.Z),
+					Color3.fromRGB(196, 196, 190),
+					Enum.Material.Concrete,
+					0
+				)
+			end
 		end
 	end
+
+	createTree("HubTreeNorthWest", Vector3.new(-138, 0, -138))
+	createTree("HubTreeNorthEast", Vector3.new(138, 0, -138))
+	createTree("HubTreeSouthWest", Vector3.new(-138, 0, 138))
+	createTree("HubTreeSouthEast", Vector3.new(138, 0, 138))
+	createTree("MallTreeLeft", Vector3.new(430, 0, 88), {
+		CanopyColor = Color3.fromRGB(86, 126, 84),
+	})
+	createTree("MallTreeRight", Vector3.new(608, 0, 86), {
+		CanopyColor = Color3.fromRGB(86, 126, 84),
+	})
+	createTree("GirlsFrontTree", Vector3.new(202, 0, -376), {
+		CanopyColor = Color3.fromRGB(112, 152, 114),
+	})
+	createTree("EstateFrontTree", Vector3.new(-318, 0, -376), {
+		CanopyColor = Color3.fromRGB(98, 128, 88),
+	})
+	createTree("WaterParkPalmLeft", Vector3.new(-92, 0, 422), {
+		TrunkHeight = 18,
+		CanopySize = Vector3.new(16, 10, 16),
+		CanopyColor = Color3.fromRGB(88, 142, 92),
+	})
+	createTree("WaterParkPalmRight", Vector3.new(92, 0, 422), {
+		TrunkHeight = 18,
+		CanopySize = Vector3.new(16, 10, 16),
+		CanopyColor = Color3.fromRGB(88, 142, 92),
+	})
+	createShrub("PlazaShrubWest", Vector3.new(-92, 0, 100), Vector3.new(8, 5, 8), Color3.fromRGB(90, 132, 84))
+	createShrub("PlazaShrubEast", Vector3.new(92, 0, 100), Vector3.new(8, 5, 8), Color3.fromRGB(90, 132, 84))
+	createShrub("FounderLoungeShrub", Vector3.new(278, 0, 118), Vector3.new(10, 5, 10), Color3.fromRGB(88, 122, 82))
+	createShrub("ContentForgeShrub", Vector3.new(-316, 0, 138), Vector3.new(10, 5, 10), Color3.fromRGB(78, 110, 92))
+	createRock("DriveInRockLeft", Vector3.new(-126, 0, -462), Vector3.new(8, 5, 7), Color3.fromRGB(92, 88, 96))
+	createRock("DriveInRockRight", Vector3.new(126, 0, -462), Vector3.new(8, 5, 7), Color3.fromRGB(92, 88, 96))
+	createLightPost("HubLightWest", Vector3.new(-86, 0, 84))
+	createLightPost("HubLightEast", Vector3.new(86, 0, 84))
+	createLightPost("MallLight", Vector3.new(446, 0, 62))
+	createLightPost("DriveInLight", Vector3.new(0, 0, -432))
 end
 
 local function createVenueShell(venueFolder, venueConfig)
@@ -1754,12 +1949,12 @@ local function buildFounderPlaza(plazaFolder, navigationFolder, spawnFolder)
 	})
 
 	createPart("PlazaSpawnZone", plazaFolder, {
-		Size = Vector3.new(42, 1.2, 42),
-		Position = hub.SpawnPosition - Vector3.new(0, 2, 0),
+		Size = Vector3.new(38, 0.35, 38),
+		Position = Vector3.new(hub.SpawnPosition.X, 1.82, hub.SpawnPosition.Z),
 		Color = Color3.fromRGB(255, 239, 179),
 		Material = Enum.Material.Neon,
-		Transparency = 0.18,
-		CanCollide = true,
+		Transparency = 0.28,
+		CanCollide = false,
 	})
 
 	createSign(
