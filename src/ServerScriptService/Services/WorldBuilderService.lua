@@ -222,11 +222,13 @@ local function worldPosition(venueConfig, offset)
 end
 
 local function registerVenueTeleportTarget(venueConfig, targetCFrame)
+	warn("[WorldBuilderService] Registering venue target:", venueConfig.Id, targetCFrame.Position)
 	TeleportService.registerVenueTarget(venueConfig.Id, targetCFrame, venueConfig.Name)
 
 	local linkedZone = zoneLookup[venueConfig.Id]
 	local destinationId = linkedZone and linkedZone.TeleportDestinationId
 	if destinationId and destinationId ~= venueConfig.Id then
+		warn("[WorldBuilderService] Registering linked venue target:", destinationId, targetCFrame.Position)
 		TeleportService.registerVenueTarget(destinationId, targetCFrame, venueConfig.Name)
 	end
 end
@@ -2376,6 +2378,18 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 		},
 	}
 
+	local spawnPosition = position + mansion.SpawnOffset
+	createPart(venueConfig.Name .. " ArrivalMarker", spawnFolder, {
+		Size = Vector3.new(10, 0.5, 10),
+		Position = spawnPosition + Vector3.new(0, -1.5, 0),
+		Color = mansion.Pink,
+		Material = Enum.Material.Neon,
+		Transparency = 0.4,
+		Anchored = true,
+		CanCollide = false,
+	})
+	registerVenueTeleportTarget(venueConfig, CFrame.new(spawnPosition))
+
 	local builtPanels = MediaFramework.build(mediaFolder, mediaVenueConfig)
 	for _, builtPanel in ipairs(builtPanels) do
 		local mediaType = builtPanel.Config.MediaType
@@ -2389,18 +2403,6 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 			CooldownKey = "Media:" .. venueConfig.Id .. ":" .. builtPanel.Config.Name,
 		})
 	end
-
-	local spawnPosition = position + mansion.SpawnOffset
-	createPart(venueConfig.Name .. " ArrivalMarker", spawnFolder, {
-		Size = Vector3.new(10, 0.5, 10),
-		Position = spawnPosition + Vector3.new(0, -1.5, 0),
-		Color = mansion.Pink,
-		Material = Enum.Material.Neon,
-		Transparency = 0.4,
-		Anchored = true,
-		CanCollide = false,
-	})
-	registerVenueTeleportTarget(venueConfig, CFrame.new(spawnPosition))
 
 	local returnPad = createNavigationPad(
 		teleportFolder,

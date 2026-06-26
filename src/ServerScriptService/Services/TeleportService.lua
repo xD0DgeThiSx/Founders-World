@@ -10,6 +10,15 @@ local TeleportService = {}
 local venueTargets = {}
 local hubTarget
 
+local function getRegisteredVenueKeys()
+	local keys = {}
+	for venueId in pairs(venueTargets) do
+		table.insert(keys, venueId)
+	end
+	table.sort(keys)
+	return keys
+end
+
 local function canTeleport(session)
 	return session and os.clock() >= session.TeleportCooldownUntil
 end
@@ -59,6 +68,8 @@ function TeleportService.registerVenueTarget(venueId, targetCFrame, venueName)
 		Target = targetCFrame,
 		Name = venueName or venueId,
 	}
+	warn("[TeleportService] Registered venue target:", venueId, targetCFrame.Position, "name:", venueName or venueId)
+	warn("[TeleportService] Available venue targets:", table.concat(getRegisteredVenueKeys(), ", "))
 end
 
 function TeleportService.teleportToCFrame(player, targetCFrame, successMessage)
@@ -97,6 +108,7 @@ function TeleportService.teleportToVenue(player, venueId)
 
 	if not venueTarget then
 		warn("[TeleportService] Venue target unavailable for", venueId, "requested by", player.Name)
+		warn("[TeleportService] Available venue target keys:", table.concat(getRegisteredVenueKeys(), ", "))
 		return false, "Venue target unavailable."
 	end
 

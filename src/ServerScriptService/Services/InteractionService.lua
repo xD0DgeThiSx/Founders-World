@@ -51,6 +51,9 @@ local function createPrompt(parent, definition)
 	prompt.Parent = parent
 
 	prompt.Triggered:Connect(function(player)
+		if definition.DebugWarnTag then
+			warn(definition.DebugWarnTag, player and player.Name or "unknown")
+		end
 		warn("[InteractionService] Prompt triggered:", definition.ActionType, definition.ObjectText, "by", player and player.Name or "unknown")
 		InteractionService.handlePrompt(player, definition)
 	end)
