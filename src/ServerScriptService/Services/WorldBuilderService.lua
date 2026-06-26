@@ -230,7 +230,7 @@ local function createNavigationPad(parent, name, position, color, label, options
 		Color = color,
 		Material = options.PadMaterial or Enum.Material.Neon,
 		Transparency = options.PadTransparency or 0,
-		CanCollide = true,
+		CanCollide = options.PadCanCollide ~= false,
 	})
 
 	local markerOffset = options.MarkerOffset or Vector3.new(0, 5, -7)
@@ -239,7 +239,7 @@ local function createNavigationPad(parent, name, position, color, label, options
 		Position = position + markerOffset,
 		Color = options.MarkerColor or Color3.fromRGB(25, 25, 25),
 		Material = options.MarkerMaterial or Enum.Material.SmoothPlastic,
-		CanCollide = true,
+		CanCollide = options.MarkerCanCollide ~= false,
 	})
 
 	createSurfaceText(marker, Enum.NormalId.Front, label, options.Subtitle or "Teleport", color)
@@ -2094,7 +2094,7 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 	local mansion = {
 		Footprint = Vector3.new(176, 42, 132),
 		SpawnOffset = Vector3.new(0, 3, -56),
-		ReturnPadOffset = Vector3.new(-66, 0.5, -18),
+		ReturnPadOffset = Vector3.new(-22, 2.55, -42),
 		Primary = Color3.fromRGB(238, 236, 232),
 		Trim = Color3.fromRGB(52, 56, 64),
 		Concrete = Color3.fromRGB(214, 212, 206),
@@ -2110,6 +2110,7 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 	local roomsFolder = createFolder("Rooms", venueFolder)
 	local propsFolder = createFolder("Props", venueFolder)
 	local signsFolder = createFolder("Signs", venueFolder)
+	local doorsFolder = createFolder("Doors", venueFolder)
 
 	createPart("MainFloor", shellFolder, {
 		Size = Vector3.new(mansion.Footprint.X, 2, mansion.Footprint.Z),
@@ -2144,12 +2145,18 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 		{ "WestWingVolume", Vector3.new(44, 26, 34), Vector3.new(-52, 13, -8), mansion.Primary, Enum.Material.SmoothPlastic },
 		{ "EastWingVolume", Vector3.new(42, 26, 36), Vector3.new(54, 13, -6), mansion.Primary, Enum.Material.SmoothPlastic },
 		{ "SouthGardenVolume", Vector3.new(74, 20, 30), Vector3.new(18, 10, 38), mansion.Primary, Enum.Material.SmoothPlastic },
-		{ "EntryCourt", Vector3.new(60, 0.5, 24), Vector3.new(0, 1.1, -82), mansion.Concrete, Enum.Material.Concrete },
-		{ "EntrySteps", Vector3.new(26, 0.4, 10), Vector3.new(0, 1.2, -68), Color3.fromRGB(226, 223, 218), Enum.Material.Concrete },
+		{ "EntryCourt", Vector3.new(68, 0.5, 30), Vector3.new(0, 1.1, -82), mansion.Concrete, Enum.Material.Concrete },
+		{ "EntrySteps", Vector3.new(30, 0.4, 10), Vector3.new(0, 1.2, -68), Color3.fromRGB(226, 223, 218), Enum.Material.Concrete },
+		{ "FrontPorch", Vector3.new(26, 0.45, 10), Vector3.new(0, 2.22, -70), Color3.fromRGB(232, 230, 225), Enum.Material.Concrete },
+		{ "EntryThreshold", Vector3.new(20, 0.25, 5), Vector3.new(0, 2.13, -64), Color3.fromRGB(78, 80, 86), Enum.Material.Slate },
 		{ "FrontCanopy", Vector3.new(34, 2, 16), Vector3.new(0, 16, -62), mansion.Trim, Enum.Material.Metal },
-		{ "EntryPortalLeft", Vector3.new(4, 20, 2), Vector3.new(-12, 10, -61.4), mansion.Wood, Enum.Material.WoodPlanks },
-		{ "EntryPortalRight", Vector3.new(4, 20, 2), Vector3.new(12, 10, -61.4), mansion.Wood, Enum.Material.WoodPlanks },
-		{ "StoneFeatureWall", Vector3.new(20, 20, 0.5), Vector3.new(-54, 10, -59.8), mansion.Stone, Enum.Material.Slate },
+		{ "EntryPortalLeft", Vector3.new(3, 20, 2), Vector3.new(-15, 10, -61.4), mansion.Wood, Enum.Material.WoodPlanks },
+		{ "EntryPortalRight", Vector3.new(3, 20, 2), Vector3.new(15, 10, -61.4), mansion.Wood, Enum.Material.WoodPlanks },
+		{ "StoneFeatureWall", Vector3.new(16, 18, 0.5), Vector3.new(-60, 9, -59.8), mansion.Stone, Enum.Material.Slate },
+		{ "FoyerAccentWest", Vector3.new(0.4, 12, 18), Vector3.new(-16.3, 7, -48), Color3.fromRGB(228, 220, 224), Enum.Material.SmoothPlastic },
+		{ "FoyerAccentEast", Vector3.new(0.4, 12, 18), Vector3.new(16.3, 7, -48), Color3.fromRGB(230, 224, 228), Enum.Material.SmoothPlastic },
+		{ "LoungeAccentPanel", Vector3.new(22, 12, 1), Vector3.new(-20, 7, 4), Color3.fromRGB(236, 224, 230), Enum.Material.SmoothPlastic },
+		{ "BackyardTransition", Vector3.new(34, 0.24, 10), Vector3.new(16, 2.12, 60), Color3.fromRGB(226, 223, 218), Enum.Material.Concrete },
 		{ "RoofTrimLower", Vector3.new(182, 1, 138), Vector3.new(0, 23, -2), mansion.Trim, Enum.Material.Metal },
 		{ "RoofTrimUpper", Vector3.new(112, 1, 92), Vector3.new(0, 41, 4), Color3.fromRGB(58, 60, 66), Enum.Material.Metal },
 		{ "BalconyDeck", Vector3.new(36, 0.4, 12), Vector3.new(28, 21.2, -62), Color3.fromRGB(226, 224, 220), Enum.Material.Concrete },
@@ -2167,12 +2174,15 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 	end
 
 	local glassParts = {
-		{ "FrontWindowLeft", Vector3.new(26, 16, 0.4), Vector3.new(42, 12, -59.6) },
-		{ "FrontWindowRight", Vector3.new(18, 16, 0.4), Vector3.new(-22, 12, -59.6) },
+		{ "FrontWindowLeft", Vector3.new(24, 16, 0.4), Vector3.new(44, 12, -59.6) },
+		{ "FrontWindowRight", Vector3.new(14, 16, 0.4), Vector3.new(-28, 12, -59.6) },
 		{ "UpperWindowBand", Vector3.new(64, 10, 0.4), Vector3.new(14, 28, -59.5) },
 		{ "WestGlassWall", Vector3.new(0.4, 18, 28), Vector3.new(-86.1, 18, -2) },
 		{ "EastGlassWall", Vector3.new(0.4, 18, 30), Vector3.new(86.1, 18, 6) },
 		{ "BackPatioDoors", Vector3.new(26, 18, 0.4), Vector3.new(12, 12, 65.6) },
+		{ "FrontDoorSidelightLeft", Vector3.new(4, 12, 0.5), Vector3.new(-11, 7, -64.9) },
+		{ "FrontDoorSidelightRight", Vector3.new(4, 12, 0.5), Vector3.new(11, 7, -64.9) },
+		{ "FrontDoorTransomGlass", Vector3.new(20, 3, 0.5), Vector3.new(0, 14.5, -64.9) },
 	}
 	for _, glass in ipairs(glassParts) do
 		createPart(glass[1], shellFolder, {
@@ -2203,10 +2213,15 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 	end
 
 	local propList = {
-		{ Name = "FoyerConsole", Kind = "Table", Offset = Vector3.new(0, 2, -49), Size = Vector3.new(12, 4, 3), Color = Color3.fromRGB(182, 154, 132), Material = Enum.Material.WoodPlanks, HideBillboard = true },
-		{ Name = "FoyerMirror", Kind = "Display", Offset = Vector3.new(0, 9, -56), Size = Vector3.new(12, 10, 1), Color = Color3.fromRGB(238, 244, 248), Material = Enum.Material.Glass, Transparency = 0.2, HideBillboard = true },
+		{ Name = "FoyerConsole", Kind = "Table", Offset = Vector3.new(11, 2, -49), Size = Vector3.new(10, 4, 3), Color = Color3.fromRGB(182, 154, 132), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "FoyerMirror", Kind = "Display", Offset = Vector3.new(11, 9, -56), Size = Vector3.new(10, 10, 1), Color = Color3.fromRGB(238, 244, 248), Material = Enum.Material.Glass, Transparency = 0.2, HideBillboard = true },
+		{ Name = "FoyerRunner", Kind = "FloorPad", Offset = Vector3.new(0, 2.08, -46), Size = Vector3.new(12, 0.16, 16), Color = Color3.fromRGB(245, 230, 236), Material = Enum.Material.SmoothPlastic, Transparency = 0.12, HideBillboard = true },
+		{ Name = "ReturnAlcoveBench", Kind = "Seat", Offset = Vector3.new(-21, 2, -34), Size = Vector3.new(10, 3.5, 4), Color = Color3.fromRGB(232, 214, 222), Material = Enum.Material.Fabric, HideBillboard = true },
+		{ Name = "ReturnAlcovePanel", Kind = "Display", Offset = Vector3.new(-22, 8, -36), Size = Vector3.new(12, 10, 1), Color = Color3.fromRGB(255, 236, 244), Material = Enum.Material.SmoothPlastic, HideBillboard = true },
+		{ Name = "ReturnAlcoveGlow", Kind = "Display", Offset = Vector3.new(-22, 14, -36), Size = Vector3.new(8, 1.2, 1), Color = mansion.Pink, Material = Enum.Material.Neon, Transparency = 0.18, HideBillboard = true, PointLight = { Color = Color3.fromRGB(255, 214, 234), Range = 12, Brightness = 0.65 } },
 		{ Name = "LivingSectional", Kind = "Seat", Offset = Vector3.new(-10, 2, -16), Size = Vector3.new(24, 4, 8), Color = Color3.fromRGB(228, 206, 214), Material = Enum.Material.Fabric, HideBillboard = true },
 		{ Name = "LivingCoffeeTable", Kind = "Table", Offset = Vector3.new(8, 1.5, -10), Size = Vector3.new(12, 3, 6), Color = Color3.fromRGB(182, 154, 132), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "LivingAreaRug", Kind = "FloorPad", Offset = Vector3.new(0, 2.08, -12), Size = Vector3.new(30, 0.16, 18), Color = Color3.fromRGB(242, 232, 236), Material = Enum.Material.SmoothPlastic, Transparency = 0.14, HideBillboard = true },
 		{ Name = "LivingFireplaceWall", Kind = "Display", Offset = Vector3.new(6, 8, 4), Size = Vector3.new(20, 12, 2), Color = Color3.fromRGB(164, 160, 154), Material = Enum.Material.Slate, HideBillboard = true },
 		{ Name = "LivingFireplaceGlow", Kind = "Display", Offset = Vector3.new(6, 4, 5.2), Size = Vector3.new(10, 4, 0.4), Color = Color3.fromRGB(255, 180, 120), Material = Enum.Material.Neon, Transparency = 0.1, HideBillboard = true, PointLight = { Color = Color3.fromRGB(255, 214, 170), Range = 18, Brightness = 0.8 } },
 		{ Name = "PendantLamp", Kind = "Display", Offset = Vector3.new(6, 16, -10), Size = Vector3.new(3, 3, 3), Color = Color3.fromRGB(255, 239, 215), Material = Enum.Material.Neon, Shape = Enum.PartType.Ball, HideBillboard = true, PointLight = { Color = Color3.fromRGB(255, 238, 220), Range = 18, Brightness = 1.2 } },
@@ -2311,10 +2326,11 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 		})
 	end
 
-	createSign(signsFolder, "VenueSign", position + Vector3.new(0, 28, -66), "Girls Hangout", "Modern VIP glam mansion", Color3.fromRGB(34, 36, 42), mansion.Pink, Vector3.new(28, 10, 1))
+	createSign(signsFolder, "VenueSign", position + Vector3.new(-44, 20, -70), "Girls Hangout", "Modern VIP glam mansion", Color3.fromRGB(34, 36, 42), mansion.Pink, Vector3.new(22, 8, 1))
 	createSign(signsFolder, "BirthdaySign", position + Vector3.new(-34, 14, 44), "Birthday Suite", "Party room + memory wall", Color3.fromRGB(248, 196, 220), mansion.Trim, Vector3.new(16, 8, 1))
 	createSign(signsFolder, "VIPSign", position + Vector3.new(38, 30, -26), "VIP Star Loft", "Balcony views and glam seating", Color3.fromRGB(242, 206, 226), mansion.Trim, Vector3.new(16, 8, 1))
 	createSign(signsFolder, "PoolSign", position + Vector3.new(22, 14, 66), "Backyard Pool", "Late-night lounge and glow deck", Color3.fromRGB(214, 216, 222), mansion.Trim, Vector3.new(16, 8, 1))
+	createSign(signsFolder, "EntrySign", position + Vector3.new(25, 8, -72), "Front Entry", "VIP house foyer", Color3.fromRGB(244, 240, 244), mansion.Trim, Vector3.new(12, 6, 1))
 
 	local mediaVenueConfig = {
 		Id = venueConfig.Id,
@@ -2383,9 +2399,12 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 		mansion.Pink,
 		"Return to Plaza",
 		{
-			MarkerOffset = Vector3.new(0, 5, -8),
+			MarkerOffset = Vector3.new(0, 4.5, 6),
 			MarkerColor = Color3.fromRGB(42, 42, 48),
-			Subtitle = "Return",
+			MarkerSize = Vector3.new(9, 6, 1),
+			MarkerCanCollide = false,
+			Subtitle = "Hub",
+			PadSize = Vector3.new(12, 1, 12),
 			PadMaterial = Enum.Material.SmoothPlastic,
 			PadTransparency = 0.08,
 		}
@@ -2397,12 +2416,69 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 		CooldownKey = "TeleportHub:" .. venueConfig.Id,
 	})
 
-	local door = createPart("MainDoor", createFolder("Doors", venueFolder), {
-		Size = Vector3.new(14, 12, 2),
-		Position = position + Vector3.new(0, 6, -66),
+	local entrySconceLeft = createPart("EntrySconceLeft", doorsFolder, {
+		Size = Vector3.new(1.4, 4, 1.2),
+		Position = position + Vector3.new(-16, 8, -64.5),
+		Color = Color3.fromRGB(255, 236, 214),
+		Material = Enum.Material.Neon,
+		Transparency = 0.12,
+		CanCollide = false,
+	})
+	attachPointLight(entrySconceLeft, {
+		Color = Color3.fromRGB(255, 228, 206),
+		Range = 14,
+		Brightness = 0.75,
+	})
+
+	local entrySconceRight = createPart("EntrySconceRight", doorsFolder, {
+		Size = Vector3.new(1.4, 4, 1.2),
+		Position = position + Vector3.new(16, 8, -64.5),
+		Color = Color3.fromRGB(255, 236, 214),
+		Material = Enum.Material.Neon,
+		Transparency = 0.12,
+		CanCollide = false,
+	})
+	attachPointLight(entrySconceRight, {
+		Color = Color3.fromRGB(255, 228, 206),
+		Range = 14,
+		Brightness = 0.75,
+	})
+
+	createPart("DoorFrameLeft", doorsFolder, {
+		Size = Vector3.new(1.2, 14, 2.2),
+		Position = position + Vector3.new(-9.6, 7, -65.2),
+		Color = mansion.Trim,
+		Material = Enum.Material.Metal,
+		CanCollide = true,
+	})
+	createPart("DoorFrameRight", doorsFolder, {
+		Size = Vector3.new(1.2, 14, 2.2),
+		Position = position + Vector3.new(9.6, 7, -65.2),
+		Color = mansion.Trim,
+		Material = Enum.Material.Metal,
+		CanCollide = true,
+	})
+	createPart("DoorFrameTop", doorsFolder, {
+		Size = Vector3.new(20.4, 1.2, 2.2),
+		Position = position + Vector3.new(0, 13.6, -65.2),
+		Color = mansion.Trim,
+		Material = Enum.Material.Metal,
+		CanCollide = true,
+	})
+	createPart("DoorHandleBar", doorsFolder, {
+		Size = Vector3.new(0.4, 5, 0.4),
+		Position = position + Vector3.new(0, 7, -64.1),
+		Color = Color3.fromRGB(232, 214, 176),
+		Material = Enum.Material.Metal,
+		CanCollide = false,
+	})
+
+	local door = createPart("MainDoor", doorsFolder, {
+		Size = Vector3.new(16, 12, 1.4),
+		Position = position + Vector3.new(0, 7, -64.8),
 		Color = mansion.Glass,
 		Material = Enum.Material.Glass,
-		Transparency = 0.2,
+		Transparency = 0.14,
 		CanCollide = true,
 	})
 	InteractionService.registerPrompt(door, {
