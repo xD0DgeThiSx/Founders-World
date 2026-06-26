@@ -221,6 +221,16 @@ local function worldPosition(venueConfig, offset)
 	return venueConfig.Position + offset
 end
 
+local function registerVenueTeleportTarget(venueConfig, targetCFrame)
+	TeleportService.registerVenueTarget(venueConfig.Id, targetCFrame, venueConfig.Name)
+
+	local linkedZone = zoneLookup[venueConfig.Id]
+	local destinationId = linkedZone and linkedZone.TeleportDestinationId
+	if destinationId and destinationId ~= venueConfig.Id then
+		TeleportService.registerVenueTarget(destinationId, targetCFrame, venueConfig.Name)
+	end
+end
+
 local function createNavigationPad(parent, name, position, color, label, options)
 	options = options or {}
 
@@ -2093,7 +2103,7 @@ end
 local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, teleportFolder, mediaFolder)
 	local mansion = {
 		Footprint = Vector3.new(176, 42, 132),
-		SpawnOffset = Vector3.new(0, 3, -56),
+		SpawnOffset = Vector3.new(0, 3.25, -46),
 		ReturnPadOffset = Vector3.new(-22, 2.55, -42),
 		Primary = Color3.fromRGB(238, 236, 232),
 		Trim = Color3.fromRGB(52, 56, 64),
@@ -2390,7 +2400,7 @@ local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, t
 		Anchored = true,
 		CanCollide = false,
 	})
-	TeleportService.registerVenueTarget(venueConfig.Id, CFrame.new(spawnPosition), venueConfig.Name)
+	registerVenueTeleportTarget(venueConfig, CFrame.new(spawnPosition))
 
 	local returnPad = createNavigationPad(
 		teleportFolder,
@@ -2545,7 +2555,7 @@ local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder,
 		Anchored = true,
 		CanCollide = false,
 	})
-	TeleportService.registerVenueTarget(venueConfig.Id, CFrame.new(spawnPosition), venueConfig.Name)
+	registerVenueTeleportTarget(venueConfig, CFrame.new(spawnPosition))
 
 	local returnPadOffset = venueConfig.ReturnPadOffset or Vector3.new(0, 2.5, venueConfig.Footprint.Z / 2 - 14)
 	local arrivalPad = createNavigationPad(
