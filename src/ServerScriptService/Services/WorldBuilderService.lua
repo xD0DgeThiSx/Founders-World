@@ -576,6 +576,12 @@ local function createSafetyGround(environmentFolder)
 				createRoutePocket("GirlsNorthLawn", zoneConfig.Position + Vector3.new(0, 0, -132), Vector3.new(206, 78), Color3.fromRGB(126, 170, 126), Enum.Material.Grass, 0.34)
 				createConnector("GirlsRoadBlend", Vector3.new(206, 0, -224), Vector3.new(208, 0, -300), 84, Color3.fromRGB(132, 176, 132), Enum.Material.Grass, 0.34)
 				createConnector("GirlsCrossroadBlend", Vector3.new(172, 0, -300), Vector3.new(90, 0, -300), 68, Color3.fromRGB(132, 176, 132), Enum.Material.Grass, 0.32)
+				createRoutePocket("GirlsEntryCourt", zoneConfig.Position + Vector3.new(0, 0, -88), Vector3.new(122, 54), Color3.fromRGB(214, 212, 206), Enum.Material.Concrete, 0.32)
+				createRoutePocket("GirlsSideLawnWest", zoneConfig.Position + Vector3.new(-96, 0, -18), Vector3.new(52, 164), Color3.fromRGB(116, 146, 110), Enum.Material.Grass, 0.32)
+				createRoutePocket("GirlsSideLawnEast", zoneConfig.Position + Vector3.new(96, 0, -18), Vector3.new(52, 164), Color3.fromRGB(116, 146, 110), Enum.Material.Grass, 0.32)
+				createRoutePocket("GirlsBackyardLawn", zoneConfig.Position + Vector3.new(4, 0, 82), Vector3.new(146, 62), Color3.fromRGB(112, 144, 108), Enum.Material.Grass, 0.32)
+				createConnector("GirlsFrontPath", Vector3.new(208, 0, -226), Vector3.new(260, 0, -366), 34, Color3.fromRGB(214, 212, 206), Enum.Material.Concrete, 0.28)
+				createConnector("GirlsPoolCourtPath", Vector3.new(260, 0, -236), Vector3.new(272, 0, -212), 54, Color3.fromRGB(214, 212, 206), Enum.Material.Concrete, 0.28)
 			elseif zoneConfig.Id == "outdoor-mall" then
 				createRoutePocket("OutdoorMallForecourt", zoneConfig.Position + Vector3.new(-56, 0, -74), Vector3.new(164, 72), Color3.fromRGB(164, 162, 156), Enum.Material.Concrete, 0.32)
 				createRoutePocket("OutdoorMallParkingApron", zoneConfig.Position + Vector3.new(-44, 0, 72), Vector3.new(180, 92), Color3.fromRGB(104, 106, 108), Enum.Material.Asphalt, 0.32)
@@ -869,26 +875,28 @@ local function createRoom(roomsFolder, venueConfig, roomConfig)
 	local wallColor = roomConfig.WallColor or venueConfig.Accent
 	local wallHeight = roomConfig.WallHeight or 16
 	local wallThickness = roomConfig.WallThickness or 1
-	local floorY = venueConfig.Position.Y + 1.15
+	local levelOffsetY = roomConfig.LevelOffsetY or 0
+	local floorY = venueConfig.Position.Y + 1.15 + levelOffsetY
+	local wallCenterY = venueConfig.Position.Y + levelOffsetY + wallHeight / 2
 
 	createRoomPart("Floor", roomFolder, Vector3.new(roomConfig.Size.X, 0.3, roomConfig.Size.Z), Vector3.new(center.X, floorY, center.Z), roomColor, roomConfig.FloorMaterial)
 
 	local walls = {
 		North = {
 			Size = Vector3.new(roomConfig.Size.X, wallHeight, wallThickness),
-			Position = Vector3.new(center.X, venueConfig.Position.Y + wallHeight / 2, center.Z - roomConfig.Size.Z / 2),
+			Position = Vector3.new(center.X, wallCenterY, center.Z - roomConfig.Size.Z / 2),
 		},
 		South = {
 			Size = Vector3.new(roomConfig.Size.X, wallHeight, wallThickness),
-			Position = Vector3.new(center.X, venueConfig.Position.Y + wallHeight / 2, center.Z + roomConfig.Size.Z / 2),
+			Position = Vector3.new(center.X, wallCenterY, center.Z + roomConfig.Size.Z / 2),
 		},
 		West = {
 			Size = Vector3.new(wallThickness, wallHeight, roomConfig.Size.Z),
-			Position = Vector3.new(center.X - roomConfig.Size.X / 2, venueConfig.Position.Y + wallHeight / 2, center.Z),
+			Position = Vector3.new(center.X - roomConfig.Size.X / 2, wallCenterY, center.Z),
 		},
 		East = {
 			Size = Vector3.new(wallThickness, wallHeight, roomConfig.Size.Z),
-			Position = Vector3.new(center.X + roomConfig.Size.X / 2, venueConfig.Position.Y + wallHeight / 2, center.Z),
+			Position = Vector3.new(center.X + roomConfig.Size.X / 2, wallCenterY, center.Z),
 		},
 	}
 
@@ -902,7 +910,7 @@ local function createRoom(roomsFolder, venueConfig, roomConfig)
 		local labelPart = createPart("RoomLabel", roomFolder, {
 			Size = roomConfig.LabelSize or Vector3.new(math.min(roomConfig.Size.X * 0.6, 16), 4, 1),
 			Position = roomConfig.LabelOffset and (center + roomConfig.LabelOffset)
-				or Vector3.new(center.X, venueConfig.Position.Y + wallHeight - 2, center.Z - roomConfig.Size.Z / 2 + 0.8),
+				or Vector3.new(center.X, venueConfig.Position.Y + levelOffsetY + wallHeight - 2, center.Z - roomConfig.Size.Z / 2 + 0.8),
 			Color = wallColor,
 			Material = Enum.Material.SmoothPlastic,
 			CanCollide = false,
@@ -2082,7 +2090,338 @@ local function createVenueAmbientSound(venueFolder, venueConfig)
 	sound:Play()
 end
 
+local function buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, teleportFolder, mediaFolder)
+	local mansion = {
+		Footprint = Vector3.new(176, 42, 132),
+		SpawnOffset = Vector3.new(0, 3, -56),
+		ReturnPadOffset = Vector3.new(-66, 0.5, -18),
+		Primary = Color3.fromRGB(238, 236, 232),
+		Trim = Color3.fromRGB(52, 56, 64),
+		Concrete = Color3.fromRGB(214, 212, 206),
+		Wood = Color3.fromRGB(114, 86, 62),
+		Stone = Color3.fromRGB(168, 164, 158),
+		Glass = Color3.fromRGB(194, 229, 255),
+		Pink = Color3.fromRGB(255, 190, 222),
+		PinkBright = Color3.fromRGB(255, 110, 186),
+	}
+
+	local position = venueConfig.Position
+	local shellFolder = createFolder("Shell", venueFolder)
+	local roomsFolder = createFolder("Rooms", venueFolder)
+	local propsFolder = createFolder("Props", venueFolder)
+	local signsFolder = createFolder("Signs", venueFolder)
+
+	createPart("MainFloor", shellFolder, {
+		Size = Vector3.new(mansion.Footprint.X, 2, mansion.Footprint.Z),
+		Position = position + Vector3.new(0, 1, 0),
+		Color = mansion.Primary,
+		Material = Enum.Material.Concrete,
+		CanCollide = true,
+	})
+	createPart("UpperFloor", shellFolder, {
+		Size = Vector3.new(108, 1.2, 84),
+		Position = position + Vector3.new(0, 21, 2),
+		Color = Color3.fromRGB(228, 226, 222),
+		Material = Enum.Material.Concrete,
+		CanCollide = true,
+	})
+	createPart("Roof", shellFolder, {
+		Size = Vector3.new(112, 2, 88),
+		Position = position + Vector3.new(0, 43, 4),
+		Color = mansion.Trim,
+		Material = Enum.Material.Metal,
+		Transparency = 0.52,
+		CanCollide = true,
+	})
+
+	local exteriorParts = {
+		{ "BackWall", Vector3.new(176, 42, 2), Vector3.new(0, 21, 66), mansion.Primary, Enum.Material.SmoothPlastic },
+		{ "LeftWall", Vector3.new(2, 42, 132), Vector3.new(-88, 21, 0), mansion.Trim, Enum.Material.Concrete },
+		{ "RightWall", Vector3.new(2, 42, 132), Vector3.new(88, 21, 0), mansion.Trim, Enum.Material.Concrete },
+		{ "FrontWallLeft", Vector3.new(66, 42, 2), Vector3.new(-55, 21, -66), mansion.Primary, Enum.Material.SmoothPlastic },
+		{ "FrontWallRight", Vector3.new(66, 42, 2), Vector3.new(55, 21, -66), mansion.Primary, Enum.Material.SmoothPlastic },
+		{ "EntryVolume", Vector3.new(34, 30, 12), Vector3.new(0, 15, -60), mansion.Trim, Enum.Material.SmoothPlastic },
+		{ "WestWingVolume", Vector3.new(44, 26, 34), Vector3.new(-52, 13, -8), mansion.Primary, Enum.Material.SmoothPlastic },
+		{ "EastWingVolume", Vector3.new(42, 26, 36), Vector3.new(54, 13, -6), mansion.Primary, Enum.Material.SmoothPlastic },
+		{ "SouthGardenVolume", Vector3.new(74, 20, 30), Vector3.new(18, 10, 38), mansion.Primary, Enum.Material.SmoothPlastic },
+		{ "EntryCourt", Vector3.new(60, 0.5, 24), Vector3.new(0, 1.1, -82), mansion.Concrete, Enum.Material.Concrete },
+		{ "EntrySteps", Vector3.new(26, 0.4, 10), Vector3.new(0, 1.2, -68), Color3.fromRGB(226, 223, 218), Enum.Material.Concrete },
+		{ "FrontCanopy", Vector3.new(34, 2, 16), Vector3.new(0, 16, -62), mansion.Trim, Enum.Material.Metal },
+		{ "EntryPortalLeft", Vector3.new(4, 20, 2), Vector3.new(-12, 10, -61.4), mansion.Wood, Enum.Material.WoodPlanks },
+		{ "EntryPortalRight", Vector3.new(4, 20, 2), Vector3.new(12, 10, -61.4), mansion.Wood, Enum.Material.WoodPlanks },
+		{ "StoneFeatureWall", Vector3.new(20, 20, 0.5), Vector3.new(-54, 10, -59.8), mansion.Stone, Enum.Material.Slate },
+		{ "RoofTrimLower", Vector3.new(182, 1, 138), Vector3.new(0, 23, -2), mansion.Trim, Enum.Material.Metal },
+		{ "RoofTrimUpper", Vector3.new(112, 1, 92), Vector3.new(0, 41, 4), Color3.fromRGB(58, 60, 66), Enum.Material.Metal },
+		{ "BalconyDeck", Vector3.new(36, 0.4, 12), Vector3.new(28, 21.2, -62), Color3.fromRGB(226, 224, 220), Enum.Material.Concrete },
+		{ "BalconyRail", Vector3.new(34, 8, 0.4), Vector3.new(28, 25, -67.8), Color3.fromRGB(80, 82, 88), Enum.Material.Metal },
+		{ "BackyardPoolDeck", Vector3.new(82, 0.5, 44), Vector3.new(16, 1.1, 86), Color3.fromRGB(216, 214, 208), Enum.Material.Concrete },
+	}
+	for _, partData in ipairs(exteriorParts) do
+		createPart(partData[1], shellFolder, {
+			Size = partData[2],
+			Position = position + partData[3],
+			Color = partData[4],
+			Material = partData[5],
+			CanCollide = true,
+		})
+	end
+
+	local glassParts = {
+		{ "FrontWindowLeft", Vector3.new(26, 16, 0.4), Vector3.new(42, 12, -59.6) },
+		{ "FrontWindowRight", Vector3.new(18, 16, 0.4), Vector3.new(-22, 12, -59.6) },
+		{ "UpperWindowBand", Vector3.new(64, 10, 0.4), Vector3.new(14, 28, -59.5) },
+		{ "WestGlassWall", Vector3.new(0.4, 18, 28), Vector3.new(-86.1, 18, -2) },
+		{ "EastGlassWall", Vector3.new(0.4, 18, 30), Vector3.new(86.1, 18, 6) },
+		{ "BackPatioDoors", Vector3.new(26, 18, 0.4), Vector3.new(12, 12, 65.6) },
+	}
+	for _, glass in ipairs(glassParts) do
+		createPart(glass[1], shellFolder, {
+			Size = glass[2],
+			Position = position + glass[3],
+			Color = mansion.Glass,
+			Material = Enum.Material.Glass,
+			Transparency = 0.24,
+			CanCollide = true,
+		})
+	end
+
+	local roomConfigs = {
+		{ Name = "Foyer", Offset = Vector3.new(0, 0, -48), Size = Vector3.new(34, 2, 20), OpenSides = { "North", "South" }, FloorColor = Color3.fromRGB(238, 236, 232), WallColor = Color3.fromRGB(246, 245, 242), WallHeight = 22, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+		{ Name = "Grand Lounge", Offset = Vector3.new(0, 0, -12), Size = Vector3.new(52, 2, 34), OpenSides = { "North", "South", "East" }, FloorColor = Color3.fromRGB(232, 230, 226), WallColor = Color3.fromRGB(244, 243, 240), WallHeight = 22, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+		{ Name = "Glam Kitchen", Offset = Vector3.new(-50, 0, -8), Size = Vector3.new(34, 2, 26), OpenSides = { "East", "South" }, FloorColor = Color3.fromRGB(242, 240, 236), WallColor = Color3.fromRGB(232, 226, 221), WallHeight = 20, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+		{ Name = "Media Arcade", Offset = Vector3.new(50, 0, -8), Size = Vector3.new(34, 2, 28), OpenSides = { "West" }, FloorColor = Color3.fromRGB(230, 228, 226), WallColor = Color3.fromRGB(224, 219, 215), WallHeight = 20, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+		{ Name = "Birthday Suite", Offset = Vector3.new(-34, 0, 28), Size = Vector3.new(40, 2, 28), OpenSides = { "North", "East", "South" }, FloorColor = Color3.fromRGB(246, 232, 238), WallColor = Color3.fromRGB(255, 194, 220), WallHeight = 20, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+		{ Name = "Pool Gallery", Offset = Vector3.new(30, 0, 28), Size = Vector3.new(40, 2, 26), OpenSides = { "North", "West", "South" }, FloorColor = Color3.fromRGB(236, 233, 230), WallColor = Color3.fromRGB(226, 220, 214), WallHeight = 20, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+		{ Name = "Upper Landing", Offset = Vector3.new(0, 0, 0), Size = Vector3.new(28, 2, 20), OpenSides = { "North", "South", "East", "West" }, FloorColor = Color3.fromRGB(240, 238, 234), WallColor = Color3.fromRGB(244, 243, 240), WallHeight = 16, LevelOffsetY = 20, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+		{ Name = "Creator Suite", Offset = Vector3.new(-42, 0, -8), Size = Vector3.new(30, 2, 24), OpenSides = { "East", "South" }, FloorColor = Color3.fromRGB(236, 232, 237), WallColor = Color3.fromRGB(232, 202, 226), WallHeight = 16, LevelOffsetY = 20, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+		{ Name = "VIP Lounge", Offset = Vector3.new(38, 0, -8), Size = Vector3.new(34, 2, 24), OpenSides = { "West" }, FloorColor = Color3.fromRGB(242, 233, 237), WallColor = Color3.fromRGB(244, 205, 224), WallHeight = 16, LevelOffsetY = 20, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+		{ Name = "Sleepover Suite", Offset = Vector3.new(-26, 0, 30), Size = Vector3.new(42, 2, 26), OpenSides = { "North", "East" }, FloorColor = Color3.fromRGB(244, 236, 240), WallColor = Color3.fromRGB(232, 214, 224), WallHeight = 16, LevelOffsetY = 20, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+		{ Name = "Vanity Bath", Offset = Vector3.new(34, 0, 30), Size = Vector3.new(26, 2, 22), OpenSides = { "West" }, FloorColor = Color3.fromRGB(242, 239, 236), WallColor = Color3.fromRGB(228, 222, 216), WallHeight = 16, LevelOffsetY = 20, HideLabel = true, FloorMaterial = Enum.Material.SmoothPlastic },
+	}
+	for _, roomConfig in ipairs(roomConfigs) do
+		createRoom(roomsFolder, venueConfig, roomConfig)
+	end
+
+	local propList = {
+		{ Name = "FoyerConsole", Kind = "Table", Offset = Vector3.new(0, 2, -49), Size = Vector3.new(12, 4, 3), Color = Color3.fromRGB(182, 154, 132), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "FoyerMirror", Kind = "Display", Offset = Vector3.new(0, 9, -56), Size = Vector3.new(12, 10, 1), Color = Color3.fromRGB(238, 244, 248), Material = Enum.Material.Glass, Transparency = 0.2, HideBillboard = true },
+		{ Name = "LivingSectional", Kind = "Seat", Offset = Vector3.new(-10, 2, -16), Size = Vector3.new(24, 4, 8), Color = Color3.fromRGB(228, 206, 214), Material = Enum.Material.Fabric, HideBillboard = true },
+		{ Name = "LivingCoffeeTable", Kind = "Table", Offset = Vector3.new(8, 1.5, -10), Size = Vector3.new(12, 3, 6), Color = Color3.fromRGB(182, 154, 132), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "LivingFireplaceWall", Kind = "Display", Offset = Vector3.new(6, 8, 4), Size = Vector3.new(20, 12, 2), Color = Color3.fromRGB(164, 160, 154), Material = Enum.Material.Slate, HideBillboard = true },
+		{ Name = "LivingFireplaceGlow", Kind = "Display", Offset = Vector3.new(6, 4, 5.2), Size = Vector3.new(10, 4, 0.4), Color = Color3.fromRGB(255, 180, 120), Material = Enum.Material.Neon, Transparency = 0.1, HideBillboard = true, PointLight = { Color = Color3.fromRGB(255, 214, 170), Range = 18, Brightness = 0.8 } },
+		{ Name = "PendantLamp", Kind = "Display", Offset = Vector3.new(6, 16, -10), Size = Vector3.new(3, 3, 3), Color = Color3.fromRGB(255, 239, 215), Material = Enum.Material.Neon, Shape = Enum.PartType.Ball, HideBillboard = true, PointLight = { Color = Color3.fromRGB(255, 238, 220), Range = 18, Brightness = 1.2 } },
+		{ Name = "KitchenIsland", Kind = "Table", Offset = Vector3.new(-50, 2, -10), Size = Vector3.new(18, 4, 8), Color = Color3.fromRGB(228, 226, 222), Material = Enum.Material.SmoothPlastic, HideBillboard = true },
+		{ Name = "KitchenBarStools", Kind = "Seat", Offset = Vector3.new(-50, 2, -18), Size = Vector3.new(18, 4, 4), Color = Color3.fromRGB(188, 162, 142), Material = Enum.Material.Fabric, HideBillboard = true },
+		{ Name = "DessertBar", Kind = "Table", Offset = Vector3.new(-60, 2, 2), Size = Vector3.new(12, 4, 4), Color = Color3.fromRGB(255, 205, 224), Material = Enum.Material.SmoothPlastic, HideBillboard = true },
+		{ Name = "PantryWall", Kind = "Display", Offset = Vector3.new(-60, 8, -10), Size = Vector3.new(12, 12, 1), Color = Color3.fromRGB(214, 210, 206), Material = Enum.Material.SmoothPlastic, HideBillboard = true },
+		{ Name = "ArcadeCabinetA", Kind = "ArcadeCabinet", Offset = Vector3.new(60, 5, -20), Size = Vector3.new(5, 10, 4), Color = Color3.fromRGB(255, 105, 176), Accent = Color3.fromRGB(255, 220, 240), HideBillboard = true },
+		{ Name = "ArcadeCabinetB", Kind = "ArcadeCabinet", Offset = Vector3.new(60, 5, -10), Size = Vector3.new(5, 10, 4), Color = Color3.fromRGB(200, 60, 160), Accent = Color3.fromRGB(255, 220, 240), HideBillboard = true },
+		{ Name = "ArcadeCabinetC", Kind = "ArcadeCabinet", Offset = Vector3.new(60, 5, 0), Size = Vector3.new(5, 10, 4), Color = Color3.fromRGB(255, 130, 200), Accent = Color3.fromRGB(255, 220, 240), HideBillboard = true },
+		{ Name = "ClipReviewScreen", Kind = "CinemaScreen", Offset = Vector3.new(42, 10, -20), Size = Vector3.new(24, 12, 1), Color = Color3.fromRGB(60, 60, 66), Accent = mansion.Pink, HideBillboard = true },
+		{ Name = "ArcadeSofa", Kind = "Seat", Offset = Vector3.new(46, 2, -2), Size = Vector3.new(16, 4, 6), Color = Color3.fromRGB(214, 200, 212), Material = Enum.Material.Fabric, HideBillboard = true },
+		{ Name = "BirthdayCakeBase", Kind = "Display", Offset = Vector3.new(-36, 3, 24), Size = Vector3.new(10, 2, 10), Color = Color3.fromRGB(255, 220, 150), HideBillboard = true },
+		{ Name = "BirthdayCakeMid", Kind = "Display", Offset = Vector3.new(-36, 5.5, 24), Size = Vector3.new(8, 3, 8), Color = Color3.fromRGB(255, 170, 200), HideBillboard = true },
+		{ Name = "BirthdayCakeTop", Kind = "Display", Offset = Vector3.new(-36, 8.5, 24), Size = Vector3.new(5, 3, 5), Color = Color3.fromRGB(255, 238, 242), HideBillboard = true },
+		{ Name = "BirthdayCandleGlow", Kind = "Display", Offset = Vector3.new(-36, 11.8, 24), Size = Vector3.new(2.5, 2, 2.5), Color = Color3.fromRGB(255, 240, 80), Material = Enum.Material.Neon, HideBillboard = true, PointLight = { Color = Color3.fromRGB(255, 234, 172), Range = 14, Brightness = 0.9 } },
+		{ Name = "BirthdayBanner", Kind = "Display", Offset = Vector3.new(-34, 11, 40.4), Size = Vector3.new(30, 5, 0.4), Color = mansion.PinkBright, Material = Enum.Material.Neon, HideBillboard = true },
+		{ Name = "BirthdayLoungeSofa", Kind = "Seat", Offset = Vector3.new(-16, 2, 28), Size = Vector3.new(14, 4, 6), Color = Color3.fromRGB(244, 208, 222), Material = Enum.Material.Fabric, HideBillboard = true },
+		{ Name = "PoolGallerySofa", Kind = "Seat", Offset = Vector3.new(16, 2, 28), Size = Vector3.new(16, 4, 6), Color = Color3.fromRGB(224, 218, 214), Material = Enum.Material.Fabric, HideBillboard = true },
+		{ Name = "PoolGalleryScreen", Kind = "CinemaScreen", Offset = Vector3.new(44, 10, 38), Size = Vector3.new(18, 10, 1), Color = Color3.fromRGB(66, 68, 74), Accent = mansion.Pink, HideBillboard = true },
+		{ Name = "SecretHatch", Kind = "Display", Offset = Vector3.new(6, 2.2, 8), Size = Vector3.new(10, 0.3, 10), Color = mansion.PinkBright, Material = Enum.Material.Neon, Transparency = 0.16, Label = "Secret Food Court" },
+		{ Name = "TunnelShaftEast", Kind = "Display", Offset = Vector3.new(11, -14, 8), Size = Vector3.new(1, 34, 10), Color = Color3.fromRGB(72, 58, 94), HideBillboard = true },
+		{ Name = "TunnelShaftWest", Kind = "Display", Offset = Vector3.new(1, -14, 8), Size = Vector3.new(1, 34, 10), Color = Color3.fromRGB(72, 58, 94), HideBillboard = true },
+		{ Name = "TunnelShaftNorth", Kind = "Display", Offset = Vector3.new(6, -14, 3), Size = Vector3.new(9, 34, 1), Color = Color3.fromRGB(72, 58, 94), HideBillboard = true },
+		{ Name = "TunnelShaftSouth", Kind = "Display", Offset = Vector3.new(6, -14, 13), Size = Vector3.new(9, 34, 1), Color = Color3.fromRGB(72, 58, 94), HideBillboard = true },
+		{ Name = "UpperHallRail", Kind = "Display", Offset = Vector3.new(10, 24, 10), Size = Vector3.new(34, 4, 1), Color = Color3.fromRGB(74, 76, 84), Material = Enum.Material.Metal, HideBillboard = true },
+		{ Name = "VIPLoungePad", Kind = "FloorPad", Offset = Vector3.new(40, 22.1, -10), Size = Vector3.new(18, 0.2, 18), Color = Color3.fromRGB(255, 176, 222), Material = Enum.Material.Neon, Transparency = 0.5, HideBillboard = true },
+		{ Name = "VIPSofa", Kind = "Seat", Offset = Vector3.new(38, 22, -8), Size = Vector3.new(16, 4, 6), Color = Color3.fromRGB(242, 216, 228), Material = Enum.Material.Fabric, HideBillboard = true },
+		{ Name = "VIPCoffeeTable", Kind = "Table", Offset = Vector3.new(38, 21.5, -2), Size = Vector3.new(8, 3, 5), Color = Color3.fromRGB(182, 154, 132), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "VIPStarWall", Kind = "VIPDisplay", Offset = Vector3.new(54, 29, -8), Size = Vector3.new(18, 12, 1), Color = mansion.Pink, Accent = Color3.fromRGB(255, 247, 252), Label = "VIP Star Loft" },
+		{ Name = "CreatorDesk", Kind = "Table", Offset = Vector3.new(-42, 21.5, -6), Size = Vector3.new(14, 3, 6), Color = Color3.fromRGB(188, 162, 142), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "CreatorScreen", Kind = "CinemaScreen", Offset = Vector3.new(-42, 28, -15), Size = Vector3.new(18, 10, 1), Color = Color3.fromRGB(64, 66, 74), Accent = mansion.Pink, HideBillboard = true },
+		{ Name = "RingLight", Kind = "Display", Offset = Vector3.new(-54, 28, -6), Size = Vector3.new(6, 6, 1), Color = Color3.fromRGB(255, 250, 220), Material = Enum.Material.Neon, Shape = Enum.PartType.Cylinder, HideBillboard = true, PointLight = { Color = Color3.fromRGB(255, 246, 230), Range = 14, Brightness = 1 } },
+		{ Name = "SleepoverBedA", Kind = "Seat", Offset = Vector3.new(-36, 22, 30), Size = Vector3.new(12, 3, 7), Color = Color3.fromRGB(246, 228, 236), Material = Enum.Material.Fabric, HideBillboard = true },
+		{ Name = "SleepoverBedB", Kind = "Seat", Offset = Vector3.new(-36, 22, 40), Size = Vector3.new(12, 3, 7), Color = Color3.fromRGB(230, 214, 228), Material = Enum.Material.Fabric, HideBillboard = true },
+		{ Name = "SleepoverRug", Kind = "FloorPad", Offset = Vector3.new(-14, 22.08, 34), Size = Vector3.new(18, 0.16, 10), Color = Color3.fromRGB(248, 202, 230), Material = Enum.Material.SmoothPlastic, Transparency = 0.16, HideBillboard = true },
+		{ Name = "VanityMirror", Kind = "Display", Offset = Vector3.new(36, 28, 30), Size = Vector3.new(10, 10, 1), Color = Color3.fromRGB(235, 242, 246), Material = Enum.Material.Glass, Transparency = 0.18, HideBillboard = true },
+		{ Name = "VanityCounter", Kind = "Table", Offset = Vector3.new(36, 22, 36), Size = Vector3.new(12, 4, 4), Color = Color3.fromRGB(236, 213, 224), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "GlamTub", Kind = "Display", Offset = Vector3.new(42, 23, 24), Size = Vector3.new(8, 4, 12), Color = Color3.fromRGB(246, 240, 244), Material = Enum.Material.SmoothPlastic, HideBillboard = true },
+		{ Name = "Pool", Kind = "Pool", Offset = Vector3.new(4, 0, 88), Size = Vector3.new(30, 4, 16), Color = Color3.fromRGB(104, 193, 255), Accent = Color3.fromRGB(235, 247, 255), HideBillboard = true },
+		{ Name = "PoolGlowEdge", Kind = "FloorPad", Offset = Vector3.new(4, 2.12, 96), Size = Vector3.new(32, 0.16, 0.5), Color = mansion.PinkBright, Material = Enum.Material.Neon, Transparency = 0.4, HideBillboard = true },
+		{ Name = "PoolChaiseA", Kind = "PoolChair", Offset = Vector3.new(-26, 2, 82), Size = Vector3.new(8, 3, 4), Color = Color3.fromRGB(244, 236, 236), Accent = mansion.Pink, HideBillboard = true },
+		{ Name = "PoolChaiseB", Kind = "PoolChair", Offset = Vector3.new(-26, 2, 92), Size = Vector3.new(8, 3, 4), Color = Color3.fromRGB(244, 236, 236), Accent = mansion.Pink, HideBillboard = true },
+		{ Name = "PatioSofa", Kind = "Seat", Offset = Vector3.new(42, 2, 84), Size = Vector3.new(18, 4, 6), Color = Color3.fromRGB(234, 214, 220), Material = Enum.Material.Fabric, HideBillboard = true },
+		{ Name = "PatioFireTable", Kind = "Table", Offset = Vector3.new(42, 1.5, 92), Size = Vector3.new(6, 3, 6), Color = Color3.fromRGB(182, 154, 132), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "PoolAccentOrb", Kind = "Display", Offset = Vector3.new(42, 6, 98), Size = Vector3.new(3, 3, 3), Color = mansion.PinkBright, Material = Enum.Material.Neon, Shape = Enum.PartType.Ball, HideBillboard = true, PointLight = { Color = Color3.fromRGB(255, 166, 214), Range = 14, Brightness = 0.75 } },
+		{ Name = "TreeTrunk", Kind = "Display", Offset = Vector3.new(86, 26, -6), Size = Vector3.new(4, 50, 4), Color = Color3.fromRGB(80, 55, 25), Material = Enum.Material.Wood, HideBillboard = true },
+		{ Name = "TreehousePlatform", Kind = "Display", Offset = Vector3.new(86, 50, -6), Size = Vector3.new(20, 2, 20), Color = Color3.fromRGB(120, 80, 40), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "TreehouseWallN", Kind = "Display", Offset = Vector3.new(86, 60, -15), Size = Vector3.new(20, 14, 1), Color = Color3.fromRGB(140, 100, 50), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "TreehouseWallE", Kind = "Display", Offset = Vector3.new(95, 60, -6), Size = Vector3.new(1, 14, 18), Color = Color3.fromRGB(140, 100, 50), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "TreehouseRoof", Kind = "Display", Offset = Vector3.new(86, 67, -6), Size = Vector3.new(22, 2, 22), Color = Color3.fromRGB(160, 120, 60), Material = Enum.Material.WoodPlanks, HideBillboard = true },
+		{ Name = "TreehouseSign", Kind = "Display", Offset = Vector3.new(86, 58, -14.4), Size = Vector3.new(16, 6, 0.5), Color = Color3.fromRGB(200, 160, 90), Material = Enum.Material.Neon, HideBillboard = true },
+		{ Name = "ZiplineCable", Kind = "Display", Offset = Vector3.new(-200, 51, -20), Size = Vector3.new(480, 0.4, 0.4), Color = Color3.fromRGB(55, 55, 55), Material = Enum.Material.Metal, HideBillboard = true },
+	}
+	for _, propConfig in ipairs(propList) do
+		createProp(propsFolder, venueConfig, propConfig)
+	end
+
+	for step = 1, 12 do
+		createProp(propsFolder, venueConfig, {
+			Name = "StairStep" .. tostring(step),
+			Kind = "Display",
+			Offset = Vector3.new(-8, 1 + step, -2 + step * 4),
+			Size = Vector3.new(10, 1, 4),
+			Color = Color3.fromRGB(188, 162, 142),
+			Material = Enum.Material.WoodPlanks,
+			HideBillboard = true,
+		})
+	end
+
+	local birthdayBanner = propsFolder:FindFirstChild("BirthdayBanner")
+	if birthdayBanner then
+		InteractionService.registerPrompt(birthdayBanner, {
+			ActionType = "Notify",
+			ActionText = "Read",
+			ObjectText = "Birthday Banner",
+			Message = "Happy 11th Birthday Abbie Jo! Love, Mom, Dad, and Charlie Lue",
+			CooldownKey = "GirlsHangout:BirthdayBanner",
+		})
+	end
+
+	local hatch = propsFolder:FindFirstChild("SecretHatch")
+	if hatch then
+		InteractionService.registerPrompt(hatch, {
+			ActionType = "TeleportVenue",
+			ActionText = "Enter",
+			ObjectText = "Secret Food Court",
+			VenueId = "underground-food-court",
+			CooldownKey = "TeleportVenue:underground-food-court",
+		})
+	end
+
+	local vipWall = propsFolder:FindFirstChild("VIPStarWall")
+	if vipWall then
+		InteractionService.registerPrompt(vipWall, {
+			ActionType = "FounderAction",
+			ActionText = "Open",
+			ObjectText = "VIP Star Loft",
+			RoleRequired = "VIP",
+			Message = "VIP Star Loft opened a glam founder highlight moment.",
+			CooldownKey = "GirlsHangout:VIPLoft",
+		})
+	end
+
+	createSign(signsFolder, "VenueSign", position + Vector3.new(0, 28, -66), "Girls Hangout", "Modern VIP glam mansion", Color3.fromRGB(34, 36, 42), mansion.Pink, Vector3.new(28, 10, 1))
+	createSign(signsFolder, "BirthdaySign", position + Vector3.new(-34, 14, 44), "Birthday Suite", "Party room + memory wall", Color3.fromRGB(248, 196, 220), mansion.Trim, Vector3.new(16, 8, 1))
+	createSign(signsFolder, "VIPSign", position + Vector3.new(38, 30, -26), "VIP Star Loft", "Balcony views and glam seating", Color3.fromRGB(242, 206, 226), mansion.Trim, Vector3.new(16, 8, 1))
+	createSign(signsFolder, "PoolSign", position + Vector3.new(22, 14, 66), "Backyard Pool", "Late-night lounge and glow deck", Color3.fromRGB(214, 216, 222), mansion.Trim, Vector3.new(16, 8, 1))
+
+	local mediaVenueConfig = {
+		Id = venueConfig.Id,
+		Position = venueConfig.Position,
+		MediaPanels = {
+			{
+				Name = "BirthdayMemoryWall",
+				MediaType = "Photo",
+				Offset = Vector3.new(-16, 8, 40),
+				Size = Vector3.new(16, 9, 1),
+				Title = "Birthday Memory Wall",
+				Items = {
+					"Abbie's Glam Party",
+					"VIP Sleepover Night",
+					"Poolside Golden Hour",
+					"Creator Loft Highlights",
+				},
+			},
+			{
+				Name = "CreatorStream",
+				MediaType = "Twitch",
+				Offset = Vector3.new(-30, 28, -14),
+				Size = Vector3.new(14, 9, 1),
+				Title = "Creator Loft Stream",
+			},
+			{
+				Name = "GirlsPlaylist",
+				MediaType = "Spotify",
+				Offset = Vector3.new(18, 8, 2),
+				Size = Vector3.new(12, 8, 1),
+				Title = "VIP House Playlist",
+			},
+		},
+	}
+
+	local builtPanels = MediaFramework.build(mediaFolder, mediaVenueConfig)
+	for _, builtPanel in ipairs(builtPanels) do
+		local mediaType = builtPanel.Config.MediaType
+		local actionText = mediaType == "Spotify" and "Open" or (mediaType == "Twitch" and "Watch" or "View")
+		local objectText = mediaType == "Spotify" and "Spotify Station" or (mediaType == "Twitch" and "Twitch Wall" or builtPanel.Config.Title)
+		InteractionService.registerPrompt(builtPanel.Screen, {
+			ActionType = "Media",
+			ActionText = actionText,
+			ObjectText = objectText,
+			Message = "Interaction placeholder: " .. builtPanel.Config.Title,
+			CooldownKey = "Media:" .. venueConfig.Id .. ":" .. builtPanel.Config.Name,
+		})
+	end
+
+	local spawnPosition = position + mansion.SpawnOffset
+	createPart(venueConfig.Name .. " ArrivalMarker", spawnFolder, {
+		Size = Vector3.new(10, 0.5, 10),
+		Position = spawnPosition + Vector3.new(0, -1.5, 0),
+		Color = mansion.Pink,
+		Material = Enum.Material.Neon,
+		Transparency = 0.4,
+		Anchored = true,
+		CanCollide = false,
+	})
+	TeleportService.registerVenueTarget(venueConfig.Id, CFrame.new(spawnPosition), venueConfig.Name)
+
+	local returnPad = createNavigationPad(
+		teleportFolder,
+		venueConfig.Name .. " ReturnPad",
+		position + mansion.ReturnPadOffset,
+		mansion.Pink,
+		"Return to Plaza",
+		{
+			MarkerOffset = Vector3.new(0, 5, -8),
+			MarkerColor = Color3.fromRGB(42, 42, 48),
+			Subtitle = "Return",
+			PadMaterial = Enum.Material.SmoothPlastic,
+			PadTransparency = 0.08,
+		}
+	)
+	InteractionService.registerPrompt(returnPad, {
+		ActionType = "TeleportHub",
+		ActionText = "Teleport",
+		ObjectText = "Founder's Plaza",
+		CooldownKey = "TeleportHub:" .. venueConfig.Id,
+	})
+
+	local door = createPart("MainDoor", createFolder("Doors", venueFolder), {
+		Size = Vector3.new(14, 12, 2),
+		Position = position + Vector3.new(0, 6, -66),
+		Color = mansion.Glass,
+		Material = Enum.Material.Glass,
+		Transparency = 0.2,
+		CanCollide = true,
+	})
+	InteractionService.registerPrompt(door, {
+		ActionType = "Door",
+		ActionText = "Open",
+		ObjectText = venueConfig.Name,
+		Target = door,
+		ClosedCFrame = door.CFrame,
+		OpenOffset = Vector3.new(0, 12, 0),
+		CooldownKey = "Door:" .. venueConfig.Id,
+	})
+end
+
 local function buildVenue(venueFolder, venueConfig, spawnFolder, teleportFolder, mediaFolder, navigationFolder)
+	if venueConfig.Id == "girls-hangout" then
+		buildGirlsHangoutMansion(venueFolder, venueConfig, spawnFolder, teleportFolder, mediaFolder)
+		return
+	end
+
 	createVenueShell(venueFolder, venueConfig)
 
 	local roomsFolder = createFolder("Rooms", venueFolder)
@@ -2229,10 +2568,10 @@ end
 local function setupEnvironment()
 	local Lighting = game:GetService("Lighting")
 	Lighting.ClockTime = 18
-	Lighting.Brightness = 1.4
-	Lighting.ExposureCompensation = 0.15
-	Lighting.Ambient = Color3.fromRGB(80, 60, 120)
-	Lighting.OutdoorAmbient = Color3.fromRGB(100, 80, 140)
+	Lighting.Brightness = 1.65
+	Lighting.ExposureCompensation = 0.08
+	Lighting.Ambient = Color3.fromRGB(106, 108, 116)
+	Lighting.OutdoorAmbient = Color3.fromRGB(118, 122, 128)
 
 	local function ensureChild(className, name)
 		local existing = Lighting:FindFirstChild(name)
@@ -2246,23 +2585,23 @@ local function setupEnvironment()
 	end
 
 	local atm = ensureChild("Atmosphere", "WorldAtmosphere")
-	atm.Density = 0.22
-	atm.Offset = 0.2
-	atm.Color = Color3.fromRGB(200, 175, 230)
-	atm.Decay = Color3.fromRGB(80, 60, 120)
-	atm.Glare = 0.2
-	atm.Haze = 0.1
+	atm.Density = 0.18
+	atm.Offset = 0.1
+	atm.Color = Color3.fromRGB(206, 210, 220)
+	atm.Decay = Color3.fromRGB(102, 110, 126)
+	atm.Glare = 0.12
+	atm.Haze = 0.08
 
 	local cc = ensureChild("ColorCorrectionEffect", "WorldColorCorrection")
-	cc.Brightness = 0.04
-	cc.Contrast = 0.08
-	cc.Saturation = 0.25
-	cc.TintColor = Color3.fromRGB(255, 245, 255)
+	cc.Brightness = 0.03
+	cc.Contrast = 0.06
+	cc.Saturation = 0.1
+	cc.TintColor = Color3.fromRGB(252, 250, 248)
 
 	local bloom = ensureChild("BloomEffect", "WorldBloom")
-	bloom.Intensity = 0.35
-	bloom.Size = 20
-	bloom.Threshold = 0.95
+	bloom.Intensity = 0.24
+	bloom.Size = 18
+	bloom.Threshold = 0.98
 end
 
 function WorldBuilderService.build()
